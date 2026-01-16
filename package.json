@@ -1,0 +1,30 @@
+{
+  "name": "backend-control-animal",
+  "version": "1.0.0",
+  "description": "Backend para el sistema de gobierno de control animal",
+  "keywords": [
+    "backend",
+    "express",
+    "prisma",
+    "postgreSQL",
+    "seguridad"
+  ],
+  "license": "ISC",
+  "author": "Eduardo Iran Arroyo Bravo https://github.com/Eduardo-Arroyo-B",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon src/server/index.js",
+    "start": "node src/server/index.js"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.19.2",
+    "cors": "^2.8.5",
+    "express": "^5.2.1",
+    "multer": "^2.0.2",
+    "nodemon": "^3.1.11"
+  },
+  "devDependencies": {
+    "prisma": "^6.19.2"
+  }
+}

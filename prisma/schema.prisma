@@ -1,0 +1,434 @@
+generator client {
+  provider = "prisma-client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Usuarios {
+  usuario_id      String          @id @default(uuid()) @db.Uuid
+  username        String
+  password        String
+  email           String          @unique
+  nombre_completo String
+  rol_id          String          @db.Uuid
+  estatus_usuario Estatus_Usuario
+  ultimo_acceso   DateTime
+
+  // Relaciones
+  Rol                       Rol                       @relation(fields: [rol_id], references: [id])
+  Integraciones             Integraciones_Log[]
+  EvaluacionesComoEvaluador Evaluacion[]              @relation("EvaluadorRelation")
+  EvaluacionesAprobadas     Evaluacion[]              @relation("AprobadoRelation")
+  Desparacitaciones         Desparasitaciones[]
+  Adopciones                Adopciones[]
+  Seguimiento_Adopciones    Seguimientos_Adopciones[]
+  Mordeduras                Mordeduras[]
+  Esterilizaciones          Esterilizaciones[]
+}
+
+model Rol {
+  id       String @id @default(uuid()) @db.Uuid
+  nombre   String @unique
+  permisos Json
+
+  Usuarios Usuarios[]
+}
+
+model Reportes_Ciudadanos {
+  reporte_id      Int      @id @default(autoincrement())
+  folio_reporte   String   @unique
+  tipo_reporte    String
+  descripcion     String
+  ubicacion       String
+  colonia_id      Int
+  prioridad       String
+  estatus_reporte String
+  fecha_reporte   DateTime
+  asignado_a      String
+
+  // Relaciones
+  Colonia Cat_Colonias @relation(fields: [colonia_id], references: [colonia_id])
+}
+
+model Integraciones_Log {
+  id                String   @id @default(uuid()) @db.Uuid
+  sistema_externo   String
+  tipo_operacion    String
+  exitoso           Boolean
+  usuarios_id       String   @db.Uuid
+  fecha_integracion DateTime @default(now())
+
+  // Relaciones
+  Usuarios Usuarios @relation(fields: [usuarios_id], references: [usuario_id])
+}
+
+model Vacunaciones {
+  id                  Int      @id @default(autoincrement())
+  animal_id           Int
+  vacuna_id           Int
+  fecha_aplicacion    DateTime
+  certificado_emitido Boolean
+  veterinario_Id      String   @db.Uuid
+
+  // Relaciones
+  Animal   Animales           @relation(fields: [animal_id], references: [animal_id])
+  Usuarios Usuarios           @relation(fields: [veterinario_Id], references: [usuario_id])
+  Vacuna   Inventario_Vacunas @relation(fields: [vacuna_id], references: [id])
+}
+
+model Animales {
+  animal_id                 Int      @id @default(autoincrement())
+  folio_interno             String   @unique
+  microchip                 String   @unique
+  nombre                    String
+  especie_animal            String
+  raza_id                   Int
+  sexo_animal               String
+  edad_aproximada           Int
+  peso_kg                   Int
+  tamano_animal             Int
+  temperamento_animal       String
+  propietario_id            String   @db.Uuid
+  estatus_animal            String
+  fecha_ingreso             DateTime @default(now())
+  es_adoptable              Boolean
+  disponible_adopcion       Boolean
+  fecha_disponible_adopcion DateTime
+  autorizado_adopcion_por   Int
+
+  // Relaciones
+  Razas                 Cat_Razas               @relation(fields: [raza_id], references: [id])
+  Propietario           Propietario             @relation(fields: [propietario_id], references: [propietario_id])
+  Usuarios              Usuarios                @relation(fields: [autorizado_adopcion_por], references: [usuario_id])
+  Evaluaciones_Adopcion Evaluaciones_Adopcion[]
+  Desparacitaciones     Desparasitaciones[]
+  Egresos_Animales      Egresos_Animales[]
+  Adopciones            Adopciones[]
+  Ingresos_Animales     Ingresos_Animales[]
+  Animales_Fotos        Animales_Fotos[]
+  Animales_Documentos   Animales_Documentos[]
+  Mordeduras            Mordeduras[]
+  Defunciones           Defunciones[]
+  Esterilizaciones      Esterilizaciones[]
+}
+
+model Propietario {
+  propietario_id        String   @id @default(uuid()) @db.Uuid
+  tipo_identificacion   String
+  numero_identificacion String   @unique
+  nombre                String
+  apellido_paterno      String
+  apellido_materno      String
+  fecha_nacimiento      DateTime
+  genero                String
+  email                 String
+  telefono              String
+  colonia               String
+  estatus_propietario   String
+
+  // Relaciones
+  Adopciones                      Adopciones[]
+  Mordeduras                      Mordeduras[]
+  Propietario_Documentos          Propietario_Documentos[]
+  Historial_Servicios_Propietario Historial_Servicios_Propietario[]
+  Pago_Servicios                  Pagos_Servicios[]
+  Esterilizaciones                Esterilizaciones[]
+}
+
+model Cat_Razas {
+  id              Int    @id @default(autoincrement())
+  especie_animal  String
+  nombre_raza     String
+  estatus_general String
+}
+
+model Inventario_Vacunas {
+  id                  Int    @id @default(autoincrement())
+  nombre_vacuna       String
+  tipo_vacuna_id      Int
+  lote                String
+  cantidad_disponible String
+
+  // Relaciones
+  Tipo_Vacuna Cat_Tipos_Vacuna @relation(fields: [tipo_vacuna_id], references: [tipo_vacuna_id])
+}
+
+model Inventario_Medicamentos {
+  medicamentos_id      Int      @id @default(autoincrement())
+  nombre_medicamento   String
+  fecha_vencimiento    DateTime
+  cantidad_disponibles Int
+  unidad_medida        Int
+  registrado_por       String   @db.Uuid
+
+  // Relaciones
+  Usuarios Usuarios @relation(fields: [registrado_por], references: [usuario_id])
+}
+
+model Inventario_Alimento {
+  alimento_id            Int      @id @default(autoincrement())
+  nombre_producto        String
+  tipo_alimento          String
+  fecha_vencimiento      DateTime
+  cantidad_disponible_kg Int
+  registrado_por         String   @db.Uuid
+
+  // Relaciones
+  Usuarios Usuarios @relation(fields: [registrado_por], references: [usuario_id])
+}
+
+model Movimientos_Inventario {
+  movimiento_Id   Int    @id @default(autoincrement())
+  tipo_inventario String
+  item_id         Int
+  tipo_movimiento String
+  cantidad        Int
+  responsable     String @db.Uuid
+
+  // Relaciones
+  Usuarios Usuarios @relation(fields: [responsable], references: [usuario_id])
+}
+
+model Auditoria {
+  auditoria_id     Int      @id @default(autoincrement())
+  usuario_id       String   @db.Uuid
+  modulo           String
+  accion           String
+  tabla_afectada   String
+  registro_id      String
+  datos_anteriores Json
+  datos_nuevos     Json
+  ip_origen        String
+  user_agent       String
+  fecha_accion     DateTime
+
+  // Relaciones
+  Usuarios Usuarios @relation(fields: [usuario_id], references: [usuario_id])
+}
+
+model Consultas_Veterinarias {
+  consulta_id         Int      @id @default(autoincrement())
+  animal_id           Int
+  veterinario_id      String   @db.Uuid
+  fecha_hora_consulta DateTime @default(now())
+
+  // Relaciones
+  Animal   Animales @relation(fields: [animal_id], references: [animal_id])
+  Usuarios Usuarios @relation(fields: [veterinario_id], references: [usuario_id])
+}
+
+model Evaluaciones_Adopcion {
+  evaluacion_id    Int      @id @default(autoincrement())
+  animal_id        Int
+  evaluador_id     String   @db.Uuid
+  apto_adopcion    Boolean
+  fecha_evaluacion DateTime
+  aprobado_por     String   @db.Uuid
+  fecha_aprobacion DateTime
+
+  // Relaciones
+  Animal    Animales @relation(fields: [animal_id], references: [animal_id])
+  Evaluador Usuarios @relation("EvaluadorRelation", fields: [evaluacion_id], references: [usuario_id])
+  Aprobado  Usuarios @relation("AprobadoRelation", fields: [aprobado_por], references: [usuario_id])
+}
+
+model Desparasitaciones {
+  desparacitaciones_id Int    @id @default(autoincrement())
+  animal_id            Int
+  producto_utilizado   String
+  aplicado_por         String @db.Uuid
+
+  // Relaciones
+  Animal   Animales @relation(fields: [animal_id], references: [animal_id])
+  Usuarios Usuarios @relation(fields: [aplicado_por], references: [usuario_id])
+}
+
+model Egresos_Animales {
+  egreso_id         Int      @id @default(autoincrement())
+  animal_id         Int
+  tipo_egreso       String
+  fecha_hora_egreso DateTime
+
+  // Relaciones
+  Animal Animales @relation(fields: [animal_id], references: [animal_id])
+}
+
+model Adopciones {
+  adopcion_id      Int      @id @default(autoincrement())
+  folio_adopcion   String   @unique
+  animal_id        Int
+  adoptante_id     String   @db.Uuid
+  fecha_solicitud  DateTime
+  estatus_adopcion String
+  evaluador_id     String   @db.Uuid
+
+  // Relaciones
+  Animal                 Animales                  @relation(fields: [animal_id], references: [animal_id])
+  Adoptante              Propietario               @relation(fields: [adoptante_id], references: [propietario_id])
+  Usuarios               Usuarios                  @relation(fields: [evaluador_id], references: [usuario_id])
+  Seguimiento_Adopciones Seguimientos_Adopciones[]
+}
+
+model Seguimientos_Adopciones {
+  seguimiento_id          Int      @id @default(autoincrement())
+  adopcion_id             Int
+  fecha_seguimiento       DateTime
+  tipo_seguimiento        String
+  condicion_seguimiento   String
+  responsable_seguimiento String   @db.Uuid
+
+  // Relaciones
+  Adopcion    Adopciones @relation(fields: [adopcion_id], references: [adopcion_id])
+  Responsable Usuarios   @relation(fields: [responsable_seguimiento], references: [usuario_id])
+}
+
+model Ingresos_Animales {
+  ingreso_id         Int      @id @default(autoincrement())
+  animal_id          Int
+  tipo_ingreso       String
+  fecha_hora_ingreso DateTime
+
+  // Relaciones
+  Animal Animales @relation(fields: [animal_id], references: [animal_id])
+}
+
+model Animales_Fotos {
+  foto_id      Int     @id @default(autoincrement())
+  animal_id    Int
+  ruta_archivo String
+  es_principal Boolean
+
+  // Relaciones
+  Animal Animales @relation(fields: [animal_id], references: [animal_id])
+}
+
+model Animales_Documentos {
+  documento_id   Int    @id @default(autoincrement())
+  animal_id      Int
+  tipo_documento String
+  nombre_archivo String
+
+  // Relaciones
+  Animal Animales @relation(fields: [animal_id], references: [animal_id])
+}
+
+model Mordeduras {
+  mordedura_id          Int      @id @default(autoincrement())
+  folio_mordedura       String   @unique
+  animal_id             Int
+  fecha_incidente       DateTime
+  propietario_animal_id String   @db.Uuid
+  registrador_por       String   @db.Uuid
+
+  // Relaciones
+  Animal      Animales    @relation(fields: [animal_id], references: [animal_id])
+  Propietario Propietario @relation(fields: [propietario_animal_id], references: [propietario_id])
+  Usuarios    Usuarios    @relation(fields: [registrador_por], references: [usuario_id])
+}
+
+model Propietario_Documentos {
+  documento_id               Int    @id @default(autoincrement())
+  propietario_id             String @db.Uuid
+  tipo_documento_propietario String
+  nombre_archivo             String
+  ruta_archivo               String
+
+  // Relaciones
+  Propietario Propietario @relation(fields: [propietario_id], references: [propietario_id])
+}
+
+model Historial_Servicios_Propietario {
+  historial_id     Int      @id @default(autoincrement())
+  propietario_id   String   @db.Uuid
+  tipo_servicio    String
+  fecha_servicio   DateTime
+  folio_referencia String
+
+  // Relaciones
+  Propietario Propietario @relation(fields: [propietario_id], references: [propietario_id])
+}
+
+model Pagos_Servicios {
+  pago_id        Int      @id @default(autoincrement())
+  folio_pago     String   @unique
+  monto          Decimal
+  metodo_pago    String
+  estatus_pago   String
+  propietario_id String   @db.Uuid
+  fecha_pago     DateTime
+
+  // Relaciones
+  Propietario Propietario @relation(fields: [propietario_id], references: [propietario_id])
+}
+
+model Defunciones {
+  defuncion_id         Int      @id @default(autoincrement())
+  animal_id            Int
+  fecha_hora_defuncion DateTime
+  causa_muerte         String
+
+  // Relaciones
+  Animal      Animales      @relation(fields: [animal_id], references: [animal_id])
+  Cremaciones Cremaciones[]
+}
+
+model Cremaciones {
+  cremacion_id            Int      @id @default(autoincrement())
+  folio_cremacion         String   @unique
+  defuncion_id            Int
+  tipo_servicio_cremacion String
+  fecha_recepcion         DateTime
+  estatus_cremacion       String
+
+  // Relaciones
+  Defuncion Defunciones @relation(fields: [defuncion_id], references: [defuncion_id])
+}
+
+model Esterilizaciones {
+  esterilizacion_id       Int      @id @default(autoincrement())
+  folio_servicio          String   @unique
+  animal_id               Int
+  propietario_id          String   @db.Uuid
+  fecha_programada        DateTime
+  veterinario_cirujano_id String   @db.Uuid
+
+  // Relaciones
+  Animal      Animales    @relation(fields: [animal_id], references: [animal_id])
+  Propietario Propietario @relation(fields: [propietario_id], references: [propietario_id])
+  Veterinario Usuarios    @relation(fields: [veterinario_cirujano_id], references: [usuario_id])
+}
+
+model Cat_Tipos_Vacuna {
+  tipo_vacuna_id Int     @id @default(autoincrement())
+  codigo_vacuna  String
+  nombre_vacuna  String
+  especie_animal String
+  obligatoria    Boolean
+}
+
+model Reporte_Seguimiento {
+  seguimiento_id          Int    @id @default(autoincrement())
+  reporte_id              Int
+  tipo_accion_seguimiento String
+  responsable_id          String
+
+  // Relaciones
+  Reporte Reportes_Ciudadanos @relation(fields: [reporte_id], references: [reporte_id])
+  Usuario Usuarios            @relation(fields: [responsable_id], references: [usuario_id])
+}
+
+model Cat_Colonias {
+  colonia_id     Int    @id @default(autoincrement())
+  nombre_colonia String
+
+  // Relaciones
+  Reportes_Ciudadanos Reportes_Ciudadanos[]
+}
+
+enum Estatus_Usuario {
+  ACTIVO
+  INACTIVO
+}
