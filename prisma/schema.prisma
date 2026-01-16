@@ -91,12 +91,14 @@ model Integraciones_Log {
 }
 
 model Vacunaciones {
-  id                  Int      @id @default(autoincrement())
-  animal_id           Int
-  vacuna_id           Int
-  fecha_aplicacion    DateTime
-  certificado_emitido Boolean
-  veterinario_Id      String   @db.Uuid
+  id               Int      @id @default(autoincrement())
+  animal_id        Int
+  vacuna_id        Int
+  lote             String
+  fecha_aplicacion DateTime
+  proxima_dosis    DateTime
+  observaciones    String
+  veterinario_Id   String   @db.Uuid
 
   // Relaciones
   Animal   Animales           @relation(fields: [animal_id], references: [animal_id])
@@ -113,6 +115,7 @@ model Animales {
   animal_id                 Int      @id @default(autoincrement())
   folio_interno             String   @unique
   microchip                 String   @unique
+  medalla                   String   @unique
   nombre                    String
   especie_animal            String
   raza_id                   Int
@@ -257,6 +260,13 @@ model Auditoria {
 model Consultas_Veterinarias {
   consulta_id         Int      @id @default(autoincrement())
   animal_id           Int
+  peso_actual         Decimal
+  temperatura         Decimal
+  motivo_consulta     String
+  diagnostico         String
+  tratamiento         String
+  observaciones       String
+  disponible_adopcion Boolean
   veterinario_id      String   @db.Uuid
   fecha_hora_consulta DateTime @default(now())
 
@@ -436,8 +446,12 @@ model Esterilizaciones {
   esterilizacion_id       Int      @id @default(autoincrement())
   folio_servicio          String   @unique
   animal_id               Int
+  tipo                    String
+  fecha_cirujia           DateTime
+  metodo                  String
+  complicaciones          String
+  observaciones           String
   propietario_id          String   @db.Uuid
-  fecha_programada        DateTime
   veterinario_cirujano_id String   @db.Uuid
 
   // Relaciones

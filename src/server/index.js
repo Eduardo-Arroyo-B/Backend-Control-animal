@@ -3,6 +3,8 @@ import cors from 'cors';
 
 // SICA
 import animales from "../routes/animals/animal.routes.js"
+import vaccinations from "../routes/vaccionations/vaccinations.routes.js"
+import consultations from "../routes/consultations/consultations.routes.js"
 
 // App
 const app = express();
@@ -32,6 +34,8 @@ app.use(cors(corsOptions));
 
 // Rutas
 app.use("/animals", animales)
+app.use("/vaccinations", vaccinations)
+app.use("/consultations")
 
 // Endpoint para validar la actividad del server
 app.use("serverAlive", (req, res) => {
