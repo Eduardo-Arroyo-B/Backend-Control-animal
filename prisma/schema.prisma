@@ -184,10 +184,9 @@ model Propietario {
 }
 
 model Cat_Razas {
-  id              Int    @id @default(autoincrement())
-  especie_animal  String
-  nombre_raza     String
-  estatus_general String
+  id             Int    @id @default(autoincrement())
+  especie_animal String
+  nombre_raza    String
 
   Animal Animales[]
 }
