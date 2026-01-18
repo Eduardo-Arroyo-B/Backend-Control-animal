@@ -35,7 +35,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors(corsOptions));
 
 // Rutas
-app.use("/sica", animales, vaccinations, consultations, razas, usuarios, roles);
+app.use("/sica", animales, vaccinations, consultations, usuarios, roles);
 
 // Endpoint para validar la actividad del server
 app.use("/serverAlive", (req, res) => {
