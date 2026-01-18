@@ -33,7 +33,7 @@ const getPropietarioById = async (req, res) => {
                     // Busqueda exactas
                     { numero_identificacion: search },
 
-                    // Busqueda parcial
+                    // Busqueda parciales
                     { nombre: { contains: search, mode: "insensitive" }},
                     { apellido_paterno: { contains: search, mode: "insensitive" }},
                     { apellido_materno: { contains: search, mode: "insensitive" }},
