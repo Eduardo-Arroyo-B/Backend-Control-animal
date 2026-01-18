@@ -8,6 +8,8 @@ const getVaccinations = async (req, res) => {
             },
             include: {
                 Animal: true,
+                Vacuna: true,
+                Usuarios: true
             }
         });
 
