@@ -10,7 +10,7 @@ const router = express.Router();
 
 // Rutas
 router.get("/getRoles", getRoles);
-router.get("/createRol", createRole);
-router.get("/deleteRol/:id", deleteRol);
+router.post("/createRol", createRole);
+router.delete("/deleteRol/:id", deleteRol);
 
 export default router;
