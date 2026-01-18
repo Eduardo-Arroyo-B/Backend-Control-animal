@@ -2,7 +2,12 @@ import prisma from "../../../prisma/prismaClient.js";
 
 const getAllAdoptions = async (req,res) => {
     try {
-        const adoptions = await prisma.adopciones.findMany()
+        const adoptions = await prisma.adopciones.findMany({
+            include: {
+                Animal: true,
+                Adoptante: true,
+            }
+        })
 
         if (!adoptions) {
             return res.status(404).json({ message: "No se pudieron obtener las adopciones" })
@@ -49,14 +54,6 @@ const createAdoption = async (req,res) => {
         costo_adopcion,
         evaluador_id
     } = req.body
-
-    const adoptionData = {
-        animal_id: Number(animal_id),
-        adoptante_id,
-        fecha_adopcion: new Date(fecha_adopcion),
-        costo_adopcion,
-        evaluador_id,
-    }
 
     try {
         const result = await prisma.$transaction(async (tx) => {
