@@ -111,8 +111,76 @@ const createReporte = async (req, res) => {
     }
 };
 
+const createReporteSeguimiento = async (req, res) => {
+    const {
+        reporte_id,
+        tipo_accion_seguimiento,
+        responsable_id,
+    } = req.body;
+
+    console.log("responsable_id", responsable_id);
+
+
+    // Validación de campos requeridos
+    if (!reporte_id || !tipo_accion_seguimiento || !responsable_id) {
+        return res.status(400).json({
+            message: "Faltan campos requeridos: reporte_id, tipo_accion_seguimiento, responsable_id (o userId)"
+        });
+    }
+
+    try {
+        // Validar que el reporte existe
+        const reporte = await prisma.reportes_Ciudadanos.findUnique({
+            where: { reporte_id: Number(reporte_id) }
+        });
+
+        if (!reporte) {
+            return res.status(404).json({
+                message: "El reporte no existe"
+            });
+        }
+
+        // Validar que el usuario existe
+        const usuario = await prisma.usuarios.findUnique({
+            where: { usuario_id: responsable_id }
+        });
+
+        if (!usuario) {
+            return res.status(404).json({
+                message: "El usuario responsable no existe"
+            });
+        }
+
+        const seguimiento = await prisma.reporte_Seguimiento.create({
+            data: {
+                reporte_id: Number(reporte_id),
+                tipo_accion_seguimiento,
+                responsable_id: responsable_id
+            },
+        });
+
+        return res.status(201).json({
+            message: "Seguimiento de reporte registrado correctamente",
+            seguimiento
+        });
+    } catch (error) {
+        console.log(error);
+        // Errores comunes de prisma
+        if (error.code === "P2003") {
+            return res.status(400).json({
+                message: "Error de relación: El reporte o el responsable no existe"
+            });
+        }
+
+        return res.status(500).json({
+            message: error.message
+        });
+    }
+};
+
 export {
     getAllReportes,
-    createReporte
+    createReporte,
+    createReporteSeguimiento
 };
 
