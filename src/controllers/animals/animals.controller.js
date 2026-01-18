@@ -2,7 +2,7 @@ import prisma from "../../../prisma/prismaClient.js"
 
 const getAnimals = async (req, res) => {
     try {
-        const animals = prisma.animales.findMany()
+        const animals = await prisma.animales.findMany()
 
         if (!animals) {
             return res.status(404).json({ message: "No se pudieron obtener los animales"})
@@ -26,7 +26,7 @@ const getAnimalsByID = async (req, res) => {
     try {
         const animal = await prisma.animales.findUnique({
             where: {
-                animal_id: id
+                animal_id: Number(id)
             },
         })
 
@@ -111,6 +111,79 @@ const createAnimal = async (req, res) => {
     }
 };
 
+const updateAnimal = async (req, res) => {
+    const { id } = req.params;
+
+    if (!id) {
+        return res.status(404).json({ message: "Falta ID" });
+    }
+
+    try {
+        // Buscar el animal
+        const findAnimal = await prisma.animales.findUnique({
+            where: { animal_id: Number(id) },
+        });
+
+        if (!findAnimal) {
+            return res.status(404).json({ message: "No se encontró el animal a actualizar" });
+        }
+
+        // Construir data dinámicamente
+        const objetoDinamico = [
+            "nombre",
+            "especie",
+            "Raza",
+            "edad",
+            "pelaje",
+            "peso",
+            "numero_microchip",
+            "tipo_ingreso",
+            "ubicacion_actual",
+            "estado_salud",
+            "sexo",
+            "observaciones",
+        ];
+
+        const intFields = ["peso", "edad"]
+        const data = {};
+
+        for (const key of objetoDinamico) {
+            const value = req.body[key];
+
+            // Ignorar campos no enviados o vacios
+            if (
+                value === undefined ||
+                value === "" ||
+                value === null
+            ) continue;
+
+            // Campos numericos
+             if (intFields.includes(key)) {
+                 const numberValue = Number(value);
+                 if(Number.isNaN(numberValue)) {
+                     return res.status(400).json({ message: `${key} debe ser numerico` })
+                 }
+                 data[key] = numberValue;
+             } else {
+                 data[key] = value;
+             }
+        }
+
+        if (Object.keys(data).length === 0) {
+            return res.status(404).json({ message: "NO hay campos validos para actualizar" });
+        }
+
+        const updatedAnimal = await prisma.animales.update({
+            where: { animal_id: Number(id) },
+            data,
+        });
+
+        return res.status(200).json({ message: "Animal actualizado correctamente", updatedAnimal });
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+};
+
 const deleteAnimals = async (req, res) => {
     // Obtener id de los parametros
     const { id } = req.params
@@ -141,5 +214,6 @@ export {
     getAnimals,
     getAnimalsByID,
     createAnimal,
+    updateAnimal,
     deleteAnimals
 }

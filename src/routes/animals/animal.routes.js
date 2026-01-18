@@ -3,6 +3,7 @@ import {
     getAnimals,
     getAnimalsByID,
     createAnimal,
+    updateAnimal,
     deleteAnimals
 } from "../../controllers/animals/animals.controller.js";
 
@@ -13,6 +14,7 @@ const router = express.Router()
 router.get("/getAnimals", getAnimals)
 router.get("/getAnimalByID/:id", getAnimalsByID)
 router.post("/createAnimal", createAnimal)
+router.put("/updateAnimal/:id", updateAnimal)
 router.delete("/deleteAnimals/:id", deleteAnimals)
 
 export default router
