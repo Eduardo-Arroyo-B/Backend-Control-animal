@@ -12,7 +12,7 @@ const router = express();
 
 // Rutas
 router.get("/getAllPropietarios", getAllPropietarios);
-router.get("/getPropietarioById/:id", getPropietarioById);
+router.get("/getPropietarioById/:search", getPropietarioById);
 router.post("/createPropietario", createPropietario);
 router.put("/updatePropietario/:id", updatePropietario);
 router.delete("/deletePropietario/:id", deletePropietario);
