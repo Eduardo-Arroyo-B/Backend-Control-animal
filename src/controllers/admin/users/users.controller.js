@@ -7,11 +7,11 @@ const login = async (req, res) => {
 
     try {
         const findUser = await prisma.usuarios.findUnique({
-            where: { nombre_usuario: usuario },
+            where: { username: usuario },
             select: {
-                nombre_usuario: true,
-                activo: true,
-                ultimo_login: true,
+                nombre_completo: true,
+                estatus_usuario: true,
+                ultimo_acceso: true,
                 password: true
             }
         })
@@ -61,9 +61,11 @@ const getUserById = async (req, res) => {
 
     try {
         const user = await prisma.usuarios.findUnique({
-            where: { id },
+            where: {
+                usuario_id: id
+            },
             include: {
-                persona: true
+                Rol: true
             }
         })
 
@@ -219,7 +221,7 @@ const deleteUser = async (req, res) => {
     try {
         const user = await prisma.usuarios.findUnique({
             where: {
-                id
+                usuario_id: id
             },
         })
 
@@ -229,7 +231,7 @@ const deleteUser = async (req, res) => {
 
         const deleteUser = await prisma.usuarios.delete({
             where: {
-                id
+                usuario_id: id
             },
         })
 
