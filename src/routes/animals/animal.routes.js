@@ -12,7 +12,7 @@ const router = express.Router()
 
 // Rutas
 router.get("/getAnimals", getAnimals)
-router.get("/getAnimalByID/:id", getAnimalsByID)
+router.get("/getAnimalByID/:search", getAnimalsByID)
 router.post("/createAnimal", createAnimal)
 router.put("/updateAnimal/:id", updateAnimal)
 router.delete("/deleteAnimals/:id", deleteAnimals)

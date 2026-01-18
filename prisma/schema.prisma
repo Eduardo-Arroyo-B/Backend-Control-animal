@@ -127,9 +127,9 @@ model Animales {
   observaciones    String
 
   // aparte
-  fecha_ingreso           String
+  fecha_ingreso           DateTime
   es_adoptable            Boolean
-  autorizado_adopcion_por String  @db.Uuid
+  autorizado_adopcion_por String   @db.Uuid
 
   // Relaciones
   Usuarios               Usuarios                 @relation(fields: [autorizado_adopcion_por], references: [usuario_id])

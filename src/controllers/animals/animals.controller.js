@@ -1,4 +1,5 @@
 import prisma from "../../../prisma/prismaClient.js"
+import convertToBoolean from "../../helpers/convertToBoolean.js";
 
 const getAnimals = async (req, res) => {
     try {
@@ -16,17 +17,24 @@ const getAnimals = async (req, res) => {
 
 const getAnimalsByID = async (req, res) => {
     // Extracion del id por parametros
-    const { id } = req.params
+    const { search } = req.params
 
     // Manejo de errores
-    if (!id) {
-        return res.status(404).json({ message: "Falta ID"})
+    if (!search) {
+        return res.status(404).json({ message: "Faltan datos de busqueda" })
     }
 
     try {
-        const animal = await prisma.animales.findUnique({
+        const animal = await prisma.animales.findFirst({
             where: {
-                animal_id: Number(id)
+                OR: [
+                    // Busqueda exacta por microchip
+                    { numero_microchip: search },
+                    { animal_id: Number(search) },
+
+                    // Busqueda parcial por nombre
+                    { nombre: { contains: search, mode: "insensitive" } },
+                ]
             },
         })
 
@@ -142,9 +150,11 @@ const updateAnimal = async (req, res) => {
             "estado_salud",
             "sexo",
             "observaciones",
+            "es_adoptable"
         ];
 
         const intFields = ["peso", "edad"]
+        const booleanFields = ["es_adoptable"]
         const data = {};
 
         for (const key of objetoDinamico) {
@@ -157,16 +167,18 @@ const updateAnimal = async (req, res) => {
                 value === null
             ) continue;
 
-            // Campos numericos
-             if (intFields.includes(key)) {
-                 const numberValue = Number(value);
-                 if(Number.isNaN(numberValue)) {
-                     return res.status(400).json({ message: `${key} debe ser numerico` })
-                 }
-                 data[key] = numberValue;
-             } else {
-                 data[key] = value;
-             }
+             // Convertir a booleano y numerico dependiendo el campo
+            if (booleanFields.includes(key)) {
+                data[key] = convertToBoolean(value)
+            } else if (intFields.includes(key)) {
+                const numberValue = Number(value);
+                if (isNaN(numberValue)) {
+                    return res.status(400).json({ message: `${key} debe ser numerico` })
+                }
+                data[key] = numberValue;
+            } else {
+                data[key] = value;
+            }
         }
 
         if (Object.keys(data).length === 0) {
