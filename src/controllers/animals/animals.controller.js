@@ -3,7 +3,11 @@ import convertToBoolean from "../../helpers/convertToBoolean.js";
 
 const getAnimals = async (req, res) => {
     try {
-        const animals = await prisma.animales.findMany()
+        const animals = await prisma.animales.findMany({
+            include: {
+                Vacunaciones: true
+            }
+        })
 
         if (!animals) {
             return res.status(404).json({ message: "No se pudieron obtener los animales"})

@@ -6,6 +6,9 @@ const getVaccinations = async (req, res) => {
             orderBy: {
                 fecha_aplicacion: "desc"
             },
+            include: {
+                Animal: true,
+            }
         });
 
         return res.status(200).json(vaccinations);
