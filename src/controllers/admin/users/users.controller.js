@@ -37,7 +37,11 @@ const login = async (req, res) => {
 
 const getUsers = async (req, res) => {
     try {
-        const users = await prisma.usuarios.findMany();
+        const users = await prisma.usuarios.findMany({
+            include: {
+                Rol: true
+            }
+        });
 
         // Manejo de errores
         if (!users) {
