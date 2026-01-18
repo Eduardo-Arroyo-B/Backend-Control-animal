@@ -58,7 +58,7 @@ model Reportes_Ciudadanos {
   ubicacion       String
   colonia         String
   prioridad       String
-  estatus_reporte String
+  estatus_reporte String @default("Pendiente")
   fecha_reporte   DateTime
   asignado_a      String
 
