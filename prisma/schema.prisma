@@ -56,17 +56,15 @@ model Reportes_Ciudadanos {
   tipo_reporte    String
   descripcion     String
   ubicacion       String
-  colonia_id      Int
+  colonia         String
   prioridad       String
-  estatus_reporte String
+  estatus_reporte String @default("Pendiente")
   fecha_reporte   DateTime
   asignado_a      String
 
   // Relaciones
-  Colonia             Cat_Colonias          @relation(fields: [colonia_id], references: [colonia_id])
   Reporte_Seguimiento Reporte_Seguimiento[]
 
-  @@index([colonia_id])
   @@index([estatus_reporte])
   @@index([prioridad])
   @@index([fecha_reporte])
@@ -465,9 +463,6 @@ model Reporte_Seguimiento {
 model Cat_Colonias {
   colonia_id     Int    @id @default(autoincrement())
   nombre_colonia String
-
-  // Relaciones
-  Reportes_Ciudadanos Reportes_Ciudadanos[]
 }
 
 enum Estatus_Usuario {
