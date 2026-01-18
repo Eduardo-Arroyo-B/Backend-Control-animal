@@ -151,7 +151,7 @@ const createUser = async (req, res) => {
 
 
 const updateUser = async (req, res) => {
-    const { id, activo, rol_id } = req.body;
+    const { id, estatus_usuario, rol_id } = req.body;
 
     // Validaciones básicas
     if (!id) {
@@ -163,7 +163,9 @@ const updateUser = async (req, res) => {
 
             // Verificar que el usuario exista
             const usuario = await tx.usuarios.findUnique({
-                where: { id }
+                where: {
+                    usuario_id: id
+                }
             });
 
             if (!usuario) {
@@ -173,14 +175,14 @@ const updateUser = async (req, res) => {
             // Construir objeto de actualización dinámico
             const dataToUpdate = {};
 
-            // Cambiar estatus
-            if (activo !== undefined) {
-                dataToUpdate.activo = activo === true || activo === "true";
-            }
-
             // Cambiar rol
             if (rol_id) {
                 dataToUpdate.rol_id = rol_id;
+            }
+
+            // Cambiar estatus
+            if (estatus_usuario) {
+                dataToUpdate.estatus_usuario = estatus_usuario;
             }
 
             // Si no hay nada que actualizar
@@ -190,10 +192,12 @@ const updateUser = async (req, res) => {
 
             // Actualizar usuario
             const updateUser = await tx.usuarios.update({
-                where: { id },
+                where: {
+                    usuario_id: id
+                },
                 data: dataToUpdate,
                 include: {
-                    rol: true
+                    Rol: true,
                 }
             });
 
