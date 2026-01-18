@@ -18,9 +18,9 @@ const getAllPropietarios = async (req, res) => {
 };
 
 const getPropietarioById = async (req, res) => {
-    const { id } = req.params;
+    const { search } = req.params;
 
-    if (!id) {
+    if (!search) {
         return res.status(400).json({
             message: "Falta el ID del propietario"
         });
@@ -29,7 +29,16 @@ const getPropietarioById = async (req, res) => {
     try {
         const propietario = await prisma.propietario.findUnique({
             where: {
-                propietario_id: id
+                OR: [
+                    // Busqueda exactas
+                    { numero_identificacion: search },
+                    { propietario_id: search },
+
+                    // Busqueda parcial
+                    { nombre: { contains: search, mode: "insensitive" }},
+                    { apellido_paterno: { contains: search, mode: "insensitive" }},
+                    { apellido_materno: { contains: search, mode: "insensitive" }},
+                ]
             },
             include: {
                 Adopciones: {
