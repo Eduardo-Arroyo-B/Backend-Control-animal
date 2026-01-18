@@ -7,6 +7,8 @@ import vaccinations from "../routes/vaccionations/vaccinations.routes.js"
 import consultations from "../routes/consultations/consultations.routes.js"
 import usuarios from "../routes/admin/users/users.routes.js"
 import roles from "../routes/admin/rol/rol.routes.js"
+import medicamentos from "../routes/inventory/medicamentos.routes.js"
+import alimentos from "../routes/inventory/alimentos.routes.js"
 
 // App
 const app = express();
@@ -35,7 +37,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors(corsOptions));
 
 // Rutas
-app.use("/sica", animales, vaccinations, consultations, usuarios, roles);
+app.use("/sica", animales, vaccinations, consultations, usuarios, roles, medicamentos, alimentos);
 
 // Endpoint para validar la actividad del server
 app.use("/serverAlive", (req, res) => {
