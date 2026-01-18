@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = env("DATABASE_URL_DEV")
 }
 
 model Usuarios {
@@ -58,7 +58,7 @@ model Reportes_Ciudadanos {
   ubicacion       String
   colonia         String
   prioridad       String
-  estatus_reporte String @default("Pendiente")
+  estatus_reporte String   @default("Pendiente")
   fecha_reporte   DateTime
   asignado_a      String
 
@@ -301,13 +301,12 @@ model Egresos_Animales {
 }
 
 model Adopciones {
-  adopcion_id      Int      @id @default(autoincrement())
-  folio_adopcion   String   @unique
-  animal_id        Int
-  adoptante_id     String   @db.Uuid
-  fecha_solicitud  DateTime
-  estatus_adopcion String
-  evaluador_id     String   @db.Uuid
+  adopcion_id    Int      @id @default(autoincrement())
+  animal_id      Int
+  adoptante_id   String   @db.Uuid
+  fecha_adopcion DateTime
+  costo_adopcion String
+  evaluador_id   String   @db.Uuid
 
   // Relaciones
   Animal                 Animales                  @relation(fields: [animal_id], references: [animal_id])
