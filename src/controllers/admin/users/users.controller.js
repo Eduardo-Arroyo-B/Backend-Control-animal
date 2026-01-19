@@ -9,13 +9,20 @@ const login = async (req, res) => {
         const findUser = await prisma.usuarios.findUnique({
             where: { username: usuario },
             select: {
+                usuario_id: true,
                 nombre_completo: true,
                 estatus_usuario: true,
                 ultimo_acceso: true,
                 password: true,
-                usuario_id: true
+                Rol: {
+                    select: {
+                        id: true,
+                        nombre: true,
+                        permisos: true
+                    }
+                }
             }
-        })
+        });
 
         // Manejo de errores
         if (!findUser) {
