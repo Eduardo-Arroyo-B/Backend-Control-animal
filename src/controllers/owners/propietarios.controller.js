@@ -17,6 +17,28 @@ const getAllPropietarios = async (req, res) => {
     }
 };
 
+const getAllPropietariosEXP = async (req, res) => {
+    try {
+        const propietarios = await prisma.propietario.findMany({
+            orderBy: {
+                nombre: "asc"
+            },
+            include: {
+                Adopciones: true,
+                Esterilizaciones: true,
+                Pago_Servicios: true,
+            }
+        });
+
+        return res.status(200).json({
+            message: "Propietarios obtenidos exitosamente",
+            propietarios
+        });
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+};
+
 const getPropietarioById = async (req, res) => {
     const { search } = req.params;
 
@@ -245,6 +267,7 @@ const deletePropietario = async (req, res) => {
 export {
     getAllPropietarios,
     getPropietarioById,
+    getAllPropietariosEXP,
     createPropietario,
     updatePropietario,
     deletePropietario

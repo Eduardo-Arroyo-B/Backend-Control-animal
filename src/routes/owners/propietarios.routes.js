@@ -2,6 +2,7 @@ import express from "express";
 import {
     getAllPropietarios,
     getPropietarioById,
+    getAllPropietariosEXP,
     createPropietario,
     updatePropietario,
     deletePropietario
@@ -13,6 +14,7 @@ const router = express();
 // Rutas
 router.get("/getAllPropietarios", getAllPropietarios);
 router.get("/getPropietarioById/:search", getPropietarioById);
+router.get("/getPropietarioEXP", getAllPropietariosEXP);
 router.post("/createPropietario", createPropietario);
 router.put("/updatePropietario/:id", updatePropietario);
 router.delete("/deletePropietario/:id", deletePropietario);
