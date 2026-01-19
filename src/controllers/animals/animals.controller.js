@@ -19,6 +19,28 @@ const getAnimals = async (req, res) => {
     }
 }
 
+const getAnimalsEXP = async (req, res) => {
+    try {
+        const animals = await prisma.animales.findMany({
+            include: {
+                Vacunaciones: true,
+                Adopciones: true,
+                Consultas_Veterinarias: true,
+                Esterilizaciones: true,
+                Ingresos_Animales: true,
+            }
+        })
+
+        if (!animals) {
+            return res.status(404).json({ message: "No se pudieron obtener los animales"})
+        }
+
+        return res.status(200).json({ message: "Expedientes de animales obtenidos exitosamente", animals })
+    } catch(error) {
+        return res.status(500).json({ message: error.message });
+    }
+}
+
 const getAnimalsByID = async (req, res) => {
     // Extracion del id por parametros
     const { search } = req.params
@@ -230,6 +252,7 @@ const deleteAnimals = async (req, res) => {
 export {
     getAnimals,
     getAnimalsByID,
+    getAnimalsEXP,
     createAnimal,
     updateAnimal,
     deleteAnimals
