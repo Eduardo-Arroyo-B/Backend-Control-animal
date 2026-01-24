@@ -47,10 +47,10 @@ const createBite = async (req, res) => {
         telefono,
         direccion,
         fecha_incidente,
-        hora,
+        hora_incidente,
         gravedad,
-        lugar_incidencia,
-        parte_afectada,
+        ubicacion_incidente,
+        parte_cuerpo_afectada,
         especie,
         animal_propio,
         ID_animal,
@@ -73,15 +73,15 @@ const createBite = async (req, res) => {
         telefono,
         direccion,
         fecha_incidente: new Date(fecha_incidente),
-        hora: new Date(hora),
+        hora_incidente: new Date(hora_incidente),
         gravedad,
-        lugar_incidencia,
-        parte_afectada,
+        ubicacion_incidente,
+        parte_cuerpo_afectada,
         especie,
         animal_propio: booleanAnimal,
         ID_animal,
         estado_vacunacion,
-        descripcion_animal,
+        descripcion_animal
     }
 
     try {

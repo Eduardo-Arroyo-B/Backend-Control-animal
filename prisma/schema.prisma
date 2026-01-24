@@ -159,7 +159,6 @@ model Animales {
   Ingresos_Animales      Ingresos_Animales[]
   Animales_Fotos         Animales_Fotos[]
   Animales_Documentos    Animales_Documentos[]
-  Mordeduras             Mordeduras[]
   Defunciones            Defunciones[]
   Esterilizaciones       Esterilizaciones[]
   Vacunaciones           Vacunaciones[]
@@ -198,7 +197,6 @@ model Propietario {
 
   // Relaciones
   Adopciones                      Adopciones[]
-  Mordeduras                      Mordeduras[]
   Propietario_Documentos          Propietario_Documentos[]
   Historial_Servicios_Propietario Historial_Servicios_Propietario[]
   Pago_Servicios                  Pagos_Servicios[]
@@ -383,15 +381,24 @@ model Animales_Documentos {
 model Mordeduras {
   mordedura_id          Int      @id @default(autoincrement())
   folio_mordedura       String   @unique
-  animal_id             Int
+  nombre_completo       String
+  edad                  Int
+  telefono              String
+  direccion             String
   fecha_incidente       DateTime
-  propietario_animal_id String   @db.Uuid
+  hora_incidente        DateTime
+  gravedad              String
+  ubicacion_incidente   String
+  parte_cuerpo_afectada String
+  especie               String
+  animal_propio         Boolean
+  ID_animal             String?
+  estado_vacunacion     String
+  descripcion_animal    String
   registrador_por       String   @db.Uuid
 
   // Relaciones
-  Animal      Animales    @relation(fields: [animal_id], references: [animal_id])
-  Propietario Propietario @relation(fields: [propietario_animal_id], references: [propietario_id])
-  Usuarios    Usuarios    @relation(fields: [registrador_por], references: [usuario_id])
+  Usuarios Usuarios @relation(fields: [registrador_por], references: [usuario_id])
 }
 
 model Propietario_Documentos {
@@ -479,6 +486,17 @@ model Cat_Tipos_Vacuna {
 
   // Relaciones
   Inventario_Vacunas Inventario_Vacunas[]
+}
+
+model Folio_Seguimiento {
+  id        Int      @id @default(autoincrement())
+  tipo      String
+  anio      Int
+  ultimo    Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([tipo, anio], name: "tipo_anio")
 }
 
 model Reporte_Seguimiento {
