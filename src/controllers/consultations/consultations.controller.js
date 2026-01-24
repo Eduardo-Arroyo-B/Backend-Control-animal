@@ -11,8 +11,6 @@ const getConsultations = async (req, res) => {
                     select: {
                         animal_id: true,
                         nombre: true,
-                        especie_animal: true,
-                        estatus_animal: true
                     }
                 },
                 Usuarios: {

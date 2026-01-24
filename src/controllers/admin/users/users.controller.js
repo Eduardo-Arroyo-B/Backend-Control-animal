@@ -7,14 +7,22 @@ const login = async (req, res) => {
 
     try {
         const findUser = await prisma.usuarios.findUnique({
-            where: { nombre_usuario: usuario },
+            where: { username: usuario },
             select: {
-                nombre_usuario: true,
-                activo: true,
-                ultimo_login: true,
-                password: true
+                usuario_id: true,
+                nombre_completo: true,
+                estatus_usuario: true,
+                ultimo_acceso: true,
+                password: true,
+                Rol: {
+                    select: {
+                        id: true,
+                        nombre: true,
+                        permisos: true
+                    }
+                }
             }
-        })
+        });
 
         // Manejo de errores
         if (!findUser) {
@@ -37,7 +45,11 @@ const login = async (req, res) => {
 
 const getUsers = async (req, res) => {
     try {
-        const users = await prisma.usuarios.findMany();
+        const users = await prisma.usuarios.findMany({
+            include: {
+                Rol: true
+            }
+        });
 
         // Manejo de errores
         if (!users) {
@@ -61,9 +73,11 @@ const getUserById = async (req, res) => {
 
     try {
         const user = await prisma.usuarios.findUnique({
-            where: { id },
+            where: {
+                usuario_id: id
+            },
             include: {
-                persona: true
+                Rol: true
             }
         })
 
@@ -145,7 +159,7 @@ const createUser = async (req, res) => {
 
 
 const updateUser = async (req, res) => {
-    const { id, activo, rol_id } = req.body;
+    const { id, estatus_usuario, rol_id } = req.body;
 
     // Validaciones básicas
     if (!id) {
@@ -157,7 +171,9 @@ const updateUser = async (req, res) => {
 
             // Verificar que el usuario exista
             const usuario = await tx.usuarios.findUnique({
-                where: { id }
+                where: {
+                    usuario_id: id
+                }
             });
 
             if (!usuario) {
@@ -167,14 +183,14 @@ const updateUser = async (req, res) => {
             // Construir objeto de actualización dinámico
             const dataToUpdate = {};
 
-            // Cambiar estatus
-            if (activo !== undefined) {
-                dataToUpdate.activo = activo === true || activo === "true";
-            }
-
             // Cambiar rol
             if (rol_id) {
                 dataToUpdate.rol_id = rol_id;
+            }
+
+            // Cambiar estatus
+            if (estatus_usuario) {
+                dataToUpdate.estatus_usuario = estatus_usuario;
             }
 
             // Si no hay nada que actualizar
@@ -184,10 +200,12 @@ const updateUser = async (req, res) => {
 
             // Actualizar usuario
             const updateUser = await tx.usuarios.update({
-                where: { id },
+                where: {
+                    usuario_id: id
+                },
                 data: dataToUpdate,
                 include: {
-                    rol: true
+                    Rol: true,
                 }
             });
 
@@ -219,7 +237,7 @@ const deleteUser = async (req, res) => {
     try {
         const user = await prisma.usuarios.findUnique({
             where: {
-                id
+                usuario_id: id
             },
         })
 
@@ -229,7 +247,7 @@ const deleteUser = async (req, res) => {
 
         const deleteUser = await prisma.usuarios.delete({
             where: {
-                id
+                usuario_id: id
             },
         })
 

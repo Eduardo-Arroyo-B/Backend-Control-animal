@@ -1,0 +1,137 @@
+import prisma from "../../../prisma/prismaClient.js";
+import generateFolio from "../../helpers/generateFolio.js";
+
+const getAllBites = async (req, res) => {
+    try {
+        const bites = await prisma.mordeduras.findMany()
+
+        if (!bites) {
+            return res.status(404).json({ message: "No se pudieron obtener las mordeduras" })
+        }
+
+        return res.status(200).json({ message: "Mordeduras obtenidas exitosamente", bites })
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+}
+
+const getBiteById = async (req, res) => {
+    // Extraccion del ID por parametros
+    const { id } = req.params
+
+    // Manejo errores
+    if (!id) {
+        return res.status(404).json({ message: "Falta ID"})
+    }
+
+    try {
+        const bite = await prisma.mordeduras.findUnique({
+            where: { mordedura_id: Number(id) },
+        })
+
+        if (!bite) {
+            return res.status(404).json({ message: "No se pudo ibtener la mordedura" })
+        }
+
+        return res.status(200).json({ message: "Mordedura obtenida exitosamente",  bite })
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+}
+
+const createBite = async (req, res) => {
+    // Extraccion de datos del body
+    const {
+        nombre_completo,
+        edad,
+        telefono,
+        direccion,
+        fecha_incidente,
+        hora,
+        gravedad,
+        lugar_incidencia,
+        parte_afectada,
+        especie,
+        animal_propio,
+        ID_animal,
+        estado_vacunacion,
+        descripcion_animal,
+        registrado_por
+    } = req.body
+
+    // validar si es true o false de si es animal propio
+    const booleanAnimal = animal_propio === true || animal_propio === "true"
+
+    // Generar folio unico
+    const folio = await generateFolio("MD")
+
+    // Objeto de datos de mordedura
+    const biteData = {
+        folio_mordedura: folio,
+        nombre_completo,
+        edad: Number(edad),
+        telefono,
+        direccion,
+        fecha_incidente: new Date(fecha_incidente),
+        hora: new Date(hora),
+        gravedad,
+        lugar_incidencia,
+        parte_afectada,
+        especie,
+        animal_propio: booleanAnimal,
+        ID_animal,
+        estado_vacunacion,
+        descripcion_animal,
+    }
+
+    try {
+        const bite = await prisma.mordeduras.create({
+            data: {
+                ...biteData,
+                Usuarios: {
+                    connect: {
+                        usuario_id: registrado_por
+                    }
+                }
+            }
+        })
+
+        if (!bite) {
+            return res.status(404).json({ message: "No se pudo crear el registro de mordedura" })
+        }
+
+        return res.status(201).json({ message: "Mordedura creada exitosamente", bite })
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+}
+
+const deleteBite = async (req, res) => {
+    // Extraccion del ID de parametros
+    const { id } = req.params
+
+    if (!id) {
+        return res.status(404).json({ message: "Falta ID"})
+    }
+
+    try {
+        const bite = await prisma.mordeduras.delete({
+            where: { mordedura_id: Number(id) },
+        })
+
+        if (!bite) {
+            return res.status(404).json({ message: "No se pudo eliminar la mordedura seleccionada" })
+        }
+
+        return res.status(200).json({ message: "Mordedura eliminada exitosamente", bite })
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+}
+
+export {
+    getAllBites,
+    getBiteById,
+    createBite,
+    deleteBite,
+}

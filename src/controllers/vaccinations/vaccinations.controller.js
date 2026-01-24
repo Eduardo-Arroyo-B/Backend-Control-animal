@@ -7,25 +7,9 @@ const getVaccinations = async (req, res) => {
                 fecha_aplicacion: "desc"
             },
             include: {
-                Animal: {
-                    select: {
-                        animal_id: true,
-                        nombre: true,
-                        especie_animal: true
-                    }
-                },
-                Vacuna: {
-                    select: {
-                        id: true,
-                        nombre_vacuna: true
-                    }
-                },
-                Usuarios: {
-                    select: {
-                        usuario_id: true,
-                        nombre_completo: true
-                    }
-                }
+                Animal: true,
+                Vacuna: true,
+                Usuarios: true
             }
         });
 
@@ -103,6 +87,79 @@ const createVaccination = async (req, res) => {
     }
 };
 
+const getCatVaccination = async (req, res) => {
+    try {
+        const vaccinations = await prisma.inventario_Vacunas.findMany({})
+
+        if (!vaccinations) {
+            return res.status(404).json({ message: "No se pudo obtener el stock de vacunas disponible"})
+        }
+
+        return res.status(200).json({ message: "Stock de vacunas obtenido exitosamente", vaccinations });
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+}
+
+const getCatVaccinationByID = async (req, res) => {
+    // Extraccion del id de parametros
+    const { id } = req.params;
+
+    // Manejo de errores
+    if (!id) {
+        return res.status(404).json({ message: "Falta ID"})
+    }
+
+    try {
+        const vaccinations = await prisma.inventario_Vacunas.findUnique({
+            where: { id: Number(id) },
+        })
+
+        if (!vaccinations) {
+            return res.status(404).json({ message: "No se pudo obtener el stock de vacunas disponible"})
+        }
+
+        return res.status(200).json({ message: "Stock de vacunas obtenido exitosamente", vaccinations });
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+}
+
+const createCatVaccination = async (req, res) => {
+    // Extraccion de datos del body
+    const {
+        nombre_vacuna,
+        lote,
+        cantidad_disponible,
+        unidad_medida,
+        fecha_vencimiento,
+        stock_alerta
+    } = req.body;
+
+    const dataVaccinations = {
+        nombre_vacuna,
+        lote,
+        cantidad_disponible: Number(cantidad_disponible),
+        unidad_medida,
+        fecha_vencimiento,
+        stock_alerta: Number(stock_alerta)
+    }
+
+    try {
+        const vaccination = await prisma.inventario_Vacunas.create({
+            data: dataVaccinations
+        })
+
+        if (!vaccination) {
+            return res.status(404).json({ message: "No se pudo crear el stock de vacunas" });
+        }
+
+        return res.status(201).json({ message: "Stock de vacunas creado exitosamente", dataVaccinations });
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+}
+
 const deleteVaccination = async (req, res) => {
     const { id } = req.params;
 
@@ -129,5 +186,8 @@ export {
     getVaccinations,
     getVaccinationByID,
     createVaccination,
+    getCatVaccination,
+    getCatVaccinationByID,
+    createCatVaccination,
     deleteVaccination
 };

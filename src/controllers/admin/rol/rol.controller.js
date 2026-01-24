@@ -29,6 +29,16 @@ const createRole = async (req, res) => {
     }
 
     try {
+        const findRole = await prisma.rol.findUnique({
+            where: {
+                nombre
+            }
+        })
+
+        if (findRole) {
+            return res.status(404).json({ message: "El rol a crear ya existe" })
+        }
+
         const role = await prisma.rol.create({
             data: { nombre, permisos }
         });
@@ -81,7 +91,7 @@ const deleteRol = async (req, res) => {
     const { id } = req.params;
 
     if (!id) {
-        return res.status(404).json({ message: "El rol nombre no existe" })
+        return res.status(404).json({ message: "Falta ID" })
     }
 
     try {
@@ -95,7 +105,7 @@ const deleteRol = async (req, res) => {
             return res.status(404).json({ message: "El rol a eliminar no existe" })
         }
 
-        const deleteRole = await prisma.rol.deleteMany({
+        const deleteRole = await prisma.rol.delete({
             where: {
                 id
             }

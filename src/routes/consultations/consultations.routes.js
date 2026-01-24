@@ -11,7 +11,7 @@ const router = express.Router()
 
 // Rutas
 router.get("/getConsultations", getConsultations);
-router.get("/getConsultationByID", getConsultationByID);
+router.get("/getConsultationByID/:id", getConsultationByID);
 router.post("/createConsultation", createConsultation);
 router.delete("/deleteConsultation", deleteConsultation);
 
