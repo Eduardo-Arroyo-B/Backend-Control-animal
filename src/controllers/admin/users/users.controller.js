@@ -6,7 +6,7 @@ const login = async (req, res) => {
     const { usuario, password } = req.body
 
     try {
-        const findUser = await prisma.usuarios.findUnique({
+        const findUser = await prisma.usuarios.findFirst({
             where: { username: usuario },
             select: {
                 usuario_id: true,
@@ -39,7 +39,7 @@ const login = async (req, res) => {
 
         return res.status(200).json({ message: "Inicio de session exitoso", findUser })
     } catch (error) {
-        return res.status(500).json({ message: error.message });
+        return res.status(500).json({ message: "Ha ocurrido un error al hacer login" });
     }
 }
 
