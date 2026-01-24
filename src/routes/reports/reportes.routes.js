@@ -9,8 +9,8 @@ import {
 const router = express();
 
 // Rutas
-router.get("/getAllReportes", getAllReportes);
-router.post("/createReporte", createReporte);
+router.get("/getAllReports", getAllReportes);
+router.post("/createReport", createReporte);
 router.put("/createReporteSeguimiento", createReporteSeguimiento);
 
 export default router;

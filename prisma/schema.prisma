@@ -54,13 +54,16 @@ model Reportes_Ciudadanos {
   reporte_id      Int      @id @default(autoincrement())
   folio_reporte   String   @unique
   tipo_reporte    String
+  prioridad       String
   descripcion     String
   ubicacion       String
   colonia_id      Int
-  prioridad       String
+  nombre_completo String
+  telefono        String
+  email           String?
   estatus_reporte String
-  fecha_reporte   DateTime
-  asignado_a      String
+  fecha_reporte   DateTime @default(now())
+  registrado_por  String
 
   // Relaciones
   Colonia             Cat_Colonias          @relation(fields: [colonia_id], references: [colonia_id])
@@ -70,7 +73,7 @@ model Reportes_Ciudadanos {
   @@index([estatus_reporte])
   @@index([prioridad])
   @@index([fecha_reporte])
-  @@index([asignado_a])
+  @@index([registrado_por])
 }
 
 model Integraciones_Log {
@@ -512,7 +515,7 @@ model Reporte_Seguimiento {
 
 model Cat_Colonias {
   colonia_id     Int    @id @default(autoincrement())
-  nombre_colonia String
+  nombre_colonia String @unique
 
   // Relaciones
   Reportes_Ciudadanos Reportes_Ciudadanos[]

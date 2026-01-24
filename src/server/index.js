@@ -18,6 +18,7 @@ import defunciones from "../routes/deaths/deaths.routes.js"
 import cremaciones from "../routes/cremations/cremations.routes.js"
 import insumos from "../routes/inventory/supplies.routes.js"
 import mordeduras from "../routes/bites/bites.routes.js"
+import colonias from "../routes/colonies/colonies.routes.js"
 
 // App
 const app = express();
@@ -63,7 +64,8 @@ app.use("/sica",
     defunciones,
     cremaciones,
     insumos,
-    mordeduras
+    mordeduras,
+    colonias
 );
 
 // Endpoint para validar la actividad del server
