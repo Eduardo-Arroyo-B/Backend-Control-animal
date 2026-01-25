@@ -34,7 +34,8 @@ const getAnimalsByID = async (req, res) => {
                     { animal_id: Number(search) },
 
                     { nombre_animal: { contains: search, mode: "insensitive" } },
-                    { }
+                    { numero_microchip: { contains: search, mode: "insensitive" } },
+                    { medalla: { contains: search, mode: "insensitive" } },
                 ]
             },
         })
