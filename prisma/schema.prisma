@@ -125,6 +125,7 @@ model Animales {
   pelaje           String?
   peso             Int?
   numero_microchip String?
+  medalla          String?
   tipo_ingreso     String?
   ubicacion_actual String?
   estado_salud     String?

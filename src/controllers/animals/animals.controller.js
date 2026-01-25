@@ -20,7 +20,7 @@ const getAnimals = async (req, res) => {
 
 const getAnimalsByID = async (req, res) => {
     // Extracion del id por parametros
-    const { id } = req.params
+    const { search } = req.params
 
     // Manejo de errores
     if (!id) {
@@ -30,7 +30,12 @@ const getAnimalsByID = async (req, res) => {
     try {
         const animal = await prisma.animales.findUnique({
             where: {
-                animal_id: Number(id)
+                OR: [
+                    { animal_id: Number(search) },
+
+                    { nombre_animal: { contains: search, mode: "insensitive" } },
+                    { }
+                ]
             },
         })
 
@@ -54,6 +59,7 @@ const createAnimal = async (req, res) => {
             pelaje,
             peso,
             numero_microchip,
+            medalla,
             tipo_ingreso,
             ubicacion_actual,
             estado_salud,
@@ -86,6 +92,7 @@ const createAnimal = async (req, res) => {
                 pelaje,
                 peso: Number(peso),
                 numero_microchip,
+                medalla,
                 tipo_ingreso,
                 ubicacion_actual,
                 estado_salud,
