@@ -30,7 +30,7 @@ const getAnimalsByID = async (req, res) => {
     try {
         const animal = await prisma.animales.findUnique({
             where: {
-                animal_id: id
+                animal_id: Number(id)
             },
         })
 
@@ -196,6 +196,17 @@ const createAnimalFlujo = async (req, res) => {
         return res.status(201).json({ message: "Animal creado exitosamente", animal })
     } catch(error) {
         return res.status(404).json({ message: error.message });
+    }
+}
+
+const updateAnimal = async (req, res) => {
+    // Extraer el ID de los parametros
+    const { id } = req.params;
+
+    try {
+
+    } catch (error) {
+        return res.status(500).json({ message: "No se pudo crear el animal", error: error.message });
     }
 }
 
