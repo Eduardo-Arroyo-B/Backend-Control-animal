@@ -32,8 +32,8 @@ const corsOptions = {
     origin: [
         "http://localhost:3000",
         "http://localhost:8080",
-        "http://10.10.250.31:3000",
-        "http://10.10.250.31:3030",
+        "http://10.10.250.31:3010",
+        "http://10.10.250.31:3040",
         "http://10.10.250.31:8080",
         "http://10.10.250.31:8090",
         "https://sica-roan.vercel.app"
