@@ -222,7 +222,7 @@ model Inventario_Vacunas {
   nombre_vacuna       String
   lote                String
   cantidad_disponible String
-  unidad_medica       String
+  unidad_medida       String
   fecha_vencimiento   DateTime
   stock_alerta        Int
   tipo_vacuna_id      Int?
