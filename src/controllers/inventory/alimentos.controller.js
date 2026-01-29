@@ -37,23 +37,18 @@ const createAlimento = async (req, res) => {
         stock_alerta
     } = req.body;
 
-    // Validación de campos requeridos
-    if (!nombre_producto || !tipo_alimento || !fecha_vencimiento || !cantidad_disponible_kg || !registrado_por) {
-        return res.status(400).json({
-            message: "Faltan campos requeridos: nombre_producto, tipo_alimento, fecha_vencimiento, cantidad_disponible_kg, registrado_por"
-        });
+    const alimentosData = {
+        nombre_producto,
+        tipo_alimento,
+        cantidad_disponible_kg: Number(cantidad_disponible_kg),
+        fecha_vencimiento: new Date(fecha_vencimiento),
+        registrado_por,
+        stock_alerta: Number(stock_alerta),
     }
 
     try {
         const alimento = await prisma.inventario_Alimento.create({
-            data: {
-                nombre_producto,
-                tipo_alimento,
-                fecha_vencimiento: new Date(fecha_vencimiento),
-                cantidad_disponible_kg: Number(cantidad_disponible_kg),
-                registrado_por,
-                stock_alerta: Number(stock_alerta),
-            },
+            data: alimentosData,
             include: {
                 Usuarios: {
                     select: {
