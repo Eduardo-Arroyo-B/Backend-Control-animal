@@ -221,7 +221,7 @@ model Inventario_Vacunas {
   id                  Int      @id @default(autoincrement())
   nombre_vacuna       String
   lote                String
-  cantidad_disponible String
+  cantidad_disponible Int
   unidad_medida       String
   fecha_vencimiento   DateTime
   stock_alerta        Int

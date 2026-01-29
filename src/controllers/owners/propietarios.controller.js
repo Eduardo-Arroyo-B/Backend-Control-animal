@@ -49,18 +49,22 @@ const getPropietarioById = async (req, res) => {
         });
     }
 
+    const terms = search.split(" ").filter(Boolean);
+
     try {
         const propietario = await prisma.propietario.findFirst({
             where: {
-                OR: [
-                    // Busqueda exactas
-                    { numero_identificacion: search },
+                AND: terms.map(term => ({
+                    OR: [
+                        // Busqueda exactas
+                        { numero_identificacion: term },
 
-                    // Busqueda parciales
-                    { nombre: { contains: search, mode: "insensitive" }},
-                    { apellido_paterno: { contains: search, mode: "insensitive" }},
-                    { apellido_materno: { contains: search, mode: "insensitive" }},
-                ]
+                        // Busqueda parciales
+                        { nombre: { contains: term, mode: "insensitive" }},
+                        { apellido_paterno: { contains: term, mode: "insensitive" }},
+                        { apellido_materno: { contains: term, mode: "insensitive" }},
+                    ]
+                }))
             },
             include: {
                 Adopciones: {
