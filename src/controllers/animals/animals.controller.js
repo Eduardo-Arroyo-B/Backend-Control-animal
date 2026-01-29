@@ -214,8 +214,65 @@ const updateAnimal = async (req, res) => {
     // Extraer el ID de los parametros
     const { id } = req.params;
 
-    try {
+    const {
+        nombre_animal,
+        especie,
+        Raza,
+        edad,
+        pelaje,
+        peso,
+        numero_microchip,
+        medalla,
+        tipo_ingreso,
+        ubicacion_actual,
+        estado_salud,
+        sexo,
+        observaciones,
+        fecha_ingreso,
+        es_adoptable,
+    } = req.body;
 
+    const booleanAdoptable = es_adoptable === true || es_adoptable === "true"
+
+    const data = {
+        nombre_animal,
+        especie,
+        Raza,
+        edad,
+        pelaje,
+        peso: peso !== undefined ? Number(peso) : undefined,
+        numero_microchip,
+        medalla,
+        tipo_ingreso,
+        ubicacion_actual,
+        estado_salud,
+        sexo,
+        observaciones,
+        fecha_ingreso,
+        es_adoptable: booleanAdoptable,
+    };
+
+    // Elimina campos undefined
+    Object.keys(data).forEach(
+        key => data[key] === undefined && delete data[key]
+    )
+
+    // Manejo de errores
+    if (Object.keys(data).length === 0) {
+        return res.status(404).json({ message: "No hay campos para actualizar" })
+    }
+
+    try {
+        const animal = await prisma.animales.update({
+            where: { animal_id: Number(id) },
+            data
+        })
+
+        if (!animal) {
+            return res.status(404).json({ message: "No se pudo actualizar el animal" })
+        }
+
+        return res.status(200).json({ message: "Animal actualizado correctamente", animal })
     } catch (error) {
         return res.status(500).json({ message: "No se pudo crear el animal", error: error.message });
     }
@@ -252,5 +309,6 @@ export {
     getAnimalsByID,
     createAnimal,
     createAnimalFlujo,
+    updateAnimal,
     deleteAnimals
 }
