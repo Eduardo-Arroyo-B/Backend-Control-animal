@@ -218,14 +218,17 @@ model Cat_Razas {
 }
 
 model Inventario_Vacunas {
-  id                  Int    @id @default(autoincrement())
+  id                  Int      @id @default(autoincrement())
   nombre_vacuna       String
-  tipo_vacuna_id      Int
   lote                String
   cantidad_disponible String
+  unidad_medica       String
+  fecha_vencimiento   DateTime
+  stock_alerta        Int
+  tipo_vacuna_id      Int?
 
   // Relaciones
-  Tipo_Vacuna  Cat_Tipos_Vacuna @relation(fields: [tipo_vacuna_id], references: [tipo_vacuna_id])
+  Tipo_Vacuna  Cat_Tipos_Vacuna? @relation(fields: [tipo_vacuna_id], references: [tipo_vacuna_id])
   Vacunaciones Vacunaciones[]
 }
 
