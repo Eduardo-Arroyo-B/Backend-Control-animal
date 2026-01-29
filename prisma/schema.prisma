@@ -235,9 +235,10 @@ model Inventario_Vacunas {
 model Inventario_Medicamentos {
   medicamentos_id      Int      @id @default(autoincrement())
   nombre_medicamento   String
-  fecha_vencimiento    DateTime
   cantidad_disponibles Int
-  unidad_medida        Int
+  unidad_medida        String
+  fecha_vencimiento    DateTime
+  stock_alerta         Int
   registrado_por       String   @db.Uuid
 
   // Relaciones

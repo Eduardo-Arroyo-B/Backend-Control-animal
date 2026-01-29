@@ -37,23 +37,18 @@ const createMedicamento = async (req, res) => {
         stock_alerta
     } = req.body;
 
-    // Validación de campos requeridos
-    if (!nombre_medicamento || !fecha_vencimiento || !cantidad_disponibles || !unidad_medida || !registrado_por) {
-        return res.status(400).json({
-            message: "Faltan campos requeridos: nombre_medicamento, fecha_vencimiento, cantidad_disponibles, unidad_medida, registrado_por"
-        });
+    const medicamentoData = {
+        nombre_medicamento,
+        fecha_vencimiento: new Date(fecha_vencimiento),
+        cantidad_disponibles: Number(cantidad_disponibles),
+        unidad_medida,
+        registrado_por,
+        stock_alerta: Number(stock_alerta)
     }
 
     try {
         const medicamento = await prisma.inventario_Medicamentos.create({
-            data: {
-                nombre_medicamento,
-                fecha_vencimiento: new Date(fecha_vencimiento),
-                cantidad_disponibles: Number(cantidad_disponibles),
-                unidad_medida: Number(unidad_medida),
-                registrado_por,
-                stock_alerta: Number(stock_alerta),
-            },
+            data: medicamentoData,
             include: {
                 Usuarios: {
                     select: {
