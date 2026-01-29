@@ -28,7 +28,7 @@ const getAnimalsByID = async (req, res) => {
     }
 
     try {
-        const animal = await prisma.animales.findUnique({
+        const animal = await prisma.animales.findMany({
             where: {
                 OR: [
                     { animal_id: Number(search) },
