@@ -31,6 +31,7 @@ model Usuarios {
   Animal                    Animales[]
   Inventario_Medicamentos   Inventario_Medicamentos[]
   Inventario_Alimentos      Inventario_Alimento[]
+  Inventario_Insumos        Inventario_Insumos[]
   Movimientos_Inventario    Movimientos_Inventario[]
   Auditoria                 Auditoria[]
   Consultas_Veterinarias    Consultas_Veterinarias[]
@@ -249,9 +250,23 @@ model Inventario_Alimento {
   alimento_id            Int      @id @default(autoincrement())
   nombre_producto        String
   tipo_alimento          String
-  fecha_vencimiento      DateTime
   cantidad_disponible_kg Int
+  fecha_vencimiento      DateTime
+  stock_alerta           Int
   registrado_por         String   @db.Uuid
+
+  // Relaciones
+  Usuarios Usuarios @relation(fields: [registrado_por], references: [usuario_id])
+}
+
+model Inventario_Insumos {
+  insumo_id           Int      @id @default(autoincrement())
+  nombre_producto     String
+  cantidad_disponible Int
+  unidad_medida       String
+  fecha_vencimiento   DateTime
+  stock_alerta        Int
+  registrado_por      String   @db.Uuid
 
   // Relaciones
   Usuarios Usuarios @relation(fields: [registrado_por], references: [usuario_id])
