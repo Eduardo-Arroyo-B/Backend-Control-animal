@@ -330,7 +330,6 @@ const createAdoptionRequest = async (req, res) => {
         estatus_propietario
     } = req.body;
 
-    // Validación de campos requeridos
     if (!animal_id) {
         return res.status(400).json({
             message: "Falta el campo requerido: animal_id"
