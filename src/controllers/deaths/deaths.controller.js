@@ -6,7 +6,7 @@ const getAllDeaths = async (req, res) => {
             include: {
                 Animal: {
                     select: {
-                        nombre: true,
+                        nombre_animal: true,
                         especie: true
                     }
                 }
