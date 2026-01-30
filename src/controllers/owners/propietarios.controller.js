@@ -70,7 +70,7 @@ const getPropietarioById = async (req, res) => {
                 Adopciones: {
                     select: {
                         adopcion_id: true,
-                        fecha_adopcion: true
+                        fecha_solicitud: true
                     }
                 },
                 Esterilizaciones: {

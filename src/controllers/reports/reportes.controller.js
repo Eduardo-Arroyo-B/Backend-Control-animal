@@ -8,18 +8,7 @@ const getAllReportes = async (req, res) => {
                 fecha_reporte: "desc"
             },
             include: {
-                Reporte_Seguimiento: {
-                    include: {
-                        Usuario: {
-                            select: {
-                                usuario_id: true,
-                                username: true,
-                                nombre_completo: true,
-                                email: true
-                            }
-                        }
-                    }
-                }
+
             }
         });
 
