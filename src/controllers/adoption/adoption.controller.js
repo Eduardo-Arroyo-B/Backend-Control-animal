@@ -422,7 +422,6 @@ const createAdoptionRequest = async (req, res) => {
                     adoptante_id: propietario.propietario_id,
                     fecha_solicitud: new Date(),
                     estatus_adopcion: 'Pendiente',
-                    evaluador_id: null
                 },
                 include: {
                     Animal: {
