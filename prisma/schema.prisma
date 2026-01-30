@@ -157,6 +157,7 @@ model Animales {
   // aparte
   fecha_ingreso  String?
   es_adoptable   Boolean?
+  muerto         Boolean  @default(false)
   registrado_por String   @db.Uuid
   propietario_id String?  @db.Uuid
 

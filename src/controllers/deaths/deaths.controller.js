@@ -68,11 +68,16 @@ const createDeaths = async (req, res) => {
             data: deathData,
         })
 
-        if (!death) {
+        const animal = await prisma.animales.update({
+            where: { animal_id: Number(animal_id) },
+            data: { muerto: true },
+        })
+
+        if (!death || !animal) {
             return res.status(404).json({ message: "no se pudo crear la cremacion" })
         }
 
-        return res.status(201).json({ message: "Defuncion creada exitosamente", death })
+        return res.status(201).json({ message: "Defuncion creada exitosamente", death, animal });
     } catch (error) {
         return res.status(500).json({ message: error.message });
     }
