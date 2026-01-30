@@ -70,7 +70,18 @@ const createCremation = async (req, res) => {
 
     try {
         const cremation = await prisma.cremaciones.create({
-            data: cremationsData
+            data: cremationsData,
+            include: {
+                Defuncion: {
+                    include: {
+                        Animal: {
+                            select: {
+                                nombre_animal: true
+                            }
+                        }
+                    }
+                }
+            }
         })
 
         if (!cremation) {
