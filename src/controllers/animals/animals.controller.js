@@ -4,7 +4,8 @@ const getAnimals = async (req, res) => {
     try {
         const animals = await prisma.animales.findMany({
             include: {
-                Animales_Fotos: true
+                Animales_Fotos: true,
+                Propietario: true
             }
         })
 

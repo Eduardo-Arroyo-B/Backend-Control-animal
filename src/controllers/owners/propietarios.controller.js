@@ -6,6 +6,9 @@ const getAllPropietarios = async (req, res) => {
         const propietarios = await prisma.propietario.findMany({
             orderBy: {
                 nombre: "asc"
+            },
+            include: {
+                Animales: true
             }
         });
 
@@ -242,6 +245,37 @@ const updatePropietario = async (req, res) => {
     }
 };
 
+const vinculatePropietarioAnimal = async (req, res) => {
+    const { id_animal, id_propietario } = req.body;
+
+    if (!id_animal || !id_propietario) {
+        return res.status(400).json({ message: "Faltan datos" });
+    }
+
+    try {
+        const animal = await prisma.animales.update({
+            where: {
+                animal_id: Number(id_animal),
+            },
+            data: {
+                propietario_id: id_propietario,
+            },
+        });
+
+        return res.status(200).json({
+            message: "Animal vinculado al propietario correctamente",
+            animal,
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            message: "Error al vincular propietario con animal",
+            error: error.message,
+        });
+    }
+};
+
+
 const deletePropietario = async (req, res) => {
     const { id } = req.params;
 
@@ -278,6 +312,7 @@ export {
     getAllPropietariosEXP,
     createPropietario,
     updatePropietario,
+    vinculatePropietarioAnimal,
     deletePropietario
 };
 

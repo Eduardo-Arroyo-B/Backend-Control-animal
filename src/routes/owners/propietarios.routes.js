@@ -5,6 +5,7 @@ import {
     getAllPropietariosEXP,
     createPropietario,
     updatePropietario,
+    vinculatePropietarioAnimal,
     deletePropietario
 } from "../../controllers/owners/propietarios.controller.js";
 
@@ -17,6 +18,7 @@ router.get("/getPropietarioById/:search", getPropietarioById);
 router.get("/getPropietarioEXP", getAllPropietariosEXP);
 router.post("/createPropietario", createPropietario);
 router.put("/updatePropietario/:id", updatePropietario);
+router.put("/vinculatePropietarioAnimal", vinculatePropietarioAnimal);
 router.delete("/deletePropietario/:id", deletePropietario);
 
 export default router;
