@@ -3,7 +3,19 @@ import generateFolio from "../../helpers/generateFolio.js";
 
 const getAllCremations = async (req, res) => {
     try {
-        const cremations = await prisma.cremaciones.findMany()
+        const cremations = await prisma.cremaciones.findMany({
+            include: {
+                Defuncion: {
+                    include: {
+                        Animal: {
+                            select: {
+                                nombre_animal: true
+                            }
+                        }
+                    }
+                }
+            }
+        })
 
         if (!cremations) {
             return res.status(404).json({ message: "No se pudieron obtener las cremaciones" })
@@ -71,17 +83,6 @@ const createCremation = async (req, res) => {
     try {
         const cremation = await prisma.cremaciones.create({
             data: cremationsData,
-            include: {
-                Defuncion: {
-                    include: {
-                        Animal: {
-                            select: {
-                                nombre_animal: true
-                            }
-                        }
-                    }
-                }
-            }
         })
 
         if (!cremation) {
