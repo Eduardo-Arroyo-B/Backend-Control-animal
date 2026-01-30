@@ -2,13 +2,22 @@ import prisma from "../../../prisma/prismaClient.js";
 
 const getAllDeaths = async (req, res) => {
     try {
-        const deats = await prisma.defunciones.findMany()
+        const deats = await prisma.defunciones.findMany({
+            include: {
+                Animal: {
+                    select: {
+                        nombre: true,
+                        especie: true
+                    }
+                }
+            }
+        })
 
         if (!deats) {
             return res.status(404).json({ message: "No se encontraron cremaciones" })
         }
 
-        return res.status(200).json({ message: "Cremaciones encontradas exitosamente", deats });
+        return res.status(200).json({ message: "Muertes encontradas exitosamente", deats });
     } catch (error) {
         return res.status(500).json({ message: error.message });
     }
