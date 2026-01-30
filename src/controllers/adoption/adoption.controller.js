@@ -56,6 +56,8 @@ const createAdoption = async (req,res) => {
         evaluador_id
     } = req.body
 
+    const folio = await generateFolio("ADP")
+
     try {
         const result = await prisma.$transaction(async (tx) => {
 
@@ -70,11 +72,12 @@ const createAdoption = async (req,res) => {
             })
 
             if (!evaluador) throw new Error('El usuario no existe')
-            console.log(evaluador)
 
             const adoption = await tx.adopciones.create({
                 data: {
-                    fecha_adopcion: new Date(fecha_adopcion),
+                    folio_adopcion: folio,
+                    fecha_solicitud: new Date(fecha_adopcion),
+                    estatus_adopcion: "Aprobada",
                     costo_adopcion,
                     Animal: { connect: { animal_id: Number(animal_id) } },
                     Adoptante: { connect: { propietario_id: adoptante_id } },

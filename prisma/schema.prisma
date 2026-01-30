@@ -393,6 +393,7 @@ model Adopciones {
   adoptante_id     String   @db.Uuid
   fecha_solicitud  DateTime
   estatus_adopcion String
+  costo_adopcion   String?
   evaluador_id     String?  @db.Uuid
 
   // Relaciones
