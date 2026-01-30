@@ -84,13 +84,6 @@ const getPropietarioById = async (req, res) => {
                         tipo: true
                     }
                 },
-                Mordeduras: {
-                    select: {
-                        mordedura_id: true,
-                        folio_mordedura: true,
-                        fecha_incidente: true
-                    }
-                }
             }
         });
 
