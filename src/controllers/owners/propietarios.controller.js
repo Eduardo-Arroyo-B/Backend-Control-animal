@@ -114,7 +114,8 @@ const createPropietario = async (req, res) => {
         email,
         telefono,
         colonia,
-        estatus_propietario
+        estatus_propietario,
+        motivo
     } = req.body;
 
     // Validación de campos requeridos
@@ -140,7 +141,8 @@ const createPropietario = async (req, res) => {
                 email: email || "",
                 telefono,
                 colonia,
-                estatus_propietario
+                estatus_propietario,
+                motivo
             }
         });
 
