@@ -108,6 +108,7 @@ model Vacunaciones {
   proxima_dosis    DateTime
   observaciones    String
   veterinario_Id   String   @db.Uuid
+  zona             String?
 
   // Relaciones
   Animal   Animales           @relation(fields: [animal_id], references: [animal_id])
@@ -545,6 +546,7 @@ model Esterilizaciones {
   observaciones           String
   propietario_id          String   @db.Uuid
   veterinario_cirujano_id String   @db.Uuid
+  zona                    String?
 
   // Relaciones
   Animal      Animales    @relation(fields: [animal_id], references: [animal_id])
