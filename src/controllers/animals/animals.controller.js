@@ -81,7 +81,8 @@ const createAnimal = async (req, res) => {
             registrado_por,
             estado_reproductivo,
             temperamento,
-            tiempo_estancia
+            tiempo_estancia,
+            muerto 
         } = req.body;
 
         // Validar relacion con el usuario que lo crea
@@ -119,7 +120,8 @@ const createAnimal = async (req, res) => {
                 registrado_por,
                 estado_reproductivo,
                 temperamento,
-                tiempo_estancia
+                tiempo_estancia,
+                muerto: convertToBoolean(muerto)
             },
         });
 
