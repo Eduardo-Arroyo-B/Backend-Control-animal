@@ -21,6 +21,7 @@ import mordeduras from "../routes/bites/bites.routes.js"
 import colonias from "../routes/colonies/colonies.routes.js"
 import cuarentenas from "../routes/quarantines/quarantines.routes.js"
 import estadisticas from "../routes/statistics/statistics.routes.js"
+import razas from "../routes/breeds/breeds.routes.js"
 
 // App
 const app = express();
@@ -73,7 +74,8 @@ app.use("/sica",
     mordeduras,
     colonias,
     cuarentenas,
-    estadisticas
+    estadisticas,
+    razas
 );
 
 // Endpoint para validar la actividad del server
