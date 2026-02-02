@@ -10,7 +10,11 @@ const getAnimals = async (req, res) => {
                     select: {
                         disponible_adopcion: true
                     }
-                }
+                },
+                Vacunaciones: true,
+                Esterilizaciones: true,
+                Cuarentenas: true,
+                Desparacitaciones: true
             }
         })
 
