@@ -50,7 +50,8 @@ const createVaccination = async (req, res) => {
         fecha_aplicacion,
         proxima_dosis,
         observaciones,
-        veterinario_Id
+        veterinario_Id,
+        zona
     } = req.body;
 
     try {
