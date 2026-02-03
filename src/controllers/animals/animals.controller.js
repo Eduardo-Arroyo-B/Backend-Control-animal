@@ -17,6 +17,9 @@ const getAnimals = async (req, res) => {
                 Esterilizaciones: true,
                 Cuarentenas: true,
                 Desparacitaciones: true
+            },
+            orderBy: {
+                animal_id: "desc"
             }
         })
 
