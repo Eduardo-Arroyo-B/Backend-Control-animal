@@ -43,7 +43,8 @@ const corsOptions = {
         "http://10.10.250.31:3060",
         "http://10.10.250.31:9060",
         "https://sidmo.tijuana.gob.mx",
-        "https://sica.tijuana.gob.mx"
+        "https://sica.tijuana.gob.mx",
+        "https://pet-adoption-frontend-lyart.vercel.app"
     ],
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
