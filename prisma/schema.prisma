@@ -141,7 +141,7 @@ model Animales {
   observaciones       String?
   estado_reproductivo String?
   temperamento        String?
-  tiempo_estancia     String?
+  tiempo_estancia     DateTime? @default(now())
   costo               String?
 
   // Modelo animal 2

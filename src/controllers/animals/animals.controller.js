@@ -86,7 +86,7 @@ const createAnimal = async (req, res) => {
             registrado_por,
             estado_reproductivo,
             temperamento,
-            tiempo_estancia,
+            costo,
             muerto 
         } = req.body;
 
@@ -125,7 +125,7 @@ const createAnimal = async (req, res) => {
                 registrado_por,
                 estado_reproductivo,
                 temperamento,
-                tiempo_estancia,
+                costo,
                 muerto: convertToBoolean(muerto)
             },
         });
