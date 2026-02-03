@@ -1,4 +1,5 @@
 import prisma from "../../../prisma/prismaClient.js"
+import convertToBoolean from "../../helpers/convertToBoolean.js";
 
 const getAnimals = async (req, res) => {
     try {
