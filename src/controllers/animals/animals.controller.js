@@ -1,5 +1,6 @@
 import prisma from "../../../prisma/prismaClient.js"
 import convertToBoolean from "../../helpers/convertToBoolean.js";
+import generateFolio from "../../helpers/generateFolio.js";
 
 const getAnimals = async (req, res) => {
     try {
@@ -105,8 +106,11 @@ const createAnimal = async (req, res) => {
 
         const booleanAdoptable = es_adoptable === true || es_adoptable === "true"
 
+        const folioGenerado = await generateFolio("ANM")
+
         const animal = await prisma.animales.create({
             data: {
+                folio: folioGenerado,
                 nombre_animal,
                 especie,
                 Raza,

@@ -123,7 +123,8 @@ model Vacunaciones {
 }
 
 model Animales {
-  animal_id Int @id @default(autoincrement())
+  animal_id Int     @id @default(autoincrement())
+  folio     String?
 
   // Modelo animal 1
   nombre_animal       String?
@@ -163,7 +164,7 @@ model Animales {
 
   // aparte
   fecha_ingreso  String?
-  es_adoptable   Boolean?
+  es_adoptable   Boolean? @default(false)
   muerto         Boolean  @default(false)
   registrado_por String   @db.Uuid
   propietario_id String?  @db.Uuid
