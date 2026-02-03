@@ -109,7 +109,7 @@ model Vacunaciones {
   observaciones    String
   veterinario_Id   String   @db.Uuid
   zona             String?
-  campaña          String?
+  campana          String?
 
   // Relaciones
   Animal   Animales           @relation(fields: [animal_id], references: [animal_id])
