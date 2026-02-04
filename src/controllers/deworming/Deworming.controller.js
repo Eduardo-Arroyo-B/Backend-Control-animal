@@ -3,7 +3,13 @@ import generateFolio from "../../helpers/generateFolio.js";
 
 const getDewormings = async (req, res) => {
     try {
-        const deworming = await prisma.desparasitaciones.findMany()
+        const deworming = await prisma.desparasitaciones.findMany({
+            include: {
+                Animal: true,
+                Usuarios: true
+            },
+            take: 10
+        })
 
         if (deworming > 0) {
             return res.status(400).json({ message: "No hay desparacitaciones actualmente" })
