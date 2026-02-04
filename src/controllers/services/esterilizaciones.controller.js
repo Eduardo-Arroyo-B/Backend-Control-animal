@@ -61,7 +61,7 @@ const createEsterilizacion = async (req, res) => {
     } = req.body;
 
     // Validación de campos requeridos
-    if (!animal_id || !tipo || !fecha_cirujia || !metodo || !propietario_id || !veterinario_cirujano_id) {
+    if (!animal_id || !tipo || !fecha_cirujia || !metodo || !veterinario_cirujano_id) {
         return res.status(400).json({
             message: "Faltan campos requeridos: animal_id, tipo, fecha_cirujia, metodo, propietario_id, veterinario_cirujano_id"
         });

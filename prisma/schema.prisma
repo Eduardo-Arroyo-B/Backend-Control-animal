@@ -558,7 +558,7 @@ model Esterilizaciones {
   metodo                  String
   complicaciones          String
   observaciones           String
-  propietario_id          String   @db.Uuid
+  propietario_id          String?   @db.Uuid
   veterinario_cirujano_id String   @db.Uuid
   zona                    String?
 
