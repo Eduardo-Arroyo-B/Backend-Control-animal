@@ -22,14 +22,16 @@ const createDeworming = async (req, res) => {
     const {
         animal_id,
         producto_utilizado,
-        aplicado_por
+        aplicado_por,
+        costo_desparasitacion
     } = req.body;
 
     // Objeto desparasitacion
     const dewormingData = {
         animal_id: Number(animal_id),
         producto_utilizado,
-        aplicado_por
+        aplicado_por,
+        costo_desparasitacion: Number(costo_desparasitacion)
     }
 
     try {
