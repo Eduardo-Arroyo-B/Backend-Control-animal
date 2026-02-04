@@ -1,6 +1,7 @@
 import express from 'express'
 import {
     getAnimals,
+    getAnimalsDeaths,
     getAnimalsByID,
     createAnimal,
     createAnimalFlujo,
@@ -14,6 +15,7 @@ const router = express.Router()
 
 // Rutas
 router.get("/getAnimals", getAnimals)
+router.get("/getAnimalsDeaths", getAnimalsDeaths)
 router.get("/getAnimalByID/:search", getAnimalsByID)
 router.post("/createAnimal", upload.array("fotos", 5), createAnimal)
 router.post("/createAnimalFlujo", upload.array("fotos", 5), createAnimalFlujo)
