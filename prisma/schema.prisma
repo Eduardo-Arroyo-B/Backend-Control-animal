@@ -68,11 +68,11 @@ model Reportes_Ciudadanos {
   email           String?
   estatus_reporte Estatus_Reporte
   fecha_reporte   DateTime        @default(now())
-  registrado_por  String          @db.Uuid
+  registrado_por  String?         @db.Uuid
 
   // Relaciones
   Colonia             Cat_Colonias          @relation(fields: [colonia_id], references: [colonia_id])
-  Usuario             Usuarios              @relation(fields: [registrado_por], references: [usuario_id])
+  Usuario             Usuarios?             @relation(fields: [registrado_por], references: [usuario_id])
   Reporte_Seguimiento Reporte_Seguimiento[]
 
   @@index([colonia_id])
