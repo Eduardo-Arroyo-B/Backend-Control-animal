@@ -68,6 +68,10 @@ const createEsterilizacion = async (req, res) => {
     }
 
     try {
+        // Normalizar propietario_id opcional: si viene vacío, lo convertimos a null
+        const propietarioIdValue =
+            propietario_id && propietario_id.trim() !== "" ? propietario_id : null;
+
         // Obtener la última esterilización para generar el siguiente folio
         const ultimaEsterilizacion = await prisma.esterilizaciones.findFirst({
             orderBy: {
@@ -105,7 +109,7 @@ const createEsterilizacion = async (req, res) => {
                 metodo,
                 complicaciones: complicaciones || "",
                 observaciones: observaciones || "",
-                propietario_id,
+                propietario_id: propietarioIdValue,
                 veterinario_cirujano_id,
                 zona
             },
