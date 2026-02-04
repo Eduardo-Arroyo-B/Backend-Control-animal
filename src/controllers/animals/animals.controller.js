@@ -115,9 +115,11 @@ const createAnimal = async (req, res) => {
         const razaId = Number(Raza)
 
         // Validar que Raza sea un numero para la relacion con el catalogo de razas
-        if (!Number.isInteger(Raza)) {
+        if (!Number.isInteger(razaId)) {
             return res.status(400).json({ message: "La raza deber esta en el catalogo del sistema, no puede ser un texto" })
         }
+
+
 
         // Validar relacion con el usuario que lo crea
         const usuario = await prisma.usuarios.findUnique({
