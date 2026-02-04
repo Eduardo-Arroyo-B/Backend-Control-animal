@@ -10,10 +10,11 @@ const getAllEsterilizaciones = async (req, res) => {
                 Animal: {
                     select: {
                         animal_id: true,
-                        nombre: true,
+                        nombre_animal: true,
                         especie: true,
                         Raza: true,
-                        sexo: true
+                        sexo: true,
+                        RazaCatalogo: true,
                     }
                 },
                 Propietario: {

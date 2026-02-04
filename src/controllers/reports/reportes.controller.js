@@ -1,5 +1,6 @@
 import prisma from "../../../prisma/prismaClient.js";
 import generateFolio from "../../helpers/generateFolio.js";
+import { transporter } from "../../helpers/mailer.js";
 
 const getAllReportes = async (req, res) => {
     try {
@@ -63,6 +64,22 @@ const createReporte = async (req, res) => {
 
         if (!reporte) {
             return res.status(404).json({ message: "No se pudo generar el reporte" })
+        }
+
+        if (tipo_reporte === "Animal maltratado") {
+            await transporter.sendMail({
+                from: "Sistema Animales 🐶",
+                to: reportData.email,
+                subject: "Correo de prueba",
+                text: "Hola, este es un correo de prueba",
+                html: "<b>Hola</b>, este es un correo de prueba"
+            })
+
+            return res.status(201).json({
+                message: "Reporte y correo enviado exitosamente",
+                reporte,
+                correo: true
+            })
         }
 
         return res.status(201).json({
