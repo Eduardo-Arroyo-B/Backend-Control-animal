@@ -26,14 +26,18 @@ const getDewormingByID = async (req, res) => {}
 const createDeworming = async (req, res) => {
     // Obtener datos del body
     const {
+        folio_desparasitacion,
         animal_id,
         producto_utilizado,
         aplicado_por,
         costo_desparasitacion
     } = req.body;
 
+    const folioDes = await generateFolio("DPS");
+
     // Objeto desparasitacion
     const dewormingData = {
+        folio_desparasitacion: folioDes,
         animal_id: Number(animal_id),
         producto_utilizado,
         aplicado_por,

@@ -382,11 +382,12 @@ model Evaluaciones_Adopcion {
 }
 
 model Desparasitaciones {
-  desparacitaciones_id  Int    @id @default(autoincrement())
+  desparacitaciones_id  Int     @id @default(autoincrement())
+  folio_desparasitacion String?
   animal_id             Int
   producto_utilizado    String
   costo_desparasitacion Int
-  aplicado_por          String @db.Uuid
+  aplicado_por          String  @db.Uuid
 
   // Relaciones
   Animal   Animales @relation(fields: [animal_id], references: [animal_id])
