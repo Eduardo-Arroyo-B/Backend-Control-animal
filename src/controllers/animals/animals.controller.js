@@ -112,6 +112,13 @@ const createAnimal = async (req, res) => {
             muerto 
         } = req.body;
 
+        const razaId = Number(Raza)
+
+        // Validar que Raza sea un numero para la relacion con el catalogo de razas
+        if (!Number.isInteger(Raza)) {
+            return res.status(400).json({ message: "La raza deber esta en el catalogo del sistema, no puede ser un texto" })
+        }
+
         // Validar relacion con el usuario que lo crea
         const usuario = await prisma.usuarios.findUnique({
             where: {
@@ -125,6 +132,16 @@ const createAnimal = async (req, res) => {
             });
         }
 
+        const raza = await prisma.cat_Razas.findUnique({
+            where: {
+                id: razaId
+            }
+        })
+
+        if (!raza) {
+            return res.status(404).json({ message: "La raza no existe en el catalogo" })
+        }
+
         const booleanAdoptable = es_adoptable === true || es_adoptable === "true"
 
         const folioGenerado = await generateFolio("ANM")
@@ -134,7 +151,7 @@ const createAnimal = async (req, res) => {
                 folio: folioGenerado,
                 nombre_animal,
                 especie,
-                Raza,
+                Raza: razaId,
                 edad,
                 pelaje,
                 peso: Number(peso),

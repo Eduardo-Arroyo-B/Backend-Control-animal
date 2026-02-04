@@ -129,7 +129,7 @@ model Animales {
   // Modelo animal 1
   nombre_animal       String?
   especie             String?
-  Raza                String?
+  Raza                Int?
   edad                String?
   pelaje              String?
   peso                Int?
@@ -172,6 +172,7 @@ model Animales {
   // Relaciones
   Usuarios               Usuarios                 @relation(fields: [registrado_por], references: [usuario_id])
   Propietario            Propietario?             @relation(fields: [propietario_id], references: [propietario_id])
+  RazaCatalogo           Cat_Razas?               @relation(fields: [Raza], references: [id])
   Evaluaciones_Adopcion  Evaluaciones_Adopcion[]
   Desparacitaciones      Desparasitaciones[]
   Egresos_Animales       Egresos_Animales[]
@@ -234,6 +235,9 @@ model Cat_Razas {
   tamano       String
   temperamento String
   tipo         String
+
+  // Relaciones
+  Animales Animales[]
 }
 
 model Inventario_Vacunas {
