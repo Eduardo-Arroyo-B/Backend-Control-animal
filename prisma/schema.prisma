@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = env("DATABASE_URL_DEV")
 }
 
 model Usuarios {
@@ -560,13 +560,15 @@ model Esterilizaciones {
 }
 
 model Campaigns {
-  id         Int      @id @default(autoincrement())
-  delegacion String
-  nombre     String
-  colonia    String
-  fecha      DateTime
-  especie    String
-  servicio   String
+  id            Int      @id @default(autoincrement())
+  delegacion    String
+  nombre        String
+  colonia       String
+  fecha         DateTime
+  especie       String
+  servicio      String
+  num_lote      String
+  cantidad_lote Int
 }
 
 model Cat_Tipos_Vacuna {

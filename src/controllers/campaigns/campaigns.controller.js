@@ -22,7 +22,9 @@ const createCampaign = async (req, res) => {
         colonia,
         fecha,
         especie,
-        servicio
+        servicio,
+        num_lote,
+        cantidad_lote
     } = req.body
 
     const campaignData = {
@@ -31,7 +33,9 @@ const createCampaign = async (req, res) => {
         colonia,
         fecha: new Date(fecha),
         especie,
-        servicio
+        servicio,
+        num_lote,
+        cantidad_lote: Number(cantidad_lote)
     }
 
     try {
