@@ -564,7 +564,7 @@ model Esterilizaciones {
 
   // Relaciones
   Animal      Animales    @relation(fields: [animal_id], references: [animal_id])
-  Propietario Propietario @relation(fields: [propietario_id], references: [propietario_id])
+  Propietario Propietario? @relation(fields: [propietario_id], references: [propietario_id])
   Veterinario Usuarios    @relation(fields: [veterinario_cirujano_id], references: [usuario_id])
 }
 
