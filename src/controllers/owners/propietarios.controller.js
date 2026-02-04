@@ -128,6 +128,14 @@ const createPropietario = async (req, res) => {
     const folioUnicoProp = await generateFolio("PROP")
 
     try {
+        const findIdentificacion = await prisma.propietario.findUnique({
+            where: { numero_identificacion }
+        })
+
+        if (findIdentificacion) {
+            return res.status(200).json({ message: "Ya existe una persona registrada con este numero de identificacion" })
+        }
+
         const propietario = await prisma.propietario.create({
             data: {
                 folio_propietario: folioUnicoProp,
