@@ -62,7 +62,8 @@ const createCremation = async (req, res) => {
         duracion,
         entrega_cenizas,
         observaciones,
-        registrado_por
+        registrado_por,
+        costo_cremacion
     } = req.body
 
     const cremationFolio = await generateFolio("CRM")
@@ -77,7 +78,8 @@ const createCremation = async (req, res) => {
         duracion,
         entrega_cenizas,
         observaciones,
-        registrado_por
+        registrado_por,
+        costo_cremacion: Number(costo_cremacion)
     }
 
     try {

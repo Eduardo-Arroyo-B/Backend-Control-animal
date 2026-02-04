@@ -56,7 +56,8 @@ const createDeaths = async (req, res) => {
         autopsia,
         disposicion_cadaver,
         observaciones,
-        veterinario_responsable
+        veterinario_responsable,
+        costo_defuncion
     } = req.body
 
     const booleanAutopsia = autopsia === true || autopsia === "true";
@@ -69,7 +70,8 @@ const createDeaths = async (req, res) => {
         veterinario_responsable,
         autopsia: booleanAutopsia,
         disposicion_cadaver,
-        observaciones
+        observaciones,
+        costo_defuncion: Number(costo_defuncion)
     }
 
     try {
