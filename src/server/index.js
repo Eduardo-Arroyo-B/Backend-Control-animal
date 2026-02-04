@@ -23,6 +23,7 @@ import cuarentenas from "../routes/quarantines/quarantines.routes.js"
 import estadisticas from "../routes/statistics/statistics.routes.js"
 import razas from "../routes/breeds/breeds.routes.js"
 import campanas from "../routes/campaigns/campaigns.routes.js"
+import desparasitaciones from "../routes/deworming/Deworming.routes.js"
 
 // App
 const app = express();
@@ -78,7 +79,8 @@ app.use("/sica",
     cuarentenas,
     estadisticas,
     razas,
-    campanas
+    campanas,
+    desparasitaciones
 );
 
 // Endpoint para validar la actividad del server
