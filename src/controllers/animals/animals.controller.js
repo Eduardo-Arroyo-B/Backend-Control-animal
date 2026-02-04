@@ -310,7 +310,7 @@ const updateAnimal = async (req, res) => {
     const data = {
         nombre_animal,
         especie,
-        Raza,
+        Raza: Number(Raza),
         edad,
         pelaje,
         peso: peso !== undefined ? Number(peso) : undefined,
