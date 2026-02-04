@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = env("DATABASE_URL_DEV")
 }
 
 model Usuarios {
@@ -333,6 +333,7 @@ model Consultas_Veterinarias {
   tratamiento         String
   observaciones       String
   disponible_adopcion Boolean
+  enfermedad_critica  String?
   veterinario_id      String   @db.Uuid
   fecha_hora_consulta DateTime @default(now())
 
