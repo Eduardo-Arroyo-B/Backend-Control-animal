@@ -74,8 +74,13 @@ const catRazasCatalogo = [
 async function createBreeads() {
     console.log("Creando catalogo de razas...");
 
+    const razasConAnimal = catRazasCatalogo.map(raza => ({
+        ...raza,
+        animal: "Felino"
+    }))
+
     await prisma.cat_Razas.createMany({
-        data: catRazasCatalogo,
+        data: razasConAnimal,
         skipDuplicates: true
     })
 

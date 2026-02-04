@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = env("DATABASE_URL_DEV")
 }
 
 model Usuarios {
@@ -133,7 +133,7 @@ model Animales {
   edad                String?
   pelaje              String?
   peso                Int?
-  numero_microchip    String?
+  numero_microchip    String?   @unique
   medalla             String?
   tipo_ingreso        String?
   ubicacion_actual    String?
@@ -230,11 +230,12 @@ model Propietario {
 
 // Sin uso
 model Cat_Razas {
-  id           Int    @id @default(autoincrement())
+  id           Int     @id @default(autoincrement())
   nombre_raza  String
   tamano       String
   temperamento String
   tipo         String
+  animal       String?
 
   // Relaciones
   Animales Animales[]
@@ -558,14 +559,14 @@ model Esterilizaciones {
   metodo                  String
   complicaciones          String
   observaciones           String
-  propietario_id          String?   @db.Uuid
+  propietario_id          String?  @db.Uuid
   veterinario_cirujano_id String   @db.Uuid
   zona                    String?
 
   // Relaciones
-  Animal      Animales    @relation(fields: [animal_id], references: [animal_id])
+  Animal      Animales     @relation(fields: [animal_id], references: [animal_id])
   Propietario Propietario? @relation(fields: [propietario_id], references: [propietario_id])
-  Veterinario Usuarios    @relation(fields: [veterinario_cirujano_id], references: [usuario_id])
+  Veterinario Usuarios     @relation(fields: [veterinario_cirujano_id], references: [usuario_id])
 }
 
 model Campaigns {

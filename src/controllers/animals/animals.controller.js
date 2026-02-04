@@ -120,8 +120,6 @@ const createAnimal = async (req, res) => {
             return res.status(400).json({ message: "La raza deber esta en el catalogo del sistema, no puede ser un texto" })
         }
 
-
-
         // Validar relacion con el usuario que lo crea
         const usuario = await prisma.usuarios.findUnique({
             where: {
@@ -143,6 +141,16 @@ const createAnimal = async (req, res) => {
 
         if (!raza) {
             return res.status(404).json({ message: "La raza no existe en el catalogo" })
+        }
+
+        const microchip = await prisma.animales.findUnique({
+            where: {
+                numero_microchip
+            }
+        })
+
+        if (microchip) {
+            return res.status(200).json({ meesage: "No se puede crear un animal con microchip existente" })
         }
 
         const booleanAdoptable = es_adoptable === true || es_adoptable === "true"
