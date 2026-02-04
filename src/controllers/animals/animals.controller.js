@@ -65,7 +65,7 @@ const getAnimalsByID = async (req, res) => {
         !isNaN(Number(search)) ? { animal_id: Number(search) } : null,
         { nombre_animal: { contains: search, mode: "insensitive" } },
         { numero_microchip: { contains: search, mode: "insensitive" } },
-        { medalla: { contains: search, mode: "insensitive" } },
+        { folio: { contains: search, mode: "insensitive" } },
     ].filter(Boolean);
 
     try {
