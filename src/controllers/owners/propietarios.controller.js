@@ -395,7 +395,11 @@ const loginPortal = async (req, res) => {
                 folio_propietario:  folio
             },
             include: {
-                Animales: true
+                Mini_Expediente: {
+                    include: {
+                        CatalogoRaza: true
+                    }
+                }
             }
         })
 
