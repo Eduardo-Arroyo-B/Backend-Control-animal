@@ -24,7 +24,8 @@ const getAllQuarantines = async (req, res) => {
                         nombre_animal: true,
                         especie: true,
                         estado_salud: true,
-                        numero_microchip: true
+                        numero_microchip: true,
+                        folio: true
                     }
                 },
                 Usuarios: {
