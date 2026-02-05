@@ -10,6 +10,7 @@ import {
     createAdoptionRequest,
     updateAdoptionStatus
 } from "../../controllers/adoption/adoption.controller.js";
+import upload from "../../middlewares/multerConfigAdoptionReport.js";
 
 // Router
 const router = express.Router();
@@ -23,7 +24,7 @@ router.delete("/deleteAdoption/:id", deleteAdoption);
 // Nuevas rutas para solicitudes de adopción
 router.get("/getAllAdoptionRequests", getAllAdoptionRequests);
 router.get("/getAdoptionRequestByID/:search", getAdoptionRequestByID);
-router.post("/createAdoptionRequest", createAdoptionRequest);
+router.post("/createAdoptionRequest", upload.array("fotos", 5) ,createAdoptionRequest);
 router.put("/updateAdoptionStatus/:id", updateAdoptionStatus);
 
 export default router;

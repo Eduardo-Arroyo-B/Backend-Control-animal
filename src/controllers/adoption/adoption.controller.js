@@ -473,6 +473,20 @@ const createAdoptionRequest = async (req, res) => {
                 }
             });
 
+            // Guardar fotos si se enviaron
+            if (req.files && req.files.length > 0) {
+                const fotosData = req.files.map((file, index) => ({
+                    adopcion_id: solicitud.adopcion_id,
+                    url: file.path.replace(/\\/g, "/"),
+                }))
+
+                const animalFotos = await prisma.fotos_Vivienda.createMany({
+                    data: fotosData
+                })
+
+                console.log("Fotos creadas", animalFotos)
+            }
+
             return solicitud;
         });
 
@@ -483,7 +497,8 @@ const createAdoptionRequest = async (req, res) => {
     } catch (error) {
         if (error.code === "P2002") {
             return res.status(400).json({
-                message: "Error al generar el folio. Intente nuevamente."
+                message: "Error al generar el folio. Intente nuevamente.",
+                error: error.message
             });
         }
         if (error.code === "P2003") {

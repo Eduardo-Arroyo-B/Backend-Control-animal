@@ -421,6 +421,7 @@ model Adopciones {
   Adoptante              Propietario               @relation(fields: [adoptante_id], references: [propietario_id])
   Usuarios               Usuarios?                 @relation(fields: [evaluador_id], references: [usuario_id])
   Seguimiento_Adopciones Seguimientos_Adopciones[]
+  Fotos_Vivienda         Fotos_Vivienda[]
 }
 
 model Seguimientos_Adopciones {
@@ -613,6 +614,14 @@ model Reporte_Seguimiento {
   // Relaciones
   Reporte Reportes_Ciudadanos @relation(fields: [reporte_id], references: [reporte_id])
   Usuario Usuarios            @relation(fields: [responsable_id], references: [usuario_id])
+}
+
+model Fotos_Vivienda {
+  id          Int    @id @default(autoincrement())
+  adopcion_id Int
+  url         String
+
+  Adopciones Adopciones @relation(fields: [adopcion_id], references: [adopcion_id])
 }
 
 model Cat_Colonias {
