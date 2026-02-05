@@ -521,6 +521,7 @@ model Pagos_Servicios {
 
 model Defunciones {
   defuncion_id            Int      @id @default(autoincrement())
+  folio                   String?
   animal_id               Int
   fecha_hora_defuncion    DateTime
   lugar_defuncion         String

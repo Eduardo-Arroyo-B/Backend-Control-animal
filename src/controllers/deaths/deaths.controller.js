@@ -1,4 +1,5 @@
 import prisma from "../../../prisma/prismaClient.js";
+import generateFolio from "../../helpers/generateFolio.js";
 
 const getAllDeaths = async (req, res) => {
     try {
@@ -38,8 +39,9 @@ const getDeathsById = async (req, res) => {
                     OR: [
                         { folio: { contains: search, mode: "insensitive" } },
                         { nombre_animal: { contains: search, mode: "insensitive" } },
+                        { folio: { contains: search, mode: "insensitive" } },
                     ]
-                }
+                },
             },
             include: {
                 Animal: {
@@ -79,8 +81,10 @@ const createDeaths = async (req, res) => {
     } = req.body
 
     const booleanAutopsia = autopsia === true || autopsia === "true";
+    const folioNew = await generateFolio("DF")
 
     const deathData = {
+        folio: folioNew,
         animal_id: Number(animal_id),
         fecha_hora_defuncion: new Date(fecha_hora_defuncion),
         lugar_defuncion,
