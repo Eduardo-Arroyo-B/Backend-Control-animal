@@ -360,6 +360,30 @@ const createPropietarioPortal = async (req, res) => {
     }
 }
 
+const updateStatusValidacionPortal = async (req, res) => {
+    // Extraccion del ID de los parametros
+    const { id }  = req.params;
+
+    try {
+        const updatePropietario = await prisma.propietario.update({
+            where: {
+                propietario_id: id
+            },
+            data: {
+                validacion_portal: true
+            }
+        })
+
+        if (!updatePropietario) {
+            return res.status(404).json({ message: "No se pudo actualizar el propietario" })
+        }
+
+        return res.status(200).json({ message: "Estatus del propietario actualizado exitosamente", updatePropietario })
+    } catch (error) {
+        return res.status(500).json({ message: "Ha ocurrido un error al tratar de actualizar el estatus del usuario", error: error.message });
+    }
+}
+
 export {
     getAllPropietarios,
     getPropietarioById,
@@ -368,6 +392,7 @@ export {
     updatePropietario,
     vinculatePropietarioAnimal,
     deletePropietario,
-    createPropietarioPortal
+    createPropietarioPortal,
+    updateStatusValidacionPortal
 };
 
