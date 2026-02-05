@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL_DEV")
+  url      = env("DATABASE_URL")
 }
 
 model Usuarios {
@@ -219,7 +219,7 @@ model Propietario {
   estatus_propietario   String
   motivo                String?
   validacion_portal     Boolean? @default(false)
-  creacion_portal       Boolean? @default(false)
+  creacion_portal       Boolean? @default(false) // false: se creo en administracion, si es true se crearon en el portal web
 
   // Relaciones
   Adopciones                      Adopciones[]
