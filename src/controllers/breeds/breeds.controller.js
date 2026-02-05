@@ -36,7 +36,7 @@ const getBreedsByID = async (req, res) => {
 
 const createBreed = async (req, res) => {
     // Obtener datos del body
-    const { nombre_raza, tamano, temperamento, tipo } = req.body
+    const { nombre_raza, tamano, temperamento, tipo, animal } = req.body
 
     try {
         const breed = await prisma.cat_Razas.create({
@@ -44,7 +44,8 @@ const createBreed = async (req, res) => {
                 nombre_raza,
                 tamano,
                 temperamento,
-                tipo
+                tipo,
+                animal
             }
         })
 
