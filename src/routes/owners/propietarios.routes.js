@@ -8,7 +8,8 @@ import {
     vinculatePropietarioAnimal,
     deletePropietario,
     createPropietarioPortal,
-    updateStatusValidacionPortal
+    updateStatusValidacionPortal,
+    loginPortal
 } from "../../controllers/owners/propietarios.controller.js";
 
 // Router
@@ -24,6 +25,7 @@ router.put("/vinculatePropietarioAnimal", vinculatePropietarioAnimal);
 router.delete("/deletePropietario/:id", deletePropietario);
 router.post("/createPropietarioPortal", createPropietarioPortal)
 router.put("/updateStatusValidacionPortal/:id", updateStatusValidacionPortal)
+router.get("/loginPortal/:folio", loginPortal)
 
 export default router;
 

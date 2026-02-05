@@ -385,6 +385,27 @@ const updateStatusValidacionPortal = async (req, res) => {
     }
 }
 
+const loginPortal = async (req, res) => {
+    // Extraccion de datos de los parametros
+    const { folio } = req.params;
+
+    try {
+        const login = await prisma.propietario.findUnique({
+            where: {
+                folio_propietario:  folio
+            }
+        })
+
+        if (!login) {
+            return res.status(404).json({ message: "No se pudo hacer login" })
+        }
+
+        return res.status(200).json({ message: "Login exitoso", login })
+    } catch (error) {
+        return res.status(500).json({ message: "Ha ocurrido un error al validar el usuario", error: error.message });
+    }
+}
+
 export {
     getAllPropietarios,
     getPropietarioById,
@@ -394,6 +415,7 @@ export {
     vinculatePropietarioAnimal,
     deletePropietario,
     createPropietarioPortal,
-    updateStatusValidacionPortal
+    updateStatusValidacionPortal,
+    loginPortal
 };
 
