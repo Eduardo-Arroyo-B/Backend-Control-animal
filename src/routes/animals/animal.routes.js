@@ -6,7 +6,9 @@ import {
     createAnimal,
     createAnimalFlujo,
     updateAnimal,
-    deleteAnimals
+    deleteAnimals,
+    getMiniExpedienteAnimal,
+    createMiniExpedienteAnimal
 } from "../../controllers/animals/animals.controller.js";
 import upload from "../../middlewares/multerConfigAnimals.js"
 import { animalModelo1Validator } from "../../middlewares/animalModel1.js";
@@ -23,5 +25,9 @@ router.post("/createAnimal", upload.array("fotos", 5), animalModelo1Validator, v
 router.post("/createAnimalFlujo", upload.array("fotos", 5), createAnimalFlujo)
 router.put("/updateAnimal/:id", updateAnimal)
 router.delete("/deleteAnimals/:id", deleteAnimals)
+
+// Mini expediente
+router.get("/getMiniExpedienteAnimal", getMiniExpedienteAnimal)
+router.post("/createMiniExpedienteAnimal", createMiniExpedienteAnimal)
 
 export default router

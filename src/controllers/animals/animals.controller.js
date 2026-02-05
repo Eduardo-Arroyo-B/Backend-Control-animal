@@ -385,6 +385,57 @@ const deleteAnimals = async (req, res) => {
     }
 }
 
+const getMiniExpedienteAnimal = async (req, res) => {
+    try {
+        const expediente = await prisma.mini_Expediente_Animal.findMany({
+            include: {
+                CatalogoRaza: true
+            }
+        })
+
+        if (expediente > 0) {
+            return res.status(200).json({ message: "No hay expedientes creados por los ciudadanos" })
+        }
+
+        return res.status(200).json({ message: "Expedientes obtenidos exitosamente", expediente })
+    } catch(error) {
+        return res.status(500).json({ message: error.message });
+    }
+}
+
+const createMiniExpedienteAnimal = async (req, res) => {
+    // Extraccion de datos del body
+    const {
+        nombre,
+        raza_id,
+        edad,
+        sexo,
+        pelaje
+    } = req.body;
+
+    const expedienteData = {
+        nombre,
+        raza_id: Number(raza_id),
+        edad,
+        sexo,
+        pelaje,
+    }
+
+    try {
+        const expediente = await prisma.mini_Expediente_Animal.create({
+            data: expedienteData
+        })
+
+        if (!expediente) {
+            return res.status().json({ message: "No se pudo crear el expediente" })
+        }
+
+        return res.status(201).json({ message: "Expediente creado exitosamente", expediente })
+    } catch (error) {
+        return res.status(500).json({ message: "Ha ocurrido un error al crear el expediente", error: error.message });
+    }
+}
+
 export {
     getAnimals,
     getAnimalsDeaths,
@@ -392,5 +443,7 @@ export {
     createAnimal,
     createAnimalFlujo,
     updateAnimal,
-    deleteAnimals
+    deleteAnimals,
+    getMiniExpedienteAnimal,
+    createMiniExpedienteAnimal
 }

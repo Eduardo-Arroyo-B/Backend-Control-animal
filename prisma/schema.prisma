@@ -238,7 +238,8 @@ model Cat_Razas {
   animal       String?
 
   // Relaciones
-  Animales Animales[]
+  Animales               Animales[]
+  Mini_Expediente_Animal Mini_Expediente_Animal[]
 }
 
 model Inventario_Vacunas {
@@ -603,6 +604,18 @@ model Folio_Seguimiento {
   updatedAt DateTime @updatedAt
 
   @@unique([tipo, anio], name: "tipo_anio")
+}
+
+model Mini_Expediente_Animal {
+  id      Int    @id @default(autoincrement())
+  nombre  String
+  raza_id Int
+  edad    String
+  sexo    String
+  pelaje  String
+
+  // Relaciones
+  CatalogoRaza Cat_Razas @relation(fields: [raza_id], references: [id])
 }
 
 model Reporte_Seguimiento {
