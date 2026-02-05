@@ -181,7 +181,8 @@ const getAllAdoptionRequests = async (req, res) => {
                         nombre_completo: true,
                         email: true
                     }
-                }
+                },
+                Fotos_Vivienda: true
             },
             orderBy: {
                 fecha_solicitud: 'desc'
@@ -301,7 +302,8 @@ const getAdoptionRequestByID = async (req, res) => {
                     orderBy: {
                         fecha_seguimiento: 'desc'
                     }
-                }
+                },
+                Fotos_Vivienda: true
             },
             orderBy: {
                 fecha_solicitud: 'desc'
@@ -363,145 +365,139 @@ const createAdoptionRequest = async (req, res) => {
     }
 
     try {
-        const result = await prisma.$transaction(async (tx) => {
-            // Verificar que el animal existe y es adoptable
-            const animal = await tx.animales.findUnique({
-                where: { animal_id: Number(animal_id) }
-            });
+        // 1) Verificar que el animal existe y es adoptable
+        const animal = await prisma.animales.findUnique({
+            where: { animal_id: Number(animal_id) }
+        });
 
-            if (!animal) {
-                throw new Error('El animal no existe');
-            }
+        if (!animal) {
+            return res.status(400).json({ message: "El animal no existe" });
+        }
 
-            if (!animal.es_adoptable) {
-                throw new Error('El animal no está disponible para adopción');
-            }
+        if (!animal.es_adoptable) {
+            return res.status(400).json({ message: "El animal no está disponible para adopción" });
+        }
 
-            // Buscar o crear el propietario
-            let propietario = await tx.propietario.findUnique({
-                where: { numero_identificacion: numero_identificacion }
-            });
+        // 2) Buscar o crear el propietario
+        let propietario = await prisma.propietario.findUnique({
+            where: { numero_identificacion: numero_identificacion }
+        });
 
-            if (!propietario) {
-                // Crear nuevo propietario
-                const folioPropietario = await generateFolio("PROP");
-                
-                propietario = await tx.propietario.create({
-                    data: {
-                        folio_propietario: folioPropietario,
-                        tipo_identificacion,
-                        numero_identificacion,
-                        nombre,
-                        apellido_paterno,
-                        apellido_materno: apellido_materno || "",
-                        fecha_nacimiento: new Date(fecha_nacimiento),
-                        genero,
-                        email: email || "",
-                        telefono,
-                        colonia,
-                        estatus_propietario
-                    }
-                });
-            } else {
-                // Actualizar datos del propietario existente si es necesario
-                propietario = await tx.propietario.update({
-                    where: { propietario_id: propietario.propietario_id },
-                    data: {
-                        nombre,
-                        apellido_paterno,
-                        apellido_materno: apellido_materno || propietario.apellido_materno,
-                        email: email || propietario.email,
-                        telefono,
-                        colonia,
-                        estatus_propietario
-                    }
-                });
-            }
+        if (!propietario) {
+            const folioPropietario = await generateFolio("PROP");
 
-            // Verificar que no existe una solicitud pendiente para este animal y adoptante
-            const solicitudExistente = await tx.adopciones.findFirst({
-                where: {
-                    animal_id: Number(animal_id),
-                    adoptante_id: propietario.propietario_id,
-                    estatus_adopcion: 'Pendiente'
-                }
-            });
-
-            if (solicitudExistente) {
-                throw new Error('Ya existe una solicitud pendiente para este animal y adoptante');
-            }
-
-            // Generar folio para la solicitud
-            const folioAdopcion = await generateFolio("ADP");
-
-            // Crear la solicitud de adopción (sin evaluador, se asignará en el update)
-            const solicitud = await tx.adopciones.create({
+            propietario = await prisma.propietario.create({
                 data: {
-                    folio_adopcion: folioAdopcion,
-                    animal_id: Number(animal_id),
-                    adoptante_id: propietario.propietario_id,
-                    fecha_solicitud: new Date(),
-                    estatus_adopcion: 'Pendiente',
+                    folio_propietario: folioPropietario,
+                    tipo_identificacion,
+                    numero_identificacion,
+                    nombre,
+                    apellido_paterno,
+                    apellido_materno: apellido_materno || "",
+                    fecha_nacimiento: new Date(fecha_nacimiento),
+                    genero,
+                    email: email || "",
+                    telefono,
+                    colonia,
+                    estatus_propietario
                 }
             });
+        } else {
+            propietario = await prisma.propietario.update({
+                where: { propietario_id: propietario.propietario_id },
+                data: {
+                    nombre,
+                    apellido_paterno,
+                    apellido_materno: apellido_materno || propietario.apellido_materno,
+                    email: email || propietario.email,
+                    telefono,
+                    colonia,
+                    estatus_propietario
+                }
+            });
+        }
 
-            // Guardar fotos si se enviaron
-            if (req.files && req.files.length > 0) {
-                const fotosData = req.files.map((file) => ({
-                    adopcion_id: solicitud.adopcion_id,
-                    url: file.path.replace(/\\/g, "/"),
-                }));
-
-                console.log(fotosData);
-
-                // Usar la misma transacción (tx) para respetar la FK hacia adopciones
-                const fotosVivienda = await tx.fotos_Vivienda.createMany({
-                    data: fotosData
-                });
-
-                console.log("Fotos de vivienda creadas", fotosVivienda);
+        // 3) Verificar que no exista solicitud pendiente para este animal y adoptante
+        const solicitudExistente = await prisma.adopciones.findFirst({
+            where: {
+                animal_id: Number(animal_id),
+                adoptante_id: propietario.propietario_id,
+                estatus_adopcion: 'Pendiente'
             }
+        });
 
-            // Volver a consultar la solicitud incluyendo las fotos y relaciones
-            const solicitudConRelaciones = await tx.adopciones.findUnique({
-                where: { adopcion_id: solicitud.adopcion_id },
-                include: {
-                    Animal: {
-                        select: {
-                            animal_id: true,
-                            nombre_animal: true,
-                            especie: true,
-                            Raza: true
-                        }
-                    },
-                    Adoptante: {
-                        select: {
-                            propietario_id: true,
-                            folio_propietario: true,
-                            nombre: true,
-                            apellido_paterno: true,
-                            apellido_materno: true,
-                            telefono: true,
-                            email: true
-                        }
-                    },
-                    Usuarios: {
-                        select: {
-                            usuario_id: true,
-                            nombre_completo: true,
-                            email: true
-                        }
-                    },
-                    Fotos_Vivienda: true
-                }
+        if (solicitudExistente) {
+            return res.status(400).json({
+                message: 'Ya existe una solicitud pendiente para este animal y adoptante'
+            });
+        }
+
+        // 4) Crear la solicitud de adopción
+        const folioAdopcion = await generateFolio("ADP");
+
+        const solicitud = await prisma.adopciones.create({
+            data: {
+                folio_adopcion: folioAdopcion,
+                animal_id: Number(animal_id),
+                adoptante_id: propietario.propietario_id,
+                fecha_solicitud: new Date(),
+                estatus_adopcion: 'Pendiente',
+            }
+        });
+
+        // 5) Guardar fotos si se enviaron
+        if (req.files && req.files.length > 0) {
+            const fotosData = req.files.map((file) => ({
+                adopcion_id: solicitud.adopcion_id,
+                url: file.path.replace(/\\/g, "/"),
+            }));
+
+            console.log("FOTOS A GUARDAR:", fotosData);
+
+            const fotosVivienda = await prisma.fotos_Vivienda.createMany({
+                data: fotosData
             });
 
-            return solicitudConRelaciones;
+            console.log("Fotos de vivienda creadas", fotosVivienda);
+        }
+
+        // 6) Volver a consultar la solicitud incluyendo las fotos y relaciones
+        const solicitudConRelaciones = await prisma.adopciones.findUnique({
+            where: { adopcion_id: solicitud.adopcion_id },
+            include: {
+                Animal: {
+                    select: {
+                        animal_id: true,
+                        nombre_animal: true,
+                        especie: true,
+                        Raza: true
+                    }
+                },
+                Adoptante: {
+                    select: {
+                        propietario_id: true,
+                        folio_propietario: true,
+                        nombre: true,
+                        apellido_paterno: true,
+                        apellido_materno: true,
+                        telefono: true,
+                        email: true
+                    }
+                },
+                Usuarios: {
+                    select: {
+                        usuario_id: true,
+                        nombre_completo: true,
+                        email: true
+                    }
+                },
+                Fotos_Vivienda: true
+            }
         });
 
         return res.status(201).json({
             message: "Solicitud de adopción registrada exitosamente",
-            solicitud: result
+            solicitud: solicitudConRelaciones
         });
     } catch (error) {
         if (error.code === "P2002") {
