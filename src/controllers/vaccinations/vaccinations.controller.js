@@ -7,7 +7,15 @@ const getVaccinations = async (req, res) => {
                 fecha_aplicacion: "desc"
             },
             include: {
-                Animal: true,
+                Animal: {
+                    select: {
+                        RazaCatalogo: {
+                            select: {
+                                nombre_raza: true
+                            }
+                        }
+                    }
+                },
                 Vacuna: true,
                 Usuarios: true
             }
