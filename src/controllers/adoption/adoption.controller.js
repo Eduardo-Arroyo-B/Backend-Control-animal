@@ -61,7 +61,7 @@ const createAdoption = async (req,res) => {
     try {
         const result = await prisma.$transaction(async (tx) => {
 
-            const animal = await tx.adopciones.findUnique({
+            const animal = await tx.adopciones.findFirst({
                 where: {
                     animal_id: Number(animal_id)
                 }
