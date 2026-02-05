@@ -309,6 +309,57 @@ const deletePropietario = async (req, res) => {
     }
 };
 
+const createPropietarioPortal = async (req, res) => {
+    const {
+        tipo_identificacion,
+        numero_identificacion,
+        nombre,
+        apellido_paterno,
+        apellido_materno,
+        fecha_nacimiento,
+        genero,
+        email,
+        telefono,
+        colonia,
+        estatus_propietario,
+        creacion_portal
+    } = req.body;
+
+    const propietarioData = {
+        tipo_identificacion,
+        numero_identificacion,
+        nombre,
+        apellido_paterno,
+        apellido_materno,
+        fecha_nacimiento: new Date(fecha_nacimiento),
+        genero,
+        email,
+        telefono,
+        colonia,
+        estatus_propietario,
+        creacion_portal: true
+    }
+
+    const folioUnicoProp = await generateFolio("PROPW")
+
+    try {
+        const propietario = await prisma.propietario.create({
+            data: {
+                ...propietarioData,
+                folio_propietario: folioUnicoProp
+            }
+        })
+
+        if (!propietario) {
+            return res.status(404).json({ message: "No se pudo crear el propietario en el portal" })
+        }
+
+        return res.status(201).json({ messafge: "Propietario en portal creado exitosamente", propietario });
+    } catch (error) {
+        return res.status(500).json({ message: "Ha ocurrido un error al crear el propietario en el portal", error: error.message})
+    }
+}
+
 export {
     getAllPropietarios,
     getPropietarioById,
@@ -316,6 +367,7 @@ export {
     createPropietario,
     updatePropietario,
     vinculatePropietarioAnimal,
-    deletePropietario
+    deletePropietario,
+    createPropietarioPortal
 };
 

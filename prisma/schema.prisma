@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = env("DATABASE_URL_DEV")
 }
 
 model Usuarios {
@@ -218,6 +218,8 @@ model Propietario {
   colonia               String
   estatus_propietario   String
   motivo                String?
+  validacion_portal     Boolean? @default(false)
+  creacion_portal       Boolean? @default(false)
 
   // Relaciones
   Adopciones                      Adopciones[]
@@ -226,6 +228,7 @@ model Propietario {
   Pago_Servicios                  Pagos_Servicios[]
   Esterilizaciones                Esterilizaciones[]
   Animales                        Animales[]
+  Mini_Expediente                 Mini_Expediente_Animal[]
 }
 
 // Sin uso
@@ -607,15 +610,17 @@ model Folio_Seguimiento {
 }
 
 model Mini_Expediente_Animal {
-  id      Int    @id @default(autoincrement())
-  nombre  String
-  raza_id Int
-  edad    String
-  sexo    String
-  pelaje  String
+  id             Int    @id @default(autoincrement())
+  nombre         String
+  raza_id        Int
+  propietario_id String @db.Uuid
+  edad           String
+  sexo           String
+  pelaje         String
 
   // Relaciones
-  CatalogoRaza Cat_Razas @relation(fields: [raza_id], references: [id])
+  CatalogoRaza Cat_Razas   @relation(fields: [raza_id], references: [id])
+  Propietario  Propietario @relation(fields: [propietario_id], references: [propietario_id])
 }
 
 model Reporte_Seguimiento {
