@@ -369,6 +369,10 @@ const createAdoptionRequest = async (req, res) => {
                 where: { animal_id: Number(animal_id) }
             });
 
+            if (!animal) {
+                throw new Error('El animal no existe');
+            }
+
             if (!animal.es_adoptable) {
                 throw new Error('El animal no está disponible para adopción');
             }
@@ -438,7 +442,29 @@ const createAdoptionRequest = async (req, res) => {
                     adoptante_id: propietario.propietario_id,
                     fecha_solicitud: new Date(),
                     estatus_adopcion: 'Pendiente',
-                },
+                }
+            });
+
+            // Guardar fotos si se enviaron
+            if (req.files && req.files.length > 0) {
+                const fotosData = req.files.map((file) => ({
+                    adopcion_id: solicitud.adopcion_id,
+                    url: file.path.replace(/\\/g, "/"),
+                }));
+
+                console.log(fotosData);
+
+                // Usar la misma transacción (tx) para respetar la FK hacia adopciones
+                const fotosVivienda = await tx.fotos_Vivienda.createMany({
+                    data: fotosData
+                });
+
+                console.log("Fotos de vivienda creadas", fotosVivienda);
+            }
+
+            // Volver a consultar la solicitud incluyendo las fotos y relaciones
+            const solicitudConRelaciones = await tx.adopciones.findUnique({
+                where: { adopcion_id: solicitud.adopcion_id },
                 include: {
                     Animal: {
                         select: {
@@ -465,26 +491,12 @@ const createAdoptionRequest = async (req, res) => {
                             nombre_completo: true,
                             email: true
                         }
-                    }
+                    },
+                    Fotos_Vivienda: true
                 }
             });
 
-            // Guardar fotos si se enviaron
-            if (req.files && req.files.length > 0) {
-                const fotosData = req.files.map((file) => ({
-                    adopcion_id: solicitud.adopcion_id,
-                    url: file.path.replace(/\\/g, "/"),
-                }));
-
-                // Usar la misma transacción (tx) para respetar la FK hacia adopciones
-                const fotosVivienda = await tx.fotos_Vivienda.createMany({
-                    data: fotosData
-                });
-
-                console.log("Fotos de vivienda creadas", fotosVivienda);
-            }
-
-            return solicitud;
+            return solicitudConRelaciones;
         });
 
         return res.status(201).json({
