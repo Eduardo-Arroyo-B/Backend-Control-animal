@@ -456,7 +456,7 @@ const createAdoptionRequest = async (req, res) => {
                             apellido_paterno: true,
                             apellido_materno: true,
                             telefono: true,
-                            email: true
+                            email: true,
                         }
                     },
                     Usuarios: {
@@ -465,7 +465,8 @@ const createAdoptionRequest = async (req, res) => {
                             nombre_completo: true,
                             email: true
                         }
-                    }
+                    },
+                    Fotos_Vivienda: true
                 }
             });
 
@@ -475,6 +476,8 @@ const createAdoptionRequest = async (req, res) => {
                     adopcion_id: solicitud.adopcion_id,
                     url: file.path.replace(/\\/g, "/"),
                 }));
+
+                console.log(fotosData)
 
                 // Usar la misma transacción (tx) para respetar la FK hacia adopciones
                 const fotosVivienda = await tx.fotos_Vivienda.createMany({
