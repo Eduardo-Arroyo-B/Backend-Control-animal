@@ -475,7 +475,7 @@ model Mordeduras {
   parte_cuerpo_afectada String
   especie               String
   animal_propio         Boolean
-  ID_animal             String?
+  ID_animal             Int?
   estado_vacunacion     String
   descripcion_animal    String
   registrador_por       String   @db.Uuid

@@ -79,7 +79,7 @@ const createBite = async (req, res) => {
         parte_cuerpo_afectada,
         especie,
         animal_propio: booleanAnimal,
-        ID_animal,
+        ID_animal: Number(ID_animal),
         estado_vacunacion,
         descripcion_animal
     }
