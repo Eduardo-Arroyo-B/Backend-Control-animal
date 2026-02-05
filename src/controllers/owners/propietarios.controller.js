@@ -393,6 +393,9 @@ const loginPortal = async (req, res) => {
         const login = await prisma.propietario.findUnique({
             where: {
                 folio_propietario:  folio
+            },
+            include: {
+                Animales: true
             }
         })
 
