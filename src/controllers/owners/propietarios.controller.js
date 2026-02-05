@@ -370,7 +370,8 @@ const updateStatusValidacionPortal = async (req, res) => {
                 propietario_id: id
             },
             data: {
-                validacion_portal: true
+                validacion_portal: true,
+                estatus_propietario: "Activo"
             }
         })
 
