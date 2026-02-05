@@ -8,7 +8,7 @@ const getVaccinations = async (req, res) => {
             },
             include: {
                 Animal: {
-                    select: {
+                    include: {
                         RazaCatalogo: {
                             select: {
                                 nombre_raza: true
