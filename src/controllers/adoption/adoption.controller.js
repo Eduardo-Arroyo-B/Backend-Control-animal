@@ -369,10 +369,6 @@ const createAdoptionRequest = async (req, res) => {
                 where: { animal_id: Number(animal_id) }
             });
 
-            if (!animal) {
-                throw new Error('El animal no existe');
-            }
-
             if (!animal.es_adoptable) {
                 throw new Error('El animal no está disponible para adopción');
             }
@@ -475,16 +471,17 @@ const createAdoptionRequest = async (req, res) => {
 
             // Guardar fotos si se enviaron
             if (req.files && req.files.length > 0) {
-                const fotosData = req.files.map((file, index) => ({
+                const fotosData = req.files.map((file) => ({
                     adopcion_id: solicitud.adopcion_id,
                     url: file.path.replace(/\\/g, "/"),
-                }))
+                }));
 
-                const animalFotos = await prisma.fotos_Vivienda.createMany({
+                // Usar la misma transacción (tx) para respetar la FK hacia adopciones
+                const fotosVivienda = await tx.fotos_Vivienda.createMany({
                     data: fotosData
-                })
+                });
 
-                console.log("Fotos creadas", animalFotos)
+                console.log("Fotos de vivienda creadas", fotosVivienda);
             }
 
             return solicitud;
@@ -499,11 +496,6 @@ const createAdoptionRequest = async (req, res) => {
             return res.status(400).json({
                 message: "Error al generar el folio. Intente nuevamente.",
                 error: error.message
-            });
-        }
-        if (error.code === "P2003") {
-            return res.status(400).json({
-                message: "El animal no existe"
             });
         }
 
