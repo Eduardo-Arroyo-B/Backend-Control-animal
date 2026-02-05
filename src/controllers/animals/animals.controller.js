@@ -9,11 +9,7 @@ const getAnimals = async (req, res) => {
                 RazaCatalogo: true,
                 Animales_Fotos: true,
                 Propietario: true,
-                Consultas_Veterinarias: {
-                    select: {
-                        disponible_adopcion: true
-                    }
-                },
+                Consultas_Veterinarias: true,
                 Vacunaciones: true,
                 Esterilizaciones: true,
                 Cuarentenas: true,
