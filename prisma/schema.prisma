@@ -263,6 +263,7 @@ model Inventario_Medicamentos {
   unidad_medida        String
   fecha_vencimiento    DateTime
   stock_alerta         Int
+  lote                 String?
   registrado_por       String   @db.Uuid
 
   // Relaciones

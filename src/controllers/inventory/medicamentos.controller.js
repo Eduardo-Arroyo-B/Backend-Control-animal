@@ -34,7 +34,8 @@ const createMedicamento = async (req, res) => {
         cantidad_disponibles,
         unidad_medida,
         registrado_por,
-        stock_alerta
+        stock_alerta,
+        lote
     } = req.body;
 
     const medicamentoData = {
@@ -43,7 +44,8 @@ const createMedicamento = async (req, res) => {
         cantidad_disponibles: Number(cantidad_disponibles),
         unidad_medida,
         registrado_por,
-        stock_alerta: Number(stock_alerta)
+        stock_alerta: Number(stock_alerta),
+        lote
     }
 
     try {
