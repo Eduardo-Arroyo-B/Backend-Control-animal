@@ -54,7 +54,7 @@ const createReporte = async (req, res) => {
         email,
         estatus_reporte,
         fecha_reporte: new Date(),
-        registrado_por: registrado_por || ""
+        registrado_por: registrado_por || null
     }
 
     try {
