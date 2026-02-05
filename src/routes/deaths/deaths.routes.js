@@ -10,7 +10,7 @@ const router = express.Router();
 
 // Rutas
 router.get("/getAllDeaths", getAllDeaths)
-router.get("/getAllDeathsByID/:id", getDeathsById)
+router.get("/getAllDeathsByID/:search", getDeathsById)
 router.post("/createDeaths", createDeaths)
 
 export default router;
