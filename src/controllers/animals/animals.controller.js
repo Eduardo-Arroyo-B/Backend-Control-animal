@@ -408,6 +408,7 @@ const createMiniExpedienteAnimal = async (req, res) => {
     const {
         nombre,
         raza_id,
+        propietario_id,
         edad,
         sexo,
         pelaje
@@ -416,6 +417,7 @@ const createMiniExpedienteAnimal = async (req, res) => {
     const expedienteData = {
         nombre,
         raza_id: Number(raza_id),
+        propietario_id,
         edad,
         sexo,
         pelaje,
