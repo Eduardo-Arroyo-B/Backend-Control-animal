@@ -24,7 +24,8 @@ const createCampaign = async (req, res) => {
         especie,
         servicio,
         num_lote,
-        cantidad_lote
+        cantidad_lote,
+        id_lote_vacuna
     } = req.body
 
     const campaignData = {
@@ -39,15 +40,36 @@ const createCampaign = async (req, res) => {
     }
 
     try {
-        const campaign = await prisma.campaigns.create({
-            data: campaignData
+        const result = await prisma.$transaction(async tx => {
+            const campaign = await tx.campaigns.create({
+                data: campaignData
+            })
+
+            if (!campaign) throw new Error("No se pudo crear la campaña")
+
+            const vacuna = await tx.inventario_Vacunas.findUnique({
+                where: {
+                    id: id_lote_vacuna
+                }
+            })
+
+            if (!vacuna) throw new Error("El inventario de la vacuna no existe")
+
+            if (vacuna.cantidad_disponible < cantidad_lote) throw new Error("Stock insuficiente en el lote")
+
+            const updateVacunas = await tx.inventario_Vacunas.update({
+                where: { id: Number(id_lote_vacuna) },
+                data: {
+                    cantidad_disponible: {
+                        decrement: cantidad_lote
+                    }
+                }
+            })
+
+            return { campaign, updateVacunas }
         })
 
-        if (!campaign) {
-            return res.status().json({ message: "No se pudo crear la campaña" })
-        }
-
-        return res.status(201).json({ message: "Campaña creada exitosamente", campaign });
+        return res.status(201).json({ message: "Campaña creada exitosamente", result });
     } catch (error) {
         return res.status(500).json({ message: "Ha ocurrido un error al crear la campaña", error: error.message });
     }

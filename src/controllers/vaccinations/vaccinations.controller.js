@@ -122,7 +122,12 @@ const createVaccination = async (req, res) => {
 
 const getCatVaccination = async (req, res) => {
     try {
-        const vaccinations = await prisma.inventario_Vacunas.findMany({})
+        const vaccinations = await prisma.inventario_Vacunas.findMany({
+            orderBy: {
+                id: "asc"
+            },
+            take: 10
+        })
 
         if (!vaccinations) {
             return res.status(404).json({ message: "No se pudo obtener el stock de vacunas disponible"})
