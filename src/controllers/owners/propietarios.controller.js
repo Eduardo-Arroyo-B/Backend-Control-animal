@@ -5,7 +5,7 @@ const getAllPropietarios = async (req, res) => {
     try {
         const propietarios = await prisma.propietario.findMany({
             orderBy: {
-                nombre: "asc"
+                propietario_id: "desc"
             },
             include: {
                 Animales: true

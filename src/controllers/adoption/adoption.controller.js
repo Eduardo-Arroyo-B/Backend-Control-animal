@@ -452,8 +452,6 @@ const createAdoptionRequest = async (req, res) => {
                     url: file.path.replace(/\\/g, "/"),
                 }));
 
-                console.log(fotosData);
-
                 // Usar la misma transacción (tx) para respetar la FK hacia adopciones
                 const fotosVivienda = await tx.fotos_Vivienda.createMany({
                     data: fotosData
