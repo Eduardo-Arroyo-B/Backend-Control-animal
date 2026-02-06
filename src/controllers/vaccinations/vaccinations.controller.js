@@ -4,7 +4,7 @@ const getVaccinations = async (req, res) => {
     try {
         const vaccinations = await prisma.vacunaciones.findMany({
             orderBy: {
-                fecha_aplicacion: "desc"
+                fecha_aplicacion: "asc"
             },
             include: {
                 Animal: {
@@ -184,6 +184,16 @@ const createCatVaccination = async (req, res) => {
     }
 
     try {
+        const loteVerificar = await prisma.inventario_Vacunas.findFirst({
+            where: {
+                lote
+            }
+        })
+
+        if (loteVerificar) {
+            return res.status(404).json({ message: "Ya existe una vacuna con el mismo lote, si quiere cambios actualize el lote" })
+        }
+
         const vaccination = await prisma.inventario_Vacunas.create({
             data: dataVaccinations
         })
