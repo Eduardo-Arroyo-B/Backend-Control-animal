@@ -124,7 +124,7 @@ const getCatVaccination = async (req, res) => {
     try {
         const vaccinations = await prisma.inventario_Vacunas.findMany({
             orderBy: {
-                fecha_vencimiento: "desc"
+                fecha_vencimiento: "asc"
             },
             take: 10
         })
