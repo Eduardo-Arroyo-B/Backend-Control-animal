@@ -4,7 +4,7 @@ const getVaccinations = async (req, res) => {
     try {
         const vaccinations = await prisma.vacunaciones.findMany({
             orderBy: {
-                fecha_aplicacion: "asc"
+                fecha_aplicacion: "desc"
             },
             include: {
                 Animal: {
@@ -124,7 +124,7 @@ const getCatVaccination = async (req, res) => {
     try {
         const vaccinations = await prisma.inventario_Vacunas.findMany({
             orderBy: {
-                id: "asc"
+                fecha_vencimiento: "desc"
             },
             take: 10
         })
