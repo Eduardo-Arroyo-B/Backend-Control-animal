@@ -204,10 +204,10 @@ model Animales_Fotos {
 }
 
 model Propietario {
-  propietario_id        String   @id @default(uuid()) @db.Uuid
-  folio_propietario     String   @unique
+  propietario_id        String    @id @default(uuid()) @db.Uuid
+  folio_propietario     String    @unique
   tipo_identificacion   String
-  numero_identificacion String   @unique
+  numero_identificacion String    @unique
   nombre                String
   apellido_paterno      String
   apellido_materno      String
@@ -218,8 +218,9 @@ model Propietario {
   colonia               String
   estatus_propietario   String
   motivo                String?
-  validacion_portal     Boolean? @default(false)
-  creacion_portal       Boolean? @default(false) // false: se creo en administracion, si es true se crearon en el portal web
+  validacion_portal     Boolean?  @default(false)
+  creacion_portal       Boolean?  @default(false) // false: se creo en administracion, si es true se crearon en el portal web
+  create_at             DateTime? @default(now())
 
   // Relaciones
   Adopciones                      Adopciones[]

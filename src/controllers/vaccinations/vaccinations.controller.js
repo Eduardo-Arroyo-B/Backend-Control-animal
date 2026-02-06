@@ -18,7 +18,8 @@ const getVaccinations = async (req, res) => {
                 },
                 Vacuna: true,
                 Usuarios: true
-            }
+            },
+            take: 10
         });
 
         return res.status(200).json(vaccinations);
@@ -79,6 +80,26 @@ const createVaccination = async (req, res) => {
                 campaña
             }
         });
+
+        // Busca la vacuna y le resta 1 al stock
+        const vaccinationUpdate = await prisma.inventario_Vacunas.update({
+            where: {
+                id: Number(vacuna_id)
+            },
+            data: {
+                cantidad_disponible: {
+                    decrement: 1
+                }
+            }
+        })
+
+        if (vaccinationUpdate.cantidad_disponible <= 0) {
+            return res.status(404).json({ message: "Ya no hay stock de la vacuna"})
+        }
+
+        if (!vaccinationUpdate) {
+            return res.status(404).json({ message: "No se pudo actualizar el stock de la vacuna" })
+        }
 
         return res.status(201).json({
             message: "Vacunación registrada correctamente",
