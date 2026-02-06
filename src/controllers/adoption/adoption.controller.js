@@ -7,6 +7,7 @@ const getAllAdoptions = async (req,res) => {
             include: {
                 Animal: true,
                 Adoptante: true,
+                Fotos_Vivienda: true,
             }
         })
 
