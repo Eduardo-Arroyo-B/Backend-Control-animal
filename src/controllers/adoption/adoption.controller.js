@@ -7,6 +7,7 @@ const getAllAdoptions = async (req,res) => {
             include: {
                 Animal: true,
                 Adoptante: true,
+                Fotos_Vivienda: true,
             }
         })
 
@@ -61,7 +62,7 @@ const createAdoption = async (req,res) => {
     try {
         const result = await prisma.$transaction(async (tx) => {
 
-            const animal = await tx.adopciones.findUnique({
+            const animal = await tx.adopciones.findFirst({
                 where: {
                     animal_id: Number(animal_id)
                 }
@@ -419,17 +420,17 @@ const createAdoptionRequest = async (req, res) => {
             }
 
             // Verificar que no existe una solicitud pendiente para este animal y adoptante
-            const solicitudExistente = await tx.adopciones.findFirst({
-                where: {
-                    animal_id: Number(animal_id),
-                    adoptante_id: propietario.propietario_id,
-                    estatus_adopcion: 'Pendiente'
-                }
-            });
-
-            if (solicitudExistente) {
-                throw new Error('Ya existe una solicitud pendiente para este animal y adoptante');
-            }
+            // const solicitudExistente = await tx.adopciones.findFirst({
+            //     where: {
+            //         animal_id: Number(animal_id),
+            //         adoptante_id: propietario.propietario_id,
+            //         estatus_adopcion: 'Pendiente'
+            //     }
+            // });
+            //
+            // if (solicitudExistente) {
+            //     throw new Error('Ya existe una solicitud pendiente para este animal y adoptante');
+            // }
 
             // Generar folio para la solicitud
             const folioAdopcion = await generateFolio("ADP");
@@ -503,8 +504,8 @@ const createAdoptionRequest = async (req, res) => {
         });
     } catch (error) {
         if (error.code === "P2002") {
-            return res.status(400).json({
-                message: "Error al generar el folio. Intente nuevamente.",
+            return res.status(404).json({
+                message: "Error al generar la adopcion. Intente nuevamente.",
                 error: error.message
             });
         }

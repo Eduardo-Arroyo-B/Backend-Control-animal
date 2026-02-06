@@ -1,4 +1,5 @@
 import prisma from "../../../prisma/prismaClient.js";
+import generateFolio from "../../helpers/generateFolio.js";
 
 const getAllDeaths = async (req, res) => {
     try {
@@ -25,19 +26,38 @@ const getAllDeaths = async (req, res) => {
 
 const getDeathsById = async (req, res) => {
     // Obtener Id por parametros
-    const { id } = req.params;
+    const { search } = req.params;
 
-    if (!id) {
-        return res.status(404).json({ message: "Falta ID" })
+    if (!search) {
+        return res.status(404).json({ message: "Faltan parametros de busqueda" })
     }
 
     try {
-        const deaths = await prisma.defunciones.findUnique({
-            where: { defuncion_id: Number(id) }
-        })
+        const deaths = await prisma.defunciones.findMany({
+            where: {
+                Animal: {
+                    OR: [
+                        { folio: { contains: search, mode: "insensitive" } },
+                        { nombre_animal: { contains: search, mode: "insensitive" } },
+                        { folio: { contains: search, mode: "insensitive" } },
+                    ]
+                },
+            },
+            include: {
+                Animal: {
+                    select: {
+                        animal_id: true,
+                        folio: true,
+                        nombre_animal: true
+                    }
+                }
+            }
+        });
 
         if (!deaths) {
-            return res.status(404).json({ message: "No se pudo obtener la cremacion" })
+            return res.status(404).json({
+                message: "No se encontraron defunciones para ese animal"
+            });
         }
 
         return res.status(200).json({ message: "Cremacion obtenida exitosamente", deaths });
@@ -61,8 +81,10 @@ const createDeaths = async (req, res) => {
     } = req.body
 
     const booleanAutopsia = autopsia === true || autopsia === "true";
+    const folioNew = await generateFolio("DF")
 
     const deathData = {
+        folio: folioNew,
         animal_id: Number(animal_id),
         fecha_hora_defuncion: new Date(fecha_hora_defuncion),
         lugar_defuncion,

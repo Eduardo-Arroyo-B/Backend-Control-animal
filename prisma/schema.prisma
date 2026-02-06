@@ -413,7 +413,7 @@ model Egresos_Animales {
 model Adopciones {
   adopcion_id      Int      @id @default(autoincrement())
   folio_adopcion   String   @unique
-  animal_id        Int      @unique
+  animal_id        Int
   adoptante_id     String   @db.Uuid
   fecha_solicitud  DateTime
   estatus_adopcion String
@@ -475,7 +475,7 @@ model Mordeduras {
   parte_cuerpo_afectada String
   especie               String
   animal_propio         Boolean
-  ID_animal             String?
+  ID_animal             Int?
   estado_vacunacion     String
   descripcion_animal    String
   registrador_por       String   @db.Uuid
@@ -521,6 +521,7 @@ model Pagos_Servicios {
 
 model Defunciones {
   defuncion_id            Int      @id @default(autoincrement())
+  folio                   String?
   animal_id               Int
   fecha_hora_defuncion    DateTime
   lugar_defuncion         String
