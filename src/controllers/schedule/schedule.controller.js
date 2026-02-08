@@ -4,12 +4,13 @@ import bitacora from "../../helpers/binnacle.js";
 const getAgendaMes = async (req, res) => {
   try {
     const { mes, anio } = req.query;
+
     if (!mes || !anio) return res.status(400).json({ error: 'Faltan mes o año' });
 
     const start = new Date(anio, mes - 1, 1);
     const end   = new Date(anio, mes, 0, 23, 59, 59, 999);
 
-    const citas = await prisma.agenda.findMany({
+    const citas = await prisma.citas.findMany({
         where: { fecha: { gte: start, lte: end } },
             orderBy: { fecha: 'asc' }
     });
@@ -19,6 +20,7 @@ const getAgendaMes = async (req, res) => {
     res.status(500).json({ error: 'Error al obtener citas' });
   }
 };
+
 // Obtener todas las citas del dia
 const getAgendaDia= async (req, res) => {
     try{
@@ -30,7 +32,7 @@ const getAgendaDia= async (req, res) => {
         const end = new Date(fecha);
         end.setHours(23, 59, 59, 999);
 
-        const citas = await prisma.agenda.findMany({
+        const citas = await prisma.citas.findMany({
             where: { fecha: { gte: start, lte: end } },
             orderBy: { fecha: 'asc' }    
     }); 
@@ -61,19 +63,22 @@ const createCita = async (req, res) => {
     }
 
     try {
+
         if (Object.keys(citaData).length === 0) {
-        return res.status(404).json({ message: "No hay campos para actualizar" })}
-        const cita = await prisma.citas.create({
-            data: citaData
-        })
+
+            return res.status(404).json({ message: "No hay campos para actualizar" })}
+
+            const cita = await prisma.citas.create({
+                data: citaData
+            })
 
         if (!cita) {
             return res.status(404).json({ message: "No se pudo crear la cita" })
         }
 
-        return res.status(200).json({message: "Cita creada exitosamente" , cita});
+        return res.status(201).json({ message: "Cita creada exitosamente" , cita });
     } catch (error) {
-        return res.status(500).json({ error: "Error al actualizar medicamento" });
+        return res.status(500).json({ message: "Error al crear la cita", error: error.message });
     }
 
 
