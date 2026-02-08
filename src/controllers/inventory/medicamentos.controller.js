@@ -120,7 +120,7 @@ const updateMedicamento = async (req, res) => {
         if (Object.keys(data).length === 0) {
         return res.status(404).json({ message: "No hay campos para actualizar" })
     }
-        const medicamento = await prisma.medicamentos.update({
+        const medicamento = await prisma.Inventario_Medicamentos.update({
             where: { medicamentos_id : Number(id) },
                 data
         })
