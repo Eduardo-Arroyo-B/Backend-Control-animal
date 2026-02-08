@@ -288,13 +288,15 @@ const createAnimalFlujo = async (req, res) => {
     }
     try {
         // Validar que no exista Microchip identico
-        const microchip = await prisma.animales.findUnique({
-            where: {
-                numero_microchip
+        if (numero_microchip){
+            const microchip = await prisma.animales.findUnique({
+                where: {
+                    numero_microchip
+                }
+            })
+            if (microchip) {
+                return res.status(200).json({ message: "No se puede crear un animal con microchip existente" })
             }
-        })
-        if (microchip) {
-            return res.status(200).json({ meesage: "No se puede crear un animal con microchip existente" })
         }
 
         const animal = await prisma.animales.create({
