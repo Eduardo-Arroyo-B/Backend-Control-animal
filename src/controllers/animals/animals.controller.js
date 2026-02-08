@@ -355,6 +355,10 @@ const updateAnimal = async (req, res) => {
         pelaje,
         peso,
         numero_microchip,
+        fecha_implantacion_microchip,
+        ubicacion_anatomica_microchip,
+        lote_microchip,
+        medico_implanto_microchip,
         medalla,
         tipo_ingreso,
         ubicacion_actual,
@@ -375,6 +379,10 @@ const updateAnimal = async (req, res) => {
         pelaje,
         peso: peso !== undefined ? Number(peso) : undefined,
         numero_microchip,
+        fecha_implantacion_microchip,
+        ubicacion_anatomica_microchip,
+        lote_microchip,
+        medico_implanto_microchip,
         medalla,
         tipo_ingreso,
         ubicacion_actual,
@@ -394,6 +402,17 @@ const updateAnimal = async (req, res) => {
     if (Object.keys(data).length === 0) {
         return res.status(404).json({ message: "No hay campos para actualizar" })
     }
+    // Validar que no exista Microchip identico
+        if (numero_microchip){
+            const microchip = await prisma.animales.findUnique({
+                where: {
+                    numero_microchip
+                }
+            })
+            if (microchip) {
+                return res.status(200).json({ message: "No se puede crear un animal con microchip existente" })
+            }
+        }
 
     try {
         const animal = await prisma.animales.update({
