@@ -610,6 +610,19 @@ model Campaigns {
   cantidad_lote Int
 }
 
+model Cita {
+  cita_id           Int      @id @default(autoincrement())
+  animal_id         Int
+  veterinario       String
+  tipo_cita         String
+  fecha_hora_cita   DateTime
+  estatus_cita      String?
+  quirofano         String?
+
+  // Relaciones
+  Animal Animales @relation(fields: [animal_id], references: [animal_id])
+}
+
 model Cat_Tipos_Vacuna {
   tipo_vacuna_id Int     @id @default(autoincrement())
   codigo_vacuna  String
