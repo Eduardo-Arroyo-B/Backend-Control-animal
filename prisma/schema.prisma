@@ -17,6 +17,10 @@ model Usuarios {
   estatus_usuario Estatus_Usuario
   ultimo_acceso   DateTime
 
+  // Seguridad
+  login_intentos  Int       @default(0)
+  bloqueado_hasta DateTime?
+
   // Relaciones
   Rol                       Rol                       @relation(fields: [rol_id], references: [id])
   Integraciones             Integraciones_Log[]
@@ -167,11 +171,11 @@ model Animales {
   relacion_animal           String?
 
   // Tiene microchip
-  numero_microchip    String?   @unique
+  numero_microchip              String? @unique
   fecha_implantacion_microchip  String?
   ubicacion_anatomica_microchip String?
-  lote_microchip String?
-  medico_implanto_microchip String?
+  lote_microchip                String?
+  medico_implanto_microchip     String?
 
   // aparte
   fecha_ingreso  String?
