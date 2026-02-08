@@ -45,6 +45,7 @@ const createCita = async (req, res) => {
     const {
         animal_id,
         veterinario,
+        estatus_cita,
         tipo_cita,
         fecha_hora_cita,
         quirofano
@@ -56,12 +57,13 @@ const createCita = async (req, res) => {
         estatus_cita: estatus_cita || 'Pendiente',
         tipo_cita,
         fecha_hora_cita,
-        quirofano
+        quirofano: quirofano || null
     }
+
     try {
         if (Object.keys(citaData).length === 0) {
         return res.status(404).json({ message: "No hay campos para actualizar" })}
-        const cita = await prisma.Cita.create({
+        const cita = await prisma.citas.create({
             data: citaData
         })
 
