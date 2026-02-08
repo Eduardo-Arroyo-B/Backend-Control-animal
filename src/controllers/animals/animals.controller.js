@@ -306,8 +306,11 @@ const createAnimalFlujo = async (req, res) => {
         const folioGenerado = await generateFolio("ANM")
 
         const animal = await prisma.animales.create({
-            data: animalData
-        })
+            data: {
+                ...animalData,
+                folio: folioGenerado
+            }
+        });
 
         if (!animal) {
             return res.status(404).json({ message: "No se pudo crear el animal" })
