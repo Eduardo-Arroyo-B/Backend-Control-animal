@@ -168,6 +168,10 @@ const createAnimal = async (req, res) => {
                 pelaje,
                 peso: Number(peso),
                 numero_microchip,
+                fecha_implantacion_microchip,
+                ubicacion_anatomica_microchip,
+                lote_microchip,
+                medico_implanto_microchip,
                 medalla,
                 tipo_ingreso,
                 ubicacion_actual,
@@ -227,6 +231,7 @@ const createAnimal = async (req, res) => {
 const createAnimalFlujo = async (req, res) => {
     // Extraccion de los datos del body
     const {
+        nombre_animal,
         tipo_ingreso,
         fecha_hora_ingreso,
         condicion_ingreso,
@@ -241,6 +246,11 @@ const createAnimalFlujo = async (req, res) => {
         numero_identificacion,
         telefono,
         correo,
+        numero_microchip,
+        fecha_implantacion_microchip,
+        ubicacion_anatomica_microchip,
+        lote_microchip,
+        medico_implanto_microchip,
         relacion_animal,
         registrado_por,
         estado_reproductivo,
@@ -250,6 +260,7 @@ const createAnimalFlujo = async (req, res) => {
 
     // Objeto del animal
     const animalData = {
+        nombre_animal,
         tipo_ingreso,
         fecha_hora_ingreso,
         condicion_ingreso,
@@ -264,14 +275,28 @@ const createAnimalFlujo = async (req, res) => {
         numero_identificacion,
         telefono,
         correo,
+        numero_microchip,
+        fecha_implantacion_microchip,
+        ubicacion_anatomica_microchip,
+        lote_microchip,
+        medico_implanto_microchip,
         relacion_animal,
         registrado_por,
         estado_reproductivo,
         temperamento,
         tiempo_estancia
     }
-
     try {
+        // Validar que no exista Microchip identico
+        const microchip = await prisma.animales.findUnique({
+            where: {
+                numero_microchip
+            }
+        })
+        if (microchip) {
+            return res.status(200).json({ meesage: "No se puede crear un animal con microchip existente" })
+        }
+
         const animal = await prisma.animales.create({
             data: animalData
         })

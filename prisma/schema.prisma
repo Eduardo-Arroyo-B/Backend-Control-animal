@@ -133,7 +133,6 @@ model Animales {
   edad                String?
   pelaje              String?
   peso                Int?
-  numero_microchip    String?   @unique
   medalla             String?
   tipo_ingreso        String?
   ubicacion_actual    String?
@@ -161,6 +160,13 @@ model Animales {
   telefono                  String?
   correo                    String?
   relacion_animal           String?
+
+  // Tiene microchip
+  numero_microchip    String?   @unique
+  fecha_implantacion_microchip  String?
+  ubicacion_anatomica_microchip String?
+  lote_microchip String?
+  medico_implanto_microchip String?
 
   // aparte
   fecha_ingreso  String?
