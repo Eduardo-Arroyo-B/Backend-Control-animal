@@ -109,7 +109,7 @@ const updateMedicamento = async (req, res) => {
 
     try {
         const medicamento = await prisma.medicamentos.update({
-            where: { id: Number(id) },
+            where: { medicamentos_id : Number(id) },
             data: {
                 nombre_medicamento,
                 fecha_vencimiento: fecha_vencimiento ? new Date(fecha_vencimiento) : undefined,
