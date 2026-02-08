@@ -94,8 +94,41 @@ const createMedicamento = async (req, res) => {
     }
 };
 
+const updateMedicamento = async (req, res) => {
+    // Extraer el ID de los parametros
+    const { id } = req.params;
+
+    const {
+        nombre_medicamento,
+        fecha_vencimiento,
+        cantidad_disponibles,
+        unidad_medida,
+        stock_alerta,
+        lote
+    } = req.body;
+
+    try {
+        const medicamento = await prisma.medicamentos.update({
+            where: { id: Number(id) },
+            data: {
+                nombre_medicamento,
+                fecha_vencimiento: fecha_vencimiento ? new Date(fecha_vencimiento) : undefined,
+                cantidad_disponibles,
+                unidad_medida,
+                stock_alerta,
+                lote
+            }
+        });
+
+        return res.status(200).json(medicamento);
+    } catch (error) {
+        return res.status(500).json({ error: "Error al actualizar medicamento" });
+    }
+};
+
 export {
     getAllMedicamentos,
+    updateMedicamento,
     createMedicamento
 };
 
