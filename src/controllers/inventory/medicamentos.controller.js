@@ -107,20 +107,29 @@ const updateMedicamento = async (req, res) => {
         lote
     } = req.body;
 
+    const data = {
+        nombre_medicamento,
+        fecha_vencimiento,
+        cantidad_disponibles,
+        unidad_medida,
+        stock_alerta,
+        lote
+    };
+
     try {
+        if (Object.keys(data).length === 0) {
+        return res.status(404).json({ message: "No hay campos para actualizar" })
+    }
         const medicamento = await prisma.medicamentos.update({
             where: { medicamentos_id : Number(id) },
-            data: {
-                nombre_medicamento,
-                fecha_vencimiento: fecha_vencimiento ? new Date(fecha_vencimiento) : undefined,
-                cantidad_disponibles,
-                unidad_medida,
-                stock_alerta,
-                lote
-            }
-        });
+                data
+        })
 
-        return res.status(200).json(medicamento);
+        if (!medicamento) {
+            return res.status(404).json({ message: "No se pudo actualizar el medicamento" })
+        }
+
+        return res.status(200).json({message: "Medicamento modificado exitosamente" , medicamento});
     } catch (error) {
         return res.status(500).json({ error: "Error al actualizar medicamento" });
     }
