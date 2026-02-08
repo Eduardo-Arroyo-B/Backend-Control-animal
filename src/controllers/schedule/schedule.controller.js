@@ -25,6 +25,7 @@ const getAgendaMes = async (req, res) => {
 const getAgendaDia= async (req, res) => {
     try{
         const { fecha } = req.query; // ej: 2025-02-08
+
         if (!fecha) return res.status(400).json({ error: 'Falta fecha' });
 
         const start = new Date(fecha);
@@ -54,7 +55,7 @@ const createCita = async (req, res) => {
     } = req.body;
 
     const citaData = {
-        animal_id,
+        animal_id: Number(animal_id),
         veterinario,
         estatus_cita: estatus_cita || 'Pendiente',
         tipo_cita,
