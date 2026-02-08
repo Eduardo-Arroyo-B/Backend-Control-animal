@@ -303,6 +303,8 @@ const createAnimalFlujo = async (req, res) => {
             }
         }
 
+        const folioGenerado = await generateFolio("ANM")
+
         const animal = await prisma.animales.create({
             data: animalData
         })
