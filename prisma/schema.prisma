@@ -409,6 +409,12 @@ model Desparasitaciones {
   animal_id             Int
   producto_utilizado    String
   costo_desparasitacion Int
+  fecha_desparasitacion DateTime
+  lote_desparasitacion  String?
+  via_administracion    String
+  dosis_desparasitacion String
+  tipo_desparasitacion  String
+
   aplicado_por          String  @db.Uuid
 
   // Relaciones

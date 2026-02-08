@@ -31,7 +31,12 @@ const createDeworming = async (req, res) => {
         animal_id,
         producto_utilizado,
         aplicado_por,
-        costo_desparasitacion
+        costo_desparasitacion,
+        fecha_desparasitacion,
+        lote_desparasitacion,
+        via_administracion,
+        dosis_desparasitacion,
+        tipo_desparasitacion
     } = req.body;
 
     const folioDes = await generateFolio("DPS");
@@ -42,7 +47,12 @@ const createDeworming = async (req, res) => {
         animal_id: Number(animal_id),
         producto_utilizado,
         aplicado_por,
-        costo_desparasitacion: Number(costo_desparasitacion)
+        costo_desparasitacion: Number(costo_desparasitacion),
+        fecha_desparasitacion,
+        lote_desparasitacion,
+        via_administracion,
+        dosis_desparasitacion,
+        tipo_desparasitacion
     }
 
     try {
