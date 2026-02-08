@@ -28,9 +28,13 @@ export const animalModelo1Validator = [
         .isInt({ gt: 0 }).withMessage('El peso debe ser un número positivo'),
 
     body('numero_microchip')
-        .notEmpty().withMessage('El número de microchip es obligatorio')
-        .isString().withMessage('El número de microchip debe ser texto')
-        .isLength({ min: 15, max: 15}).withMessage('El microchip debe tener 15 caracteres'),
+        .optional({ values: 'falsy' })
+        .trim()
+        .if(body('numero_microchip').exists()) 
+            .isLength({ min: 15, max: 15 })
+            .withMessage('Debe tener exactamente 15 caracteres')
+            .isNumeric()
+            .withMessage('Solo se permiten números (sin letras, guiones ni espacios)'),
 
     body('tipo_ingreso')
         .notEmpty().withMessage('El tipo de ingreso es obligatorio')
