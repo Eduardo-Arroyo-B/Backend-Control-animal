@@ -134,7 +134,7 @@ const createPropietario = async (req, res) => {
         })
 
         if (findIdentificacion) {
-            return res.status(200).json({ message: "Ya existe una persona registrada con este numero de identificacion" })
+            return res.status(404).json({ message: "Ya existe una persona registrada con este numero de identificacion" })
         }
 
         const propietario = await prisma.propietario.create({
