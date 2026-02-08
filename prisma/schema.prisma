@@ -200,6 +200,7 @@ model Animales {
   Vacunaciones           Vacunaciones[]
   Consultas_Veterinarias Consultas_Veterinarias[]
   Cuarentenas            Cuarentenas[]
+  Citas                  Citas[]
 
   // Avisar Alan
   @@index([es_adoptable])
@@ -610,7 +611,7 @@ model Campaigns {
   cantidad_lote Int
 }
 
-model Cita {
+model Citas {
   cita_id           Int      @id @default(autoincrement())
   animal_id         Int
   veterinario       String
