@@ -275,6 +275,7 @@ const vinculatePropietarioAnimal = async (req, res) => {
             },
             data: {
                 propietario_id: id_propietario,
+                es_adoptable: false
             },
         });
 

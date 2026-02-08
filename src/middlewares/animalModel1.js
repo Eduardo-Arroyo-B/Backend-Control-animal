@@ -30,7 +30,7 @@ export const animalModelo1Validator = [
     body('numero_microchip')
         .notEmpty().withMessage('El número de microchip es obligatorio')
         .isString().withMessage('El número de microchip debe ser texto')
-        .isLength({ min: 5 }).withMessage('El microchip debe tener al menos 5 caracteres'),
+        .isLength({ min: 15, max: 15}).withMessage('El microchip debe tener 15 caracteres'),
 
     body('tipo_ingreso')
         .notEmpty().withMessage('El tipo de ingreso es obligatorio')
