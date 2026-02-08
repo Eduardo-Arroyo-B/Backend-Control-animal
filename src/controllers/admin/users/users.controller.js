@@ -1,9 +1,18 @@
 import prisma from "../../../../prisma/prismaClient.js"
 import bcrypt from "bcrypt"
+import bitacora from "../../../helpers/binnacle.js"
 
 const login = async (req, res) => {
     // Extraer informacion del body
     const { usuario, password } = req.body
+
+    // Se define logica de validacion de intentos
+    const MAX_INTENTOS = 5
+    const BLOQUEO_MINUTOS = 15
+
+    const rawIp = req.headers['x-forwarded-for']?.split(',')[0] || req.socket.remoteAddress;
+
+    const ip = rawIp?.replace('::ffff', '');
 
     try {
         const findUser = await prisma.usuarios.findFirst({
@@ -26,16 +35,59 @@ const login = async (req, res) => {
 
         // Manejo de errores
         if (!findUser) {
+
+            await bitacora({
+                usuarioId: usuario,
+                fecha_hora: new Date().toISOString(),
+                operacion: "LOGIN_FALLIDO_USUARIO_NO_EXISTE",
+                ip,
+                resultado: `Login fallido del usuario`,
+            })
+
             return res.status(404).json({ message: "El usuario no existe" })
         }
 
         // Compara el password en texto plano con el hasheado
         const comparePassword = await bcrypt.compare( password, findUser.password )
 
+        if (findUser.bloqueado_hasta && findUser.bloqueado_hasta > new Date()) {
+            return res.status(403).json({
+                message: "Usuario bloqueado temporalmente "
+            })
+        }
+
         // Manejo de errores
         if (!comparePassword) {
+            const intentos = findUser.login_intentos + 1
+
+            await prisma.usuarios.update({
+                where: { id: findUser.usuario_id },
+                data: {
+                    login_intentos: intentos,
+                    bloqueado_hasta: intentos >= MAX_INTENTOS
+                        ? new Date(Date.now() + BLOQUEO_MINUTOS * 60000)
+                        : null
+                }
+            })
+
+            await bitacora({
+                usuarioId: usuario,
+                fecha_hora: new Date().toISOString(),
+                operacion: "LOGIN_FALLIDO_PASSWORD",
+                ip,
+                resultado: `Login fallido del usuario contraseña no es correcta`,
+            })
+
             return res.status(401).json({ message: "La contraseña no es correcta" })
         }
+
+        await bitacora({
+            usuarioId: usuario,
+            fecha_hora: new Date().toISOString(),
+            operacion: "LOGIN_EXITOSO",
+            ip,
+            resultado: `Login exitoso del usuario`,
+        })
 
         return res.status(200).json({ message: "Inicio de session exitoso", findUser })
     } catch (error) {
