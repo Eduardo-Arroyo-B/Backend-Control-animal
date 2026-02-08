@@ -645,12 +645,13 @@ const updateAdoptionStatus = async (req, res) => {
 
             // Si se aprueba, marcar el animal como no adoptable y registrar egreso
             if (estatus_adopcion === 'Aprobada') {
+                /*
                 await tx.animales.update({
                     where: { animal_id: solicitud.animal_id },
                     data: {
                         es_adoptable: false
                     }
-                });
+                });*/
 
                 // Registrar el egreso del animal
                 await tx.egresos_Animales.create({
