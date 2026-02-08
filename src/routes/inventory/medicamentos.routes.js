@@ -11,7 +11,7 @@ const router = express();
 // Rutas
 router.get("/getAllMedicamentos", getAllMedicamentos);
 router.post("/createMedicamento", createMedicamento);
-router.put("/updateMedicamento", updateMedicamento);
+router.put("/updateMedicamento/:id", updateMedicamento);
 
 export default router;
 
