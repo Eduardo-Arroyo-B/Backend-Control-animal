@@ -62,7 +62,10 @@ const createVaccination = async (req, res) => {
         observaciones,
         veterinario_Id,
         zona,
-        campaña
+        campaña,
+        via_administracion,
+        sitio_anatomico,
+        dosis_aplicada
     } = req.body;
 
     try {
@@ -78,7 +81,10 @@ const createVaccination = async (req, res) => {
                 observaciones: observaciones || "",
                 veterinario_Id,
                 zona,
-                campaña
+                campaña,
+                via_administracion,
+                sitio_anatomico,
+                dosis_aplicada
             }
         });
 

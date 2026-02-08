@@ -111,6 +111,11 @@ model Vacunaciones {
   zona             String?
   campana          String?
 
+  // Nuevos campos
+  via_administracion String?
+  sitio_anatomico    String?
+  dosis_aplicada     String?
+
   // Relaciones
   Animal   Animales           @relation(fields: [animal_id], references: [animal_id])
   Usuarios Usuarios           @relation(fields: [veterinario_Id], references: [usuario_id])
