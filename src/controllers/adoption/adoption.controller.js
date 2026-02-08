@@ -95,6 +95,7 @@ const createAdoption = async (req,res) => {
                 }
             })
 
+            /*
             const updateAnimal = await tx.animales.updateMany({
                 where: {animal_id: Number(animal_id)},
                 data: {
@@ -102,7 +103,7 @@ const createAdoption = async (req,res) => {
                 }
             })
 
-            if (!updateAnimal) throw new Error("No se pudo actualizar el estatus del animal")
+            if (!updateAnimal) throw new Error("No se pudo actualizar el estatus del animal") */
 
             return adoption
         })
