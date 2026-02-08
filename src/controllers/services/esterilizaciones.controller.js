@@ -1,4 +1,6 @@
 import prisma from "../../../prisma/prismaClient.js";
+import bitacora from "../../helpers/binnacle.js";
+import generateFolio from "../../helpers/generateFolio.js";
 
 const getAllEsterilizaciones = async (req, res) => {
     try {
@@ -79,26 +81,7 @@ const createEsterilizacion = async (req, res) => {
             }
         });
 
-        // Generar el nuevo folio
-        let nuevoFolio;
-        const añoActual = new Date().getFullYear();
-
-        if (ultimaEsterilizacion && ultimaEsterilizacion.folio_servicio) {
-            // Extraer el número del último folio
-            // Formato esperado: EST-YYYY-NNN o similar
-            const match = ultimaEsterilizacion.folio_servicio.match(/(\d+)$/);
-            if (match) {
-                const ultimoNumero = parseInt(match[1], 10);
-                const siguienteNumero = ultimoNumero + 1;
-                nuevoFolio = `EST-${añoActual}-${String(siguienteNumero).padStart(3, '0')}`;
-            } else {
-                // Si no se puede parsear, empezar desde 1
-                nuevoFolio = `EST-${añoActual}-001`;
-            }
-        } else {
-            // Si no hay esterilizaciones previas, empezar desde 1
-            nuevoFolio = `EST-${añoActual}-001`;
-        }
+        const nuevoFolio = await generateFolio("EST")
 
         const esterilizacion = await prisma.esterilizaciones.create({
             data: {
@@ -139,6 +122,18 @@ const createEsterilizacion = async (req, res) => {
                 }
             }
         });
+
+        const rawIp = req.headers['x-forwarded-for']?.split(',')[0] || req.socket.remoteAddress;
+
+        const ip = rawIp?.replace('::ffff', '');
+
+        await bitacora({
+            usuarioId: veterinario_cirujano_id,
+            fecha_hora: new Date().toISOString(),
+            operacion: "CREACION",
+            ip,
+            resultado: `Esterilizacion creada con ID ${nuevoFolio}`
+        })
 
         return res.status(201).json({
             message: "Esterilización registrada correctamente",

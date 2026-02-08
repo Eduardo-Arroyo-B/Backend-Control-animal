@@ -1,6 +1,7 @@
 import prisma from "../../../prisma/prismaClient.js";
 import generateFolio from "../../helpers/generateFolio.js";
 import { transporter } from "../../helpers/mailer.js";
+import bitacora from "../../helpers/binnacle.js";
 
 const getAllReportes = async (req, res) => {
     try {
@@ -81,6 +82,18 @@ const createReporte = async (req, res) => {
                 correo: true
             })
         }
+
+        const rawIp = req.headers['x-forwarded-for']?.split(',')[0] || req.socket.remoteAddress;
+
+        const ip = rawIp?.replace('::ffff', '');
+
+        await bitacora({
+            usuarioId: registrado_por,
+            fecha_hora: new Date().toISOString(),
+            operacion: "CREACION",
+            ip,
+            resultado: `Reporte creado con ID ${nuevoFolio}`
+        })
 
         return res.status(201).json({
             message: "Reporte registrado correctamente",

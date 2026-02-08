@@ -1,5 +1,6 @@
 import prisma from "../../../prisma/prismaClient.js";
 import generateFolio from "../../helpers/generateFolio.js";
+import bitacora from "../../helpers/binnacle.js";
 
 const getAllPropietarios = async (req, res) => {
     try {
@@ -153,6 +154,18 @@ const createPropietario = async (req, res) => {
                 motivo
             }
         });
+
+        const rawIp = req.headers['x-forwarded-for']?.split(',')[0] || req.socket.remoteAddress;
+
+        const ip = rawIp?.replace('::ffff', '');
+
+        await bitacora({
+            usuarioId: "NA",
+            fecha_hora: new Date().toISOString(),
+            operacion: "CREACION",
+            ip,
+            resultado: `Propietario creado con ID ${folioUnicoProp}`
+        })
 
         return res.status(201).json({
             message: "Propietario registrado correctamente",

@@ -1,4 +1,5 @@
 import prisma from "../../../prisma/prismaClient.js";
+import bitacora from "../../helpers/binnacle.js";
 
 const getAllQuarantines = async (req, res) => {
     try {
@@ -213,6 +214,18 @@ const createQuarantine = async (req, res) => {
                 }
             }
         });
+
+        const rawIp = req.headers['x-forwarded-for']?.split(',')[0] || req.socket.remoteAddress;
+
+        const ip = rawIp?.replace('::ffff', '');
+
+        await bitacora({
+            usuarioId: registrado_por,
+            fecha_hora: new Date().toISOString(),
+            operacion: "CREACION",
+            ip,
+            resultado: `Cuarentena creada con ID ${quarantine.cuarentena_id}`
+        })
 
         return res.status(201).json({
             message: "Cuarentena registrada correctamente",

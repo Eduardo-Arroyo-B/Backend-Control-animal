@@ -1,5 +1,6 @@
 import prisma from "../../../prisma/prismaClient.js";
 import generateFolio from "../../helpers/generateFolio.js";
+import bitacora from "../../helpers/binnacle.js";
 
 const getAllDeaths = async (req, res) => {
     try {
@@ -109,6 +110,18 @@ const createDeaths = async (req, res) => {
         if (!death || !animal) {
             return res.status(404).json({ message: "no se pudo crear la cremacion" })
         }
+
+        const rawIp = req.headers['x-forwarded-for']?.split(',')[0] || req.socket.remoteAddress;
+
+        const ip = rawIp?.replace('::ffff', '');
+
+        await bitacora({
+            usuarioId: veterinario_responsable,
+            fecha_hora: new Date().toISOString(),
+            operacion: "CREACION",
+            ip,
+            resultado: `Defuncion creada con ID ${folioNew}`
+        })
 
         return res.status(201).json({ message: "Defuncion creada exitosamente", death, animal });
     } catch (error) {

@@ -1,4 +1,5 @@
 import prisma from "../../../prisma/prismaClient.js";
+import bitacora from "../../helpers/binnacle.js";
 
 const getAllSupplies = async (req, res) => {
     try {
@@ -66,6 +67,18 @@ const createSupplies = async (req, res) => {
         if (!supplies) {
             return res.status(404).json({ message: "No se pudo crear el inventario de insumo solicitado" })
         }
+
+        const rawIp = req.headers['x-forwarded-for']?.split(',')[0] || req.socket.remoteAddress;
+
+        const ip = rawIp?.replace('::ffff', '');
+
+        await bitacora({
+            usuarioId: registrado_por,
+            fecha_hora: new Date().toISOString(),
+            operacion: "CREACION",
+            ip,
+            resultado: `Inventario creado con ID ${supplies.insumo_id}`
+        })
 
         return res.status(201).json({ message: "Inventario de insumo creado exitosamente", supplies });
     } catch (error) {

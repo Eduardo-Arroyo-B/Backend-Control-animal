@@ -1,5 +1,6 @@
 import prisma from "../../../prisma/prismaClient.js";
 import generateFolio from "../../helpers/generateFolio.js";
+import bitacora from "../../helpers/binnacle.js";
 
 const getAllCremations = async (req, res) => {
     try {
@@ -90,6 +91,18 @@ const createCremation = async (req, res) => {
         if (!cremation) {
             return res.status(404).json({ message: "No se pudo crear la cremacion"})
         }
+
+        const rawIp = req.headers['x-forwarded-for']?.split(',')[0] || req.socket.remoteAddress;
+
+        const ip = rawIp?.replace('::ffff', '');
+
+        await bitacora({
+            usuarioId: registrado_por,
+            fecha_hora: new Date().toISOString(),
+            operacion: "CREACION",
+            ip,
+            resultado: `Folio creado con ID ${cremationFolio}`
+        })
 
         return res.status(201).json({ message: "Cremacion creada exitosamente", cremation })
     } catch (error) {

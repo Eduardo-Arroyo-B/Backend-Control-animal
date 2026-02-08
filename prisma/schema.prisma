@@ -652,6 +652,15 @@ model Cat_Colonias {
   Reportes_Ciudadanos Reportes_Ciudadanos[]
 }
 
+model Bitacora_Auditoria {
+  id         Int      @id @default(autoincrement())
+  usuarioId  String
+  fecha_hora DateTime
+  operacion  String
+  ip         String
+  resultado  String
+}
+
 enum Estatus_Reporte {
   Pendiente
   EnProceso

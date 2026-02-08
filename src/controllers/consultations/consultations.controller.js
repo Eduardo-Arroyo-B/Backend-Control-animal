@@ -1,4 +1,5 @@
 import prisma from "../../../prisma/prismaClient.js";
+import bitacora from "../../helpers/binnacle.js";
 
 const getConsultations = async (req, res) => {
     try {
@@ -87,6 +88,18 @@ const createConsultation = async (req, res) => {
         if (!consultation) {
             return res.status(404).json({ message: "No se pudo crear la consulta" });
         }
+        const rawIp = req.headers['x-forwarded-for']?.split(',')[0] || req.socket.remoteAddress;
+
+        const ip = rawIp?.replace('::ffff', '');
+
+        await bitacora({
+            usuarioId: veterinario_id,
+            fecha_hora: new Date().toISOString(),
+            operacion: "CREACION",
+            ip,
+            resultado: `Consulta creada con ID ${animal_id}`
+        })
+
 
         return res.status(201).json({
             message: "Consulta veterinaria registrada correctamente",

@@ -1,4 +1,5 @@
 import prisma from "../../../prisma/prismaClient.js";
+import bitacora from "../../helpers/binnacle.js";
 
 const getVaccinations = async (req, res) => {
     try {
@@ -100,6 +101,18 @@ const createVaccination = async (req, res) => {
         if (!vaccinationUpdate) {
             return res.status(404).json({ message: "No se pudo actualizar el stock de la vacuna" })
         }
+
+        const rawIp = req.headers['x-forwarded-for']?.split(',')[0] || req.socket.remoteAddress;
+
+        const ip = rawIp?.replace('::ffff', '');
+
+        await bitacora({
+            usuarioId: veterinario_Id,
+            fecha_hora: new Date().toISOString(),
+            operacion: "CREACION",
+            ip,
+            resultado: `Esterilizacion creada con ID ${vaccination.id}`
+        })
 
         return res.status(201).json({
             message: "Vacunación registrada correctamente",

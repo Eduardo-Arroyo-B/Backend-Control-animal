@@ -1,5 +1,6 @@
 import prisma from "../../../prisma/prismaClient.js";
 import generateFolio from "../../helpers/generateFolio.js";
+import bitacora from "../../helpers/binnacle.js";
 
 const getAllBites = async (req, res) => {
     try {
@@ -99,6 +100,18 @@ const createBite = async (req, res) => {
         if (!bite) {
             return res.status(404).json({ message: "No se pudo crear el registro de mordedura" })
         }
+
+        const rawIp = req.headers['x-forwarded-for']?.split(',')[0] || req.socket.remoteAddress;
+
+        const ip = rawIp?.replace('::ffff', '');
+
+        await bitacora({
+            usuarioId: registrado_por,
+            fecha_hora: new Date().toISOString(),
+            operacion: "CREACION",
+            ip,
+            resultado: `Mordedura creada con ID ${folio}`
+        })
 
         return res.status(201).json({ message: "Mordedura creada exitosamente", bite })
     } catch (error) {

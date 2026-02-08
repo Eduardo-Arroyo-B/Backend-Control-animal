@@ -1,5 +1,6 @@
 import prisma from "../../../prisma/prismaClient.js";
 import generateFolio from "../../helpers/generateFolio.js";
+import bitacora from "../../helpers/binnacle.js";
 
 const getAllAdoptions = async (req,res) => {
     try {
@@ -106,6 +107,17 @@ const createAdoption = async (req,res) => {
             return adoption
         })
 
+        const rawIp = req.headers['x-forwarded-for']?.split(',')[0] || req.socket.remoteAddress;
+
+        const ip = rawIp?.replace('::ffff', '');
+
+        await bitacora({
+            usuarioId: evaluador_id,
+            fecha_hora: new Date().toISOString(),
+            operacion: "CREACION",
+            ip,
+            resultado: `Adopcion creada con ID ${folio}`
+        })
 
         return res.status(201).json({ message: "Adopcion creada exitosamente", result })
     } catch (error) {
@@ -651,6 +663,18 @@ const updateAdoptionStatus = async (req, res) => {
 
             return solicitudActualizada;
         });
+
+        const rawIp = req.headers['x-forwarded-for']?.split(',')[0] || req.socket.remoteAddress;
+
+        const ip = rawIp?.replace('::ffff', '');
+
+        await bitacora({
+            usuarioId: aprobado_por,
+            fecha_hora: new Date().toISOString(),
+            operacion: "ACTUALIZACION",
+            ip,
+            resultado: `Adopcion actualizada del animal ${animal.animal_id}`
+        })
 
         return res.status(200).json({
             message: `Solicitud de adopción ${estatus_adopcion.toLowerCase()} exitosamente`,

@@ -1,5 +1,6 @@
 import prisma from "../../../prisma/prismaClient.js";
 import generateFolio from "../../helpers/generateFolio.js";
+import bitacora from "../../helpers/binnacle.js";
 
 const getDewormings = async (req, res) => {
     try {
@@ -52,6 +53,18 @@ const createDeworming = async (req, res) => {
         if (deworming > 0) {
             return res.status(400).json({ message: "No hay desparasitaciones actualmente" })
         }
+
+        const rawIp = req.headers['x-forwarded-for']?.split(',')[0] || req.socket.remoteAddress;
+
+        const ip = rawIp?.replace('::ffff', '');
+
+        await bitacora({
+            usuarioId: aplicado_por,
+            fecha_hora: new Date().toISOString(),
+            operacion: "CREACION",
+            ip,
+            resultado: `Animal creado con ID ${folioDes}`
+        })
 
         return res.status(201).json({ message: "Desparasitacion creada exitosamente", deworming })
     } catch (error) {

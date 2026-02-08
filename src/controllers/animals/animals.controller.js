@@ -1,6 +1,7 @@
 import prisma from "../../../prisma/prismaClient.js"
 import convertToBoolean from "../../helpers/convertToBoolean.js";
 import generateFolio from "../../helpers/generateFolio.js";
+import bitacora from "../../helpers/binnacle.js"
 
 const getAnimals = async (req, res) => {
     try {
@@ -109,6 +110,10 @@ const createAnimal = async (req, res) => {
             muerto 
         } = req.body;
 
+        const rawIp = req.headers['x-forwarded-for']?.split(',')[0] || req.socket.remoteAddress;
+
+        const ip = rawIp?.replace('::ffff', '');
+
         const razaId = Number(Raza)
 
         // Validar que Raza sea un numero para la relacion con el catalogo de razas
@@ -192,6 +197,14 @@ const createAnimal = async (req, res) => {
 
             console.log("Fotos creadas", animalFotos)
         }
+
+        await bitacora({
+            usuarioId: registrado_por,
+            fecha_hora: new Date().toISOString(),
+            operacion: "CREACION",
+            ip,
+            resultado: `Animal creado con ID ${folioGenerado}`
+        })
 
         return res.status(201).json({
             message: "Animal creado correctamente",
@@ -281,6 +294,18 @@ const createAnimalFlujo = async (req, res) => {
             console.log("Fotos creadas", animalFotos)
         }
 
+        const rawIp = req.headers['x-forwarded-for']?.split(',')[0] || req.socket.remoteAddress;
+
+        const ip = rawIp?.replace('::ffff', '');
+
+        await bitacora({
+            usuarioId: registrado_por,
+            fecha_hora: new Date().toISOString(),
+            operacion: "CREACION",
+            ip,
+            resultado: `Animal creado con ID ${animal.animal_id}`
+        })
+
         return res.status(201).json({ message: "Animal creado exitosamente", animal })
     } catch(error) {
         return res.status(404).json({ message: error.message });
@@ -348,6 +373,18 @@ const updateAnimal = async (req, res) => {
         if (!animal) {
             return res.status(404).json({ message: "No se pudo actualizar el animal" })
         }
+
+        // const rawIp = req.headers['x-forwarded-for']?.split(',')[0] || req.socket.remoteAddress;
+        //
+        // const ip = rawIp?.replace('::ffff', '');
+        //
+        // await bitacora({
+        //     usuarioId: registrado_por,
+        //     fecha_hora: new Date().toISOString(),
+        //     operacion: "ACTUALIZACION",
+        //     ip,
+        //     resultado: `Animal creado con ID ${animal.animal_id}`
+        // })
 
         return res.status(200).json({ message: "Animal actualizado correctamente", animal })
     } catch (error) {
