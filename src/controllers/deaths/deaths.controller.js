@@ -83,7 +83,9 @@ const createDeaths = async (req, res) => {
 
     const deathData = {
         folio: folioNew,
-        animal_id: Number(animal_id),
+        Animal: {
+            connect: { animal_id: animal_id}
+        },
         fecha_hora_defuncion: new Date(fecha_hora_defuncion),
         lugar_defuncion,
         causa_muerte,
@@ -105,7 +107,8 @@ const createDeaths = async (req, res) => {
         const animal = await prisma.animales.update({
             where: { animal_id: Number(animal_id) },
             data: { 
-                muerto: true
+                muerto: true,
+                estado_salud: "Finido"
             },
         })
 
