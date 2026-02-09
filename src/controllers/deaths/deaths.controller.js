@@ -83,9 +83,7 @@ const createDeaths = async (req, res) => {
 
     const deathData = {
         folio: folioNew,
-        animal: {
-            connect: { animal_id: Number(animal_id) }
-        },
+        animal_id: Number(animal_id),
         fecha_hora_defuncion: new Date(fecha_hora_defuncion),
         lugar_defuncion,
         causa_muerte,
@@ -97,6 +95,9 @@ const createDeaths = async (req, res) => {
     }
 
     try {
+        if (!animal_id || isNaN(Number(animal_id))) {
+            return res.status(400).json({ message: "animal_id inválido o faltante" });
+        }
         const death = await prisma.defunciones.create({
             data: deathData,
         })
@@ -104,9 +105,7 @@ const createDeaths = async (req, res) => {
         const animal = await prisma.animales.update({
             where: { animal_id: Number(animal_id) },
             data: { 
-                muerto: true,
-                estado_salud: "Finado"
-
+                muerto: true
             },
         })
 
