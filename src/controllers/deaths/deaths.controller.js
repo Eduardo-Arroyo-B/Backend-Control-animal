@@ -104,7 +104,11 @@ const createDeaths = async (req, res) => {
 
         const animal = await prisma.animales.update({
             where: { animal_id: Number(animal_id) },
-            data: { muerto: true },
+            data: { 
+                muerto: true,
+                estado_salud: "Finado"
+
+            },
         })
 
         if (!death || !animal) {
