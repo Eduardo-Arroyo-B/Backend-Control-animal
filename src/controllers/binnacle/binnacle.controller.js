@@ -14,6 +14,40 @@ const getAllBinnacles = async (req, res) => {
     }
 }
 
+const createDeleteBinnacle = async (req, res) => {
+    // Extraccion de datos del body
+    const {
+        usuarioId,
+        operacion,
+        resultado
+    } = req.body
+
+    const rawIp = req.headers['x-forwarded-for']?.split(',')[0] || req.socket.remoteAddress;
+
+    const ip = rawIp?.replace('::ffff', '');
+
+    try {
+        const deleteBinaccle = await prisma.bitacora_Auditoria.create({
+            data: {
+                usuarioId,
+                fecha_hora: new Date().toISOString(),
+                operacion,
+                ip,
+                resultado
+            }
+        })
+
+        if (!deleteBinaccle) {
+            return res.status(404).json({ message: "No se pudo crear la bitacora de cierre de sesion" })
+        }
+
+        return res.status(201).json({ message: "Bitacora de eliminacion creada exitosamente", deleteBinaccle })
+    } catch (error) {
+        return res.status(404).json({ message: "Error la crear la bitacora de eliminacion", error: error.message })
+    }
+}
+
 export {
-    getAllBinnacles
+    getAllBinnacles,
+    createDeleteBinnacle
 }

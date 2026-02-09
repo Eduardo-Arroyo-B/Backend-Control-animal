@@ -4,7 +4,11 @@ import bitacora from "../../helpers/binnacle.js";
 
 const getAllBites = async (req, res) => {
     try {
-        const bites = await prisma.mordeduras.findMany()
+        const bites = await prisma.mordeduras.findMany({
+            include: {
+                Mordeduras_Fotos: true
+            }
+        })
 
         if (!bites) {
             return res.status(404).json({ message: "No se pudieron obtener las mordeduras" })
@@ -99,6 +103,20 @@ const createBite = async (req, res) => {
 
         if (!bite) {
             return res.status(404).json({ message: "No se pudo crear el registro de mordedura" })
+        }
+
+        // Guardar fotos si se enviaron
+        if (req.files && req.files.length > 0) {
+            const fotosData = req.files.map((file, index) => ({
+                mordedura_id: bite.mordedura_id,
+                url: file.path.replace(/\\/g, "/"),
+            }))
+
+            const mordidasFotos = await prisma.mordeduras_Fotos.createMany({
+                data: fotosData
+            })
+
+            console.log("Fotos creadas", mordidasFotos)
         }
 
         const rawIp = req.headers['x-forwarded-for']?.split(',')[0] || req.socket.remoteAddress;
