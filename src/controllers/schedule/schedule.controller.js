@@ -15,7 +15,7 @@ const getAgendaMes = async (req, res) => {
         where: { fecha_hora_cita: { gte: start, lte: end }, 
             estatus_cita: "Pendiente"
         },
-            orderBy: { fecha_hora_cita: 'asc' }
+            orderBy: { fecha_hora_cita: 'asc' },
     });
 
     return res.status(200).json({ message: "Citas del mes obtenidas exitosamente", citas})
@@ -28,7 +28,7 @@ const getAgendaMes = async (req, res) => {
 // Obtener todas las citas del dia
 const getAgendaDia = async (req, res) => {
     try{
-        const { fecha } = req.body; // ej: 2025-02-08
+        const { fecha } = req.query;
 
         if (!fecha) return res.status(400).json({ error: 'Falta fecha' });
 
@@ -38,8 +38,10 @@ const getAgendaDia = async (req, res) => {
         end.setHours(23, 59, 59, 999);
 
         const citas = await prisma.Citas.findMany({
-            where: { fecha: { gte: start, lte: end } },
-            orderBy: { fecha: 'asc' }    
+            where: { fecha_hora_cita: { gte: start, lte: end },
+                estatus_cita: "Pendiente"
+        },
+            orderBy: { fecha_hora_cita: 'asc' }    
     }); 
 
     return res.status(200).json({ message: "Citas del dia obtenidas exitosamente", citas})
