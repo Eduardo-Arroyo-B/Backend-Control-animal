@@ -9,8 +9,8 @@ import {
 const router = express();
 
 // Rutas
-router.post("/getAgendaMes", getAgendaMes);
-router.post("/getAgendaDia", getAgendaDia);
+router.get("/getAgendaMes", getAgendaMes);
+router.get("/getAgendaDia", getAgendaDia);
 router.post("/createCita", createCita);
 
 export default router;
