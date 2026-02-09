@@ -40,11 +40,14 @@ const getAgendaDia = async (req, res) => {
         const end = new Date(fecha);
         end.setHours(23, 59, 59, 999);
 
-        const citas = await prisma.Citas.findMany({
+        const citas = await prisma.citas.findMany({
             where: { fecha_hora_cita: { gte: start, lte: end },
                 estatus_cita: "Pendiente"
         },
-            orderBy: { fecha_hora_cita: 'asc' }    
+            orderBy: { fecha_hora_cita: 'asc' },
+            include: {
+            Animal: true
+        }
     }); 
 
     return res.status(200).json({ message: "Citas del dia obtenidas exitosamente", citas})
