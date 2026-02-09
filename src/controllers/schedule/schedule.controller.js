@@ -3,7 +3,7 @@ import bitacora from "../../helpers/binnacle.js";
 // Obtener todas las citas del mes
 const getAgendaMes = async (req, res) => {
   try {
-    const { mes, anio } = req.query;
+    const { mes, anio } = req.body;
 
     if (!mes || !anio) return res.status(400).json({ error: 'Faltan mes o año' });
 
@@ -81,9 +81,8 @@ const createCita = async (req, res) => {
     } catch (error) {
         return res.status(500).json({ message: "Error al crear la cita", error: error.message });
     }
-
-
 }
+
 export {
     getAgendaMes,
     getAgendaDia,

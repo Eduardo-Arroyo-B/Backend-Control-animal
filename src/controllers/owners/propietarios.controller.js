@@ -1,6 +1,7 @@
 import prisma from "../../../prisma/prismaClient.js";
 import generateFolio from "../../helpers/generateFolio.js";
 import bitacora from "../../helpers/binnacle.js";
+import trasnporter, {transporter} from "../../helpers/mailer.js"
 
 const getAllPropietarios = async (req, res) => {
     try {
@@ -368,6 +369,14 @@ const createPropietarioPortal = async (req, res) => {
             return res.status(404).json({ message: "No se pudo crear el propietario en el portal" })
         }
 
+        await transporter.sendMail({
+            from: "SICA",
+            to: reportData.email,
+            subject: "🐶 SICA - Sistema Integral de Control Animal Municipal",
+            text: "Registro en Portal Publico SICA",
+            html: "<b>Hola</b>, gracias por su registro en nuestro portal público, estamos procesando la revision de su expediente lo más rapido posible, una vez aprobado le mandaremos un correo con su folio para acceder, gracias por su registro"
+        })
+
         return res.status(201).json({ messafge: "Propietario en portal creado exitosamente", propietario });
     } catch (error) {
         return res.status(500).json({ message: "Ha ocurrido un error al crear el propietario en el portal", error: error.message})
@@ -392,6 +401,17 @@ const updateStatusValidacionPortal = async (req, res) => {
         if (!updatePropietario) {
             return res.status(404).json({ message: "No se pudo actualizar el propietario" })
         }
+
+        await transporter.sendMail({
+            from: "SICA",
+            to: updatePropietario.email,
+            subject: "🐶 SICA - Sistema Integral de Control Animal Municipal",
+            text: "Solicitud Aprobada",
+            html:
+                `<b>Hola</b>
+                 Su solicitud ha sido aprobada para el uso del portal público de SICA.
+                 Su folio es: <b>${updatePropietario.folio_propietario}</b>`
+        })
 
         return res.status(200).json({ message: "Estatus del propietario actualizado exitosamente", updatePropietario })
     } catch (error) {
