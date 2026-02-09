@@ -85,7 +85,7 @@ const createEsterilizacion = async (req, res) => {
             const nuevoFolio = await generateFolio("EST")
 
             const result = await prisma.$transaction(async tx => {
-                const esterilizacion = await tx.esterilizacion.create({
+                const esterilizacion = await tx.Esterilizaciones.create({
                     data: {
                         folio_servicio: nuevoFolio,
                         animal_id: Number(animal_id),
