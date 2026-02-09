@@ -331,7 +331,6 @@ const createAnimalFlujo = async (req, res) => {
         }
 
         const rawIp = req.headers['x-forwarded-for']?.split(',')[0] || req.socket.remoteAddress;
-
         const ip = rawIp?.replace('::ffff', '');
 
         await bitacora({
@@ -370,6 +369,7 @@ const updateAnimal = async (req, res) => {
         estado_salud,
         sexo,
         observaciones,
+        actualizado_por,
         fecha_ingreso,
         es_adoptable,
     } = req.body;
@@ -394,6 +394,7 @@ const updateAnimal = async (req, res) => {
         estado_salud,
         sexo,
         observaciones,
+        actualizado_por,
         fecha_ingreso,
         es_adoptable: booleanAdoptable,
     };
@@ -434,17 +435,16 @@ const updateAnimal = async (req, res) => {
             return res.status(404).json({ message: "No se pudo actualizar el animal" })
         }
 
-        // const rawIp = req.headers['x-forwarded-for']?.split(',')[0] || req.socket.remoteAddress;
-        //
-        // const ip = rawIp?.replace('::ffff', '');
-        //
-        // await bitacora({
-        //     usuarioId: registrado_por,
-        //     fecha_hora: new Date().toISOString(),
-        //     operacion: "ACTUALIZACION",
-        //     ip,
-        //     resultado: `Animal creado con ID ${animal.animal_id}`
-        // })
+        const rawIp = req.headers['x-forwarded-for']?.split(',')[0] || req.socket.remoteAddress;
+        const ip = rawIp?.replace('::ffff', '');
+
+        await bitacora({
+            usuarioId: actualizado_por,
+            fecha_hora: new Date().toISOString(),
+            operacion: "UPDATE",
+            ip,
+            resultado: `Animal actualizado con ID ${animal.animal_id}`
+        })
 
         return res.status(200).json({ message: "Animal actualizado correctamente", animal })
     } catch (error) {
