@@ -22,9 +22,9 @@ const getAgendaMes = async (req, res) => {
 };
 
 // Obtener todas las citas del dia
-const getAgendaDia= async (req, res) => {
+const getAgendaDia = async (req, res) => {
     try{
-        const { fecha } = req.query; // ej: 2025-02-08
+        const { fecha } = req.body; // ej: 2025-02-08
 
         if (!fecha) return res.status(400).json({ error: 'Falta fecha' });
 

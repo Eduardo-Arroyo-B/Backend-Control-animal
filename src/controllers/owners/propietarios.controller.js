@@ -1,7 +1,7 @@
 import prisma from "../../../prisma/prismaClient.js";
 import generateFolio from "../../helpers/generateFolio.js";
 import bitacora from "../../helpers/binnacle.js";
-import trasnporter, {transporter} from "../../helpers/mailer.js"
+import { transporter } from "../../helpers/mailer.js"
 
 const getAllPropietarios = async (req, res) => {
     try {
