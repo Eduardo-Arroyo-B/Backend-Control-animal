@@ -23,6 +23,8 @@ const login = async (req, res) => {
                 estatus_usuario: true,
                 ultimo_acceso: true,
                 password: true,
+                bloqueado_hasta: true,
+                login_intentos: true,
                 Rol: {
                     select: {
                         id: true,
@@ -50,6 +52,7 @@ const login = async (req, res) => {
         // Compara el password en texto plano con el hasheado
         const comparePassword = await bcrypt.compare( password, findUser.password )
 
+        // Verificar Bloqueo
         if (findUser.bloqueado_hasta && findUser.bloqueado_hasta > new Date()) {
             return res.status(403).json({
                 message: "Usuario bloqueado temporalmente "
@@ -58,13 +61,12 @@ const login = async (req, res) => {
 
         // Manejo de errores
         if (!comparePassword) {
-            const intentos = findUser.login_intentos + 1
-
             await prisma.usuarios.update({
-                where: { id: findUser.usuario_id },
+                where: { usuario_id: findUser.usuario_id },
                 data: {
-                    login_intentos: intentos,
-                    bloqueado_hasta: intentos >= MAX_INTENTOS
+                    login_intentos: { increment: 1 },
+                    bloqueado_hasta:
+                        findUser.login_intentos + 1 >= MAX_INTENTOS
                         ? new Date(Date.now() + BLOQUEO_MINUTOS * 60000)
                         : null
                 }
@@ -89,9 +91,19 @@ const login = async (req, res) => {
             resultado: `Login exitoso del usuario`,
         })
 
+        // Login exitoso
+        await prisma.usuarios.update({
+            where: { usuario_id: findUser.usuario_id },
+            data: {
+                login_intentos: 0,
+                bloqueado_hasta: null,
+                ultimo_acceso: new Date().toISOString()
+            }
+        })
+
         return res.status(200).json({ message: "Inicio de session exitoso", findUser })
     } catch (error) {
-        return res.status(500).json({ message: "Ha ocurrido un error al hacer login" });
+        return res.status(500).json({ message: "Ha ocurrido un error al hacer login", error: error.message });
     }
 }
 
