@@ -237,6 +237,7 @@ model Propietario {
   validacion_portal     Boolean?  @default(false)
   creacion_portal       Boolean?  @default(false) // false: se creo en administracion, si es true se crearon en el portal web
   create_at             DateTime? @default(now())
+  password              String?
 
   // Relaciones
   Adopciones                      Adopciones[]

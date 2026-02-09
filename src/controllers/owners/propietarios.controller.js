@@ -2,6 +2,8 @@ import prisma from "../../../prisma/prismaClient.js";
 import generateFolio from "../../helpers/generateFolio.js";
 import bitacora from "../../helpers/binnacle.js";
 import { transporter } from "../../helpers/mailer.js"
+import generatePassword from "../../helpers/generatePassword.js"
+import bcrypt from "bcrypt";
 
 const getAllPropietarios = async (req, res) => {
     try {
@@ -355,7 +357,17 @@ const createPropietarioPortal = async (req, res) => {
         creacion_portal: true
     }
 
+    // Genera el folio del propietario web
     const folioUnicoProp = await generateFolio("PROPW")
+
+    // Genera Password para el usuario
+    const plainPassword = generatePassword()
+
+    // Salt para password
+    const salt = await bcrypt.genSalt(10);
+
+    // Generar hash password
+    const hash = await bcrypt.hash(plainPassword, salt);
 
     try {
         const existing = await prisma.propietario.findUnique({
@@ -370,7 +382,8 @@ const createPropietarioPortal = async (req, res) => {
         const propietario = await prisma.propietario.create({
             data: {
                 ...propietarioData,
-                folio_propietario: folioUnicoProp
+                folio_propietario: folioUnicoProp,
+                password: hash,
             }
         })
 
@@ -389,6 +402,33 @@ const createPropietarioPortal = async (req, res) => {
         return res.status(201).json({ messafge: "Propietario en portal creado exitosamente", propietario });
     } catch (error) {
         return res.status(500).json({ message: "Ha ocurrido un error al crear el propietario en el portal", error: error.message})
+    }
+}
+
+const loginPortalPassword = async (req, res) => {
+    // Extraccion de datos del body
+    const { usuario, password } = req.body
+
+    try {
+        const login = await prisma.propietario.findUnique({
+            where: {
+                folio_propietario: usuario,
+            }
+        })
+
+        if (!login) {
+            return res.status(404).json({ message: "el usuario no existe" })
+        }
+
+        const isValid = await bcrypt.compare(password, login.password)
+
+        if (!isValid) {
+            return res.status(404).json({ message: "La contraseña no es correcta, favor de verificarla" })
+        }
+
+        return res.status(200).json({ message: "Login exitoso" })
+     } catch (error) {
+        return res.status(500).json({ message: "No se pudo hacer el login en el portal web", error: error.message });
     }
 }
 
@@ -466,6 +506,7 @@ export {
     deletePropietario,
     createPropietarioPortal,
     updateStatusValidacionPortal,
-    loginPortal
+    loginPortal,
+    loginPortalPassword
 };
 
