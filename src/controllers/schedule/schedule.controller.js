@@ -13,7 +13,7 @@ const getAgendaMes = async (req, res) => {
 
     const citas = await prisma.citas.findMany({
         where: { fecha_hora_cita: { gte: start, lte: end }, 
-            estatus_cita: "Pendiente"
+            estatus_cita: "Programada"
         },
         orderBy: { fecha_hora_cita: 'asc' },
         include: {
@@ -42,7 +42,7 @@ const getAgendaDia = async (req, res) => {
 
         const citas = await prisma.citas.findMany({
             where: { fecha_hora_cita: { gte: start, lte: end },
-                estatus_cita: "Pendiente"
+                estatus_cita: "Programada"
         },
             orderBy: { fecha_hora_cita: 'asc' },
             include: {
@@ -70,7 +70,7 @@ const createCita = async (req, res) => {
     const citaData = {
         animal_id: Number(animal_id),
         veterinario,
-        estatus_cita: estatus_cita || 'Pendiente',
+        estatus_cita: estatus_cita || 'Programada',
         tipo_cita,
         fecha_hora_cita,
         quirofano: quirofano || null
