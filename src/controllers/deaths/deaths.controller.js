@@ -110,7 +110,7 @@ const createDeaths = async (req, res) => {
             where: { animal_id: Number(animal_id) },
             data: { 
                 muerto: true,
-                estado_salud: "Finido"
+                estado_salud: "Finado"
             },
         })
 
