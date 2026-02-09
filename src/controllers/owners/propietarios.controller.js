@@ -360,15 +360,6 @@ const createPropietarioPortal = async (req, res) => {
     // Genera el folio del propietario web
     const folioUnicoProp = await generateFolio("PROPW")
 
-    // Genera Password para el usuario
-    const plainPassword = generatePassword()
-
-    // Salt para password
-    const salt = await bcrypt.genSalt(10);
-
-    // Generar hash password
-    const hash = await bcrypt.hash(plainPassword, salt);
-
     try {
         const existing = await prisma.propietario.findUnique({
             where: { numero_identificacion },
@@ -382,8 +373,7 @@ const createPropietarioPortal = async (req, res) => {
         const propietario = await prisma.propietario.create({
             data: {
                 ...propietarioData,
-                folio_propietario: folioUnicoProp,
-                password: hash,
+                folio_propietario: folioUnicoProp
             }
         })
 
@@ -437,13 +427,23 @@ const updateStatusValidacionPortal = async (req, res) => {
     const { id }  = req.params;
 
     try {
+        // Genera Password para el usuario
+        const plainPassword = generatePassword()
+
+        // Salt para password
+        const salt = await bcrypt.genSalt(10);
+
+        // Generar hash password
+        const hash = await bcrypt.hash(plainPassword, salt);
+
         const updatePropietario = await prisma.propietario.update({
             where: {
                 propietario_id: id
             },
             data: {
                 validacion_portal: true,
-                estatus_propietario: "Activo"
+                estatus_propietario: "Activo",
+                password: hash
             }
         })
 
@@ -459,7 +459,8 @@ const updateStatusValidacionPortal = async (req, res) => {
             html:
                 `<b>Hola</b>
                  Su solicitud ha sido aprobada para el uso del portal público de SICA.
-                 Su folio es: <b>${updatePropietario.folio_propietario}</b>`
+                 Su folio es: <b>${updatePropietario.folio_propietario}</b>
+                 Su contraseña es: <b>${plainPassword}</b>`
         })
 
         return res.status(200).json({ message: "Estatus del propietario actualizado exitosamente", updatePropietario })
