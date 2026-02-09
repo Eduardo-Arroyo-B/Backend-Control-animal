@@ -1,5 +1,6 @@
 import prisma from "../../../prisma/prismaClient.js";
 import bitacora from "../../helpers/binnacle.js";
+
 // Obtener todas las citas del mes
 const getAgendaMes = async (req, res) => {
   try {
@@ -7,16 +8,17 @@ const getAgendaMes = async (req, res) => {
 
     if (!mes || !anio) return res.status(400).json({ error: 'Faltan mes o año' });
 
-    const start = new Date(anio, mes - 1, 1);
-    const end   = new Date(anio, mes, 0, 23, 59, 59, 999);
+    const start = new Date(Number(anio), Number(mes) - 1, 1);
+    const end = new Date(Number(anio), Number(mes), 0, 23, 59, 59, 999);
 
-    const citas = await prisma.citas.findMany({
+    const citas = await prisma.Citas.findMany({
         where: { fecha: { gte: start, lte: end } },
             orderBy: { fecha: 'asc' }
     });
 
     return res.status(200).json({ message: "Citas del mes obtenidas exitosamente", citas})
   } catch (error) {
+    console.error(error); // ← agrega esto para debug
     res.status(500).json({ error: 'Error al obtener citas' });
   }
 };
@@ -33,13 +35,14 @@ const getAgendaDia = async (req, res) => {
         const end = new Date(fecha);
         end.setHours(23, 59, 59, 999);
 
-        const citas = await prisma.citas.findMany({
+        const citas = await prisma.Citas.findMany({
             where: { fecha: { gte: start, lte: end } },
             orderBy: { fecha: 'asc' }    
     }); 
 
     return res.status(200).json({ message: "Citas del dia obtenidas exitosamente", citas})
     } catch (error) {
+        console.error(error); // ← agrega esto para debug
         res.status(500).json({error: 'Error al obtener citas' })
     }
 };
