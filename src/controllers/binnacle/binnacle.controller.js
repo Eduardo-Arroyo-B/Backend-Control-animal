@@ -47,7 +47,32 @@ const createDeleteBinnacle = async (req, res) => {
     }
 }
 
+const createBinnacleReports = async (req, res) => {
+    const { resultado, usuarioId } = req.body
+
+    try {
+        const createBinnacle = await prisma.bitacora_Auditoria.create({
+            data: {
+                usuarioId,
+                fecha_hora: new Date().toISOString(),
+                operacion: "CREACION",
+                ip: rawIp?.replace('::ffff', ''),
+                resultado: `Reporte de ${resultado} creado con ID ${usuarioId}`
+            }
+        })
+
+        if (!createBinnacle) {
+            return res.status(404).json({ message: "No se pudo crear la bitacora de reportes" })
+        }
+
+        return res.status(201).json({ message: "Bitacora de reportes creada exitosamente" })
+    } catch (error) {
+        return res.status(500).json({ message: "Error la crear la bitacora de reportes" })
+    }
+}
+
 export {
     getAllBinnacles,
-    createDeleteBinnacle
+    createDeleteBinnacle,
+    createBinnacleReports
 }
