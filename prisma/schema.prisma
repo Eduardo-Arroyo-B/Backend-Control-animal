@@ -405,7 +405,7 @@ model Evaluaciones_Adopcion {
 }
 
 model Desparasitaciones {
-  desparacitaciones_id  Int     @id @default(autoincrement())
+  desparacitaciones_id  Int      @id @default(autoincrement())
   folio_desparasitacion String?
   animal_id             Int
   producto_utilizado    String
@@ -416,7 +416,7 @@ model Desparasitaciones {
   dosis_desparasitacion String
   tipo_desparasitacion  String
 
-  aplicado_por          String  @db.Uuid
+  aplicado_por String @db.Uuid
 
   // Relaciones
   Animal   Animales @relation(fields: [animal_id], references: [animal_id])
@@ -612,13 +612,13 @@ model Campaigns {
 }
 
 model Citas {
-  cita_id           Int      @id @default(autoincrement())
-  animal_id         Int
-  veterinario       String
-  tipo_cita         String
-  fecha_hora_cita   DateTime
-  estatus_cita      String?
-  quirofano         String?
+  cita_id         Int      @id @default(autoincrement())
+  animal_id       Int
+  veterinario     String
+  tipo_cita       String
+  fecha_hora_cita DateTime
+  estatus_cita    String?
+  quirofano       String?
 
   // Relaciones
   Animal Animales @relation(fields: [animal_id], references: [animal_id])

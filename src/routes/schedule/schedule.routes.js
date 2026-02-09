@@ -11,6 +11,6 @@ const router = express();
 // Rutas
 router.get("/getAgendaMes", getAgendaMes);
 router.get("/getAgendaDia", getAgendaDia);
-router.post("/createCita/:id", createCita);
+router.post("/createCita", createCita);
 
 export default router;
