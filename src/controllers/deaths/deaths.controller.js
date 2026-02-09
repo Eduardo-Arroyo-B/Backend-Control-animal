@@ -7,10 +7,7 @@ const getAllDeaths = async (req, res) => {
         const deats = await prisma.defunciones.findMany({
             include: {
                 Animal: {
-                    select: {
-                        nombre_animal: true,
-                        especie: true
-                    }
+                    include: true
                 }
             }
         })
