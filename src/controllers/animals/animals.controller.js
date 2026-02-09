@@ -540,5 +540,6 @@ export {
     updateAnimal,
     deleteAnimals,
     getMiniExpedienteAnimal,
-    createMiniExpedienteAnimal
+    createMiniExpedienteAnimal,
+    updateEstadoReproductivo
 }
