@@ -253,6 +253,7 @@ const updateQuarantine = async (req, res) => {
         fecha_inicio,
         observaciones,
         registrado_por,
+        actualizado_por,
         estatus_cuarentena,
         fecha_fin_real
     } = req.body;
@@ -382,6 +383,17 @@ const updateQuarantine = async (req, res) => {
                 }
             }
         });
+
+        const rawIp = req.headers['x-forwarded-for']?.split(',')[0] || req.socket.remoteAddress;
+        const ip = rawIp?.replace('::ffff', '');
+
+        await bitacora({
+            usuarioId: actualizado_por,
+            fecha_hora: new Date().toISOString(),
+            operacion: "UPDATE",
+            ip,
+            resultado: `Medicamento actualizado con ID ${medicamento.medicamento_id}`
+        })
 
         return res.status(200).json({
             message: "Cuarentena actualizada correctamente",

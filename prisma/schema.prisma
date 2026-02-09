@@ -286,6 +286,7 @@ model Inventario_Medicamentos {
   unidad_medida        String
   fecha_vencimiento    DateTime
   stock_alerta         Int
+  actualizado_por      String?
   lote                 String?
   registrado_por       String   @db.Uuid
 
@@ -377,6 +378,7 @@ model Cuarentenas {
   fecha_fin_estimada DateTime
   estatus_cuarentena Estatus_Cuarentena @default(Activa)
   observaciones      String?
+  actualizado_por    String?
   registrado_por     String             @db.Uuid
 
   // Relaciones

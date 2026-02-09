@@ -103,6 +103,7 @@ const updateMedicamento = async (req, res) => {
         fecha_vencimiento,
         cantidad_disponibles,
         unidad_medida,
+        actualizado_por,
         stock_alerta,
         lote
     } = req.body;
@@ -112,6 +113,7 @@ const updateMedicamento = async (req, res) => {
         fecha_vencimiento,
         cantidad_disponibles,
         unidad_medida,
+        actualizado_por,
         stock_alerta,
         lote
     };
@@ -128,6 +130,16 @@ const updateMedicamento = async (req, res) => {
             return res.status(404).json({ message: "No se pudo actualizar el medicamento" })
         }
 
+        const rawIp = req.headers['x-forwarded-for']?.split(',')[0] || req.socket.remoteAddress;
+        const ip = rawIp?.replace('::ffff', '');
+
+        await bitacora({
+            usuarioId: actualizado_por,
+            fecha_hora: new Date().toISOString(),
+            operacion: "UPDATE",
+            ip,
+            resultado: `Medicamento actualizado con ID ${medicamento.medicamentos_id}`
+        })
         return res.status(200).json({message: "Medicamento modificado exitosamente" , medicamento});
     } catch (error) {
         return res.status(500).json({ error: "Error al actualizar medicamento" });
