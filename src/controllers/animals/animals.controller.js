@@ -36,6 +36,9 @@ const getAnimalsDeaths = async (req, res) => {
         const animals = await prisma.animales.findMany({
             where: {
                 muerto: true
+            },
+            include: {
+                RazaCatalogo: true
             }
         })
 
