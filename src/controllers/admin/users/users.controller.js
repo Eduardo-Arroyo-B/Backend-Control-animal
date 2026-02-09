@@ -211,7 +211,7 @@ const createUser = async (req, res) => {
 
 
 const updateUser = async (req, res) => {
-    const { id, estatus_usuario, rol_id } = req.body;
+    const { id, estatus_usuario, rol_id, actualizado_por} = req.body;
 
     // Validaciones básicas
     if (!id) {
@@ -264,6 +264,16 @@ const updateUser = async (req, res) => {
             return updateUser;
         });
 
+        const rawIp = req.headers['x-forwarded-for']?.split(',')[0] || req.socket.remoteAddress;
+        const ip = rawIp?.replace('::ffff', '');
+
+        await bitacora({
+            usuarioId: actualizado_por,
+            fecha_hora: new Date().toISOString(),
+            operacion: "UPDATE",
+            ip,
+            resultado: `Usuario actualizado con ID ${usuario.usuario_id}`
+        })
         return res.status(200).json({
             message: "Usuario actualizado correctamente",
             result
@@ -275,7 +285,6 @@ const updateUser = async (req, res) => {
         });
     }
 };
-
 
 const deleteUser = async (req, res) => {
     // Extraccion del id por parametros

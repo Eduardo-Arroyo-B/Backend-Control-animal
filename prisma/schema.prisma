@@ -15,6 +15,7 @@ model Usuarios {
   nombre_completo String
   rol_id          String          @db.Uuid
   estatus_usuario Estatus_Usuario
+  actualizado_por String?
   ultimo_acceso   DateTime
 
   // Seguridad
