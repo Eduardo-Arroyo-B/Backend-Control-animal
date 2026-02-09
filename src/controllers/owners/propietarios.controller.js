@@ -358,6 +358,15 @@ const createPropietarioPortal = async (req, res) => {
     const folioUnicoProp = await generateFolio("PROPW")
 
     try {
+        const existing = await prisma.propietario.findUnique({
+            where: { numero_identificacion },
+        })
+
+        // Busca un propietario existente con su ID
+        if (existing) {
+            return res.status(404).json({ message: "El ID de este propietario ya existe"})
+        }
+
         const propietario = await prisma.propietario.create({
             data: {
                 ...propietarioData,
