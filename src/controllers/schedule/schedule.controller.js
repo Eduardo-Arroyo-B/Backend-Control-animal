@@ -11,11 +11,14 @@ const getAgendaMes = async (req, res) => {
     const start = new Date(Number(anio), Number(mes) - 1, 1);
     const end = new Date(Number(anio), Number(mes), 0, 23, 59, 59, 999);
 
-    const citas = await prisma.Citas.findMany({
+    const citas = await prisma.citas.findMany({
         where: { fecha_hora_cita: { gte: start, lte: end }, 
             estatus_cita: "Pendiente"
         },
-            orderBy: { fecha_hora_cita: 'asc' },
+        orderBy: { fecha_hora_cita: 'asc' },
+        include: {
+            Animal: true
+        }
     });
 
     return res.status(200).json({ message: "Citas del mes obtenidas exitosamente", citas})
