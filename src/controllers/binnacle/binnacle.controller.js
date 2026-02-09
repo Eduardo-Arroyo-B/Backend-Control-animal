@@ -55,13 +55,17 @@ const createDeleteBinnacle = async (req, res) => {
 const createBinnacleReports = async (req, res) => {
     const { resultado, usuarioId } = req.body
 
+    const rawIp = req.headers['x-forwarded-for']?.split(',')[0] || req.socket.remoteAddress;
+
+    const ip = rawIp?.replace('::ffff', '');
+
     try {
         const createBinnacle = await prisma.bitacora_Auditoria.create({
             data: {
                 usuarioId,
                 fecha_hora: new Date().toISOString(),
                 operacion: "CREACION",
-                ip: rawIp?.replace('::ffff', ''),
+                ip,
                 resultado: `Reporte de ${resultado} creado con ID ${usuarioId}`
             }
         })
