@@ -380,7 +380,7 @@ const createPropietarioPortal = async (req, res) => {
 
         await transporter.sendMail({
             from: "SICA",
-            to: reportData.email,
+            to: email,
             subject: "🐶 SICA - Sistema Integral de Control Animal Municipal",
             text: "Registro en Portal Publico SICA",
             html: "<b>Hola</b>, gracias por su registro en nuestro portal público, estamos procesando la revision de su expediente lo más rapido posible, una vez aprobado le mandaremos un correo con su folio para acceder, gracias por su registro"
