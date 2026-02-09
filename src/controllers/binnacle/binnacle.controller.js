@@ -2,7 +2,12 @@ import prisma from "../../../prisma/prismaClient.js";
 
 const getAllBinnacles = async (req, res) => {
     try {
-        const binnacles = await prisma.bitacora_Auditoria.findMany()
+        const binnacles = await prisma.bitacora_Auditoria.findMany({
+            orderBy: {
+                id: "desc"
+            },
+            take: 50
+        })
 
         if (binnacles.length === 0) {
             return res.status(404).json({ message: "No se encontraron resultados en la bitacora de auditoria" })
