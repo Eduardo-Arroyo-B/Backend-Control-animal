@@ -83,7 +83,7 @@ const createDeaths = async (req, res) => {
 
     const deathData = {
         folio: folioNew,
-        animales: {
+        Animales: {
             connect: { animal_id: Number(animal_id) }
         },
         fecha_hora_defuncion: new Date(fecha_hora_defuncion),
@@ -109,7 +109,6 @@ const createDeaths = async (req, res) => {
             data: { 
                 muerto: true,
                 estado_salud: "Finado"
-
             },
         })
 
