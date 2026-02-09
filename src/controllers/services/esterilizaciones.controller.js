@@ -148,9 +148,11 @@ const createEsterilizacion = async (req, res) => {
                     ip,
                     resultado: `Esterilizacion creada con ID ${nuevoFolio}`
                 })
-                return esterilizacion;       
             });
-            return res.status(201).json({message: "Esterilización registrada correctamente",esterilizacion});
+            return res.status(201).json({
+                message: "Esterilización registrada correctamente",
+                esterilizacion: result 
+            });
         } catch (error) {
             return res.status(500).json({ message: error.message});
         }
