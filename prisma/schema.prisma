@@ -508,6 +508,17 @@ model Mordeduras {
   Usuarios Usuarios @relation(fields: [registrador_por], references: [usuario_id])
 }
 
+model Mordeduras_Fotos {
+  id          Int     @id @default(autoincrement())
+  mordedura_id   Int
+  url         String
+  descripcion String?
+
+  Mordeduras Mordeduras @relation(fields: [mordedura_id], references: [mordedura_id])
+
+  @@index([mordedura_id])
+}
+
 model Propietario_Documentos {
   documento_id               Int    @id @default(autoincrement())
   propietario_id             String @db.Uuid
