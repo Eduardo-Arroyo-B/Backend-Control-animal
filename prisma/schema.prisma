@@ -179,12 +179,12 @@ model Animales {
   medico_implanto_microchip     String?
 
   // aparte
-  fecha_ingreso  String?
-  es_adoptable   Boolean? @default(false)
-  muerto         Boolean  @default(false)
-  registrado_por String   @db.Uuid
+  fecha_ingreso   String?
+  es_adoptable    Boolean? @default(false)
+  muerto          Boolean  @default(false)
+  registrado_por  String   @db.Uuid
   actualizado_por String?
-  propietario_id String?  @db.Uuid
+  propietario_id  String?  @db.Uuid
 
   // Relaciones
   Usuarios               Usuarios                 @relation(fields: [registrado_por], references: [usuario_id])
@@ -446,7 +446,7 @@ model Adopciones {
   fecha_solicitud  DateTime
   estatus_adopcion String
   costo_adopcion   Int?
-  actualizado_por String?
+  actualizado_por  String?
   evaluador_id     String?  @db.Uuid
 
   // Relaciones

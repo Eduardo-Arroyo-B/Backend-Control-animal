@@ -58,8 +58,11 @@ const getAnimalsByID = async (req, res) => {
         return res.status(404).json({ message: "Falta ID"})
     }
 
+    const isAnimalId =
+        /^\d+$/.test(search) && Number(search) <= 2147483647;
+
     const conditions = [
-        !isNaN(Number(search)) ? { animal_id: Number(search) } : null,
+        isAnimalId ? { animal_id: Number(search) } : null,
         { nombre_animal: { contains: search, mode: "insensitive" } },
         { numero_microchip: { contains: search, mode: "insensitive" } },
         { folio: { contains: search, mode: "insensitive" } },
