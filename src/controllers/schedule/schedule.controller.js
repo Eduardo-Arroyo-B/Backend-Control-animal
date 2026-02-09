@@ -18,7 +18,7 @@ const getAgendaMes = async (req, res) => {
 
     return res.status(200).json({ message: "Citas del mes obtenidas exitosamente", citas})
   } catch (error) {
-    console.error(error); // ← agrega esto para debug
+    console.error(error);
     res.status(500).json({ error: 'Error al obtener citas' });
   }
 };
@@ -42,7 +42,7 @@ const getAgendaDia = async (req, res) => {
 
     return res.status(200).json({ message: "Citas del dia obtenidas exitosamente", citas})
     } catch (error) {
-        console.error(error); // ← agrega esto para debug
+        console.error(error);
         res.status(500).json({error: 'Error al obtener citas' })
     }
 };
