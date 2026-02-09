@@ -155,7 +155,7 @@ const createAnimal = async (req, res) => {
         })
 
         if (microchip) {
-            return res.status(200).json({ meesage: "No se puede crear un animal con microchip existente" })
+            return res.status(200).json({ message: "No se puede crear un animal con microchip existente" })
         }
 
         const booleanAdoptable = es_adoptable === true || es_adoptable === "true"
