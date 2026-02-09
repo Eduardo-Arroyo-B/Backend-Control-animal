@@ -4,7 +4,7 @@ import bitacora from "../../helpers/binnacle.js";
 // Obtener todas las citas del mes
 const getAgendaMes = async (req, res) => {
   try {
-    const { mes, anio } = req.params;
+    const { mes, anio } = req.query;
 
     if (!mes || !anio) return res.status(400).json({ error: 'Faltan mes o año' });
 
