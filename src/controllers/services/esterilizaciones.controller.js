@@ -59,9 +59,10 @@ const createEsterilizacion = async (req, res) => {
         observaciones,
         propietario_id,
         veterinario_cirujano_id,
-        zona,
-        estadoReproductivo
+        zona
     } = req.body;
+
+    const estadoReproductivo = "Esterilizado";
 
     // Validación de campos requeridos
     if (!animal_id || !tipo || !fecha_cirujia || !metodo || !veterinario_cirujano_id) {
@@ -154,10 +155,7 @@ const createEsterilizacion = async (req, res) => {
                     })       
                 })
                 if (!result) throw new Error ("No se pudo crear esterilizacion ni modificar estatus");
-                return res.status(201).json({
-                message: "Esterilización registrada correctamente",
-                esterilizacion
-            });
+                return res.status(201).json({message: "Esterilización registrada correctamente",esterilizacion});
             } catch (error) {
                 return res.status(500).json({ message: error.message});
             }
