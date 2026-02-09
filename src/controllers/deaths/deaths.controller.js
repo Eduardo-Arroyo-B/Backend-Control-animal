@@ -89,7 +89,9 @@ const createDeaths = async (req, res) => {
         fecha_hora_defuncion: new Date(fecha_hora_defuncion),
         lugar_defuncion,
         causa_muerte,
-        veterinario_responsable,
+        Usuarios: {
+            connect: { veterinario_responsable: veterinario_responsable}
+        },
         autopsia: booleanAutopsia,
         disposicion_cadaver,
         observaciones,
