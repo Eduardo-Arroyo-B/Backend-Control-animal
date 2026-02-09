@@ -40,7 +40,7 @@ const getAgendaDia = async (req, res) => {
 
     return res.status(200).json({ message: "Citas del dia obtenidas exitosamente", citas})
     } catch (error) {
-        res.status(500).json({error: 'Error al obtener citas'})
+        res.status(500).json({error: 'Error al obtener citas' })
     }
 };
 
