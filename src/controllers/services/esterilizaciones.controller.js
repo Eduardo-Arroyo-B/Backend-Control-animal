@@ -59,7 +59,8 @@ const createEsterilizacion = async (req, res) => {
         observaciones,
         propietario_id,
         veterinario_cirujano_id,
-        zona
+        zona,
+        estadoReproductivo
     } = req.body;
 
     // Validación de campos requeridos
@@ -84,91 +85,81 @@ const createEsterilizacion = async (req, res) => {
         const nuevoFolio = await generateFolio("EST")
 
         const transaction = async (req, res) => {
-            const { id, estadoReproductivo } = req.body;
-                try{
-                    const result = await prisma.$transaction(async tx => {
-                        const esterilizacion = await tx.esterilizacion.create({
-                            data: {
-                                folio_servicio: nuevoFolio,
-                                animal_id: Number(animal_id),
-                                tipo,
-                                fecha_cirujia: new Date(fecha_cirujia),
-                                metodo,
-                                complicaciones: complicaciones || "",
-                                observaciones: observaciones || "",
-                                propietario_id: propietarioIdValue,
-                                veterinario_cirujano_id,
-                                zona
+            try {
+                const result = await prisma.$transaction(async tx => {
+                    const esterilizacion = await tx.esterilizacion.create({
+                        data: {
+                            folio_servicio: nuevoFolio,
+                            animal_id: Number(animal_id),
+                            tipo,
+                            fecha_cirujia: new Date(fecha_cirujia),
+                            metodo,
+                            complicaciones: complicaciones || "",
+                            observaciones: observaciones || "",
+                            propietario_id: propietarioIdValue,
+                            veterinario_cirujano_id,
+                            zona
+                        },
+                        include: {
+                            Animal: {
+                                select: {
+                                    animal_id: true,
+                                    nombre: true,
+                                    especie: true,
+                                    Raza: true
+                                }
                             },
-                            include: {
-                                Animal: {
-                                    select: {
-                                        animal_id: true,
-                                        nombre: true,
-                                        especie: true,
-                                        Raza: true
-                                    }
-                                },
-                                Propietario: {
-                                    select: {
-                                        propietario_id: true,
-                                        nombre: true,
-                                        apellido_paterno: true,
-                                        apellido_materno: true
-                                    }
-                                },
-                                Veterinario: {
-                                    select: {
-                                        usuario_id: true,
-                                        username: true,
-                                        nombre_completo: true
-                                    }
+                            Propietario: {
+                                select: {
+                                    propietario_id: true,
+                                    nombre: true,
+                                    apellido_paterno: true,
+                                    apellido_materno: true
+                                }
+                            },
+                            Veterinario: {
+                                select: {
+                                    usuario_id: true,
+                                    username: true,
+                                    nombre_completo: true
                                 }
                             }
-                        })
-                        if (!esterilizacion) {
-                                return res.status(404).json({ message: "No se pudo crear esterilizacion" })
-                            }
-                        const animalid = await prisma.animales.findUnique({
-                                where: {
-                                    animal_id: Number(id)
-                                }
-                            })
-
-                        if (!animalid) {
-                            return res.status(404).json({ message: "No se encontro el animal a actualizar" })
                         }
-
-                        const animal = await tx.animales.update({
-                            where: { animal_id: Number(id) },
-                            estado_reproductivo : estadoReproductivo
-                        })
-
-                        if (!animal) {
-                            return res.status(404).json({ message: "No se pudo actualizar el animal" })
-                        }
-                        const rawIp = req.headers['x-forwarded-for']?.split(',')[0] || req.socket.remoteAddress;
-
-                        const ip = rawIp?.replace('::ffff', '');
-                        await bitacora({
-                            usuarioId: veterinario_cirujano_id,
-                            fecha_hora: new Date().toISOString(),
-                            operacion: "CREACION",
-                            ip,
-                            resultado: `Esterilizacion creada con ID ${nuevoFolio}`
-                        })       
                     })
-                    if (!result) {
-                        return res.status(404).json({ message: "No se pudo crear esterilizacion ni modificar estatus" })
-                    }
-                    return res.status(201).json({
-                    message: "Esterilización registrada correctamente",
-                    esterilizacion
-                });
-                } catch (error) {
-                    return res.status(500).json({
-                    message: error.message
-                });
+                    if (!esterilizacion) throw new Error("No se pudo crear esterilizacion");
+
+                    const animalid = await prisma.animales.findUnique({
+                            where: {
+                                animal_id: Number(animal_id)
+                            }
+                        })
+
+                    if (!animalid) throw new Error("No se encontro el animal a actualizar");
+
+                    const animal = await tx.animales.update({
+                        where: { animal_id: Number(animal_id) },
+                        estado_reproductivo : estadoReproductivo
+                    })
+
+                    if (!animal) throw new Error ("No se pudo actualizar el animal");
+                    const rawIp = req.headers['x-forwarded-for']?.split(',')[0] || req.socket.remoteAddress;
+
+                    const ip = rawIp?.replace('::ffff', '');
+                    await bitacora({
+                        usuarioId: veterinario_cirujano_id,
+                        fecha_hora: new Date().toISOString(),
+                        operacion: "CREACION",
+                        ip,
+                        resultado: `Esterilizacion creada con ID ${nuevoFolio}`
+                    })       
+                })
+                if (!result) throw new Error ("No se pudo crear esterilizacion ni modificar estatus");
+                return res.status(201).json({
+                message: "Esterilización registrada correctamente",
+                esterilizacion
+            });
+            } catch (error) {
+                return res.status(500).json({ message: error.message});
             }
         }
     } catch (error) {
