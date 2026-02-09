@@ -416,7 +416,7 @@ const loginPortalPassword = async (req, res) => {
             return res.status(404).json({ message: "La contraseña no es correcta, favor de verificarla" })
         }
 
-        return res.status(200).json({ message: "Login exitoso" })
+        return res.status(200).json({ message: "Login exitoso", login })
      } catch (error) {
         return res.status(500).json({ message: "No se pudo hacer el login en el portal web", error: error.message });
     }
