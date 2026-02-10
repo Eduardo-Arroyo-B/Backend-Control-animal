@@ -714,6 +714,12 @@ model Bitacora_Auditoria {
   resultado  String
 }
 
+model Catalogo_Pelo {
+  id        Int    @id @default(autoincrement())
+  tipo_pelo String
+  razas     String
+}
+
 enum Estatus_Reporte {
   Pendiente
   EnProceso

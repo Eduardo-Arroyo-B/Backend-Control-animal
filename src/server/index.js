@@ -26,6 +26,7 @@ import campanas from "../routes/campaigns/campaigns.routes.js"
 import desparasitaciones from "../routes/deworming/Deworming.routes.js"
 import bitacora from "../routes/binnacle/binaccle.routes.js"
 import citas from "../routes/schedule/schedule.routes.js"
+import pelaje from "../routes/hair/hair.routes.js"
 
 // App
 const app = express();
@@ -84,7 +85,8 @@ app.use("/sica",
     campanas,
     desparasitaciones,
     bitacora,
-    citas
+    citas,
+    pelaje
 );
 
 // Endpoint para validar la actividad del server
