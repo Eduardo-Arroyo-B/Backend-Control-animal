@@ -81,8 +81,8 @@ const getAnimalsByID = async (req, res) => {
             }
         })
 
-        if (!animal) {
-            return res.status(404).json({ message: "No se pudo obtener el animal" })
+        if (animal > 0) {
+            return res.status(404).json({ message: "No existen animales actualmente" })
         }
 
         return res.status(200).json({ message: "Animal obtenido exitosamente", animal })
@@ -161,12 +161,14 @@ const createAnimal = async (req, res) => {
         })
 
         if (microchip) {
-            return res.status(200).json({ message: "No se puede crear un animal con microchip existente" })
+            return res.status(404).json({ message: "No se puede crear un animal con microchip existente" })
         }
 
         const booleanAdoptable = es_adoptable === true || es_adoptable === "true"
 
         const folioGenerado = await generateFolio("ANM")
+
+        console.log(numero_microchip)
 
         const animal = await prisma.animales.create({
             data: {
