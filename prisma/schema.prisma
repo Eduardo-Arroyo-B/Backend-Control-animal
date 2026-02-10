@@ -569,7 +569,7 @@ model Defunciones {
   causa_muerte            String
   autopsia                Boolean
   disposicion_cadaver     String
-  observaciones           String
+  observaciones           String?
   costo_defuncion         Int
   veterinario_responsable String   @db.Uuid
 

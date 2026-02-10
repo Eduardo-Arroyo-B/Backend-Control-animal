@@ -267,8 +267,12 @@ const createAnimalFlujo = async (req, res) => {
         registrado_por,
         estado_reproductivo,
         temperamento,
-        tiempo_estancia
+        tiempo_estancia,
+        Raza,
+        especie
     } = req.body;
+
+    const razaId = Number(Raza)
 
     // Objeto del animal
     const animalData = {
@@ -296,7 +300,9 @@ const createAnimalFlujo = async (req, res) => {
         registrado_por,
         estado_reproductivo,
         temperamento,
-        tiempo_estancia
+        tiempo_estancia,
+        Raza: razaId,
+        especie
     }
     try {
         // Validar que no exista Microchip identico
