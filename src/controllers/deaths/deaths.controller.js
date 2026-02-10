@@ -90,7 +90,7 @@ const createDeaths = async (req, res) => {
         lugar_defuncion,
         causa_muerte,
         Usuarios: {
-            connect: { veterinario_responsable: veterinario_responsable}
+            connect: { usuario_id: veterinario_responsable}
         },
         autopsia: booleanAutopsia,
         disposicion_cadaver,
@@ -110,7 +110,7 @@ const createDeaths = async (req, res) => {
             where: { animal_id: Number(animal_id) },
             data: { 
                 muerto: true,
-                estado_salud: "Finido"
+                estado_salud: "Finado"
             },
         })
 
