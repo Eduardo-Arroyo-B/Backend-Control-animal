@@ -1,6 +1,7 @@
 import prisma from "../../../../prisma/prismaClient.js"
 import bcrypt from "bcrypt"
 import bitacora from "../../../helpers/binnacle.js"
+import generateJWT from "../../../helpers/generateJWT.js"
 
 const login = async (req, res) => {
     // Extraer informacion del body
@@ -101,7 +102,14 @@ const login = async (req, res) => {
             }
         })
 
-        return res.status(200).json({ message: "Inicio de session exitoso", findUser })
+        const payload = {
+            usuario,
+            nombre_usuario: findUser.nombre_completo
+        }
+
+        const token = await generateJWT(payload)
+
+        return res.status(200).json({ message: "Inicio de session exitoso", findUser, token })
     } catch (error) {
         return res.status(500).json({ message: "Ha ocurrido un error al hacer login", error: error.message });
     }
