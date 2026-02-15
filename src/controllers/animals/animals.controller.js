@@ -547,6 +547,65 @@ const createMiniExpedienteAnimal = async (req, res) => {
     }
 }
 
+const createRUAC = async (req, res) => {
+    try {
+        const { animalId } = req.body
+
+        if (!animalId) {
+            return res.status(404).json({ message: "El id del animal es requerido" })
+        }
+
+        // Buscar animal con propietario
+        const animal = await prisma.animales.findUnique({
+            where: { animal_id: Number(animalId) },
+            include: { Propietario: true }
+        })
+
+        if (!animal) {
+            return res.status(404).json({ message: "Animal no encontrado" })
+        }
+
+        const propietario = animal.Propietario
+
+        if (!propietario) {
+            return res.status(404).json({ message: "El animal no tiene propietario asignado" })
+        }
+
+        // Contruccion De RUAC
+
+        const especie = animal.especie?.charAt(0).toUpperCase() || "X"
+        const sexo = animal.sexo?.charAt(0).toUpperCase() || "X"
+
+        const segundoApellido = propietario.apellido_materno?.substring(0, 2).toUpperCase().padEnd(2,"X")
+
+        const inicialNombre = propietario.nombre?.charAt(0).toUpperCase() || "X"
+
+        // Generar folio consecutivo
+        const nuevoFolio = await prisma.folio_RUAC.create({
+            data: {
+                tipo: "RUAC"
+            }
+        })
+
+        if (!nuevoFolio) {
+            return res.status(404).json({ message: "No se pudo generar el nuevo folio" })
+        }
+
+        const folioFormateado = String(nuevoFolio.id).padStart(6, "0")
+
+        // Unir todo
+        const ruac = `${especie}${sexo}${segundoApellido}${inicialNombre}${folioFormateado}`
+
+        if (ruac.length !== 11) {
+            return res.status(404).json({ message: "Error generando RUAC invalido" })
+        }
+
+        return res.status(201).json({ message: "Animal actualizado correctamente", ruac })
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+}
+
 export {
     getAnimals,
     getAnimalsDeaths,
@@ -556,5 +615,6 @@ export {
     updateAnimal,
     deleteAnimals,
     getMiniExpedienteAnimal,
-    createMiniExpedienteAnimal
+    createMiniExpedienteAnimal,
+    createRUAC
 }
