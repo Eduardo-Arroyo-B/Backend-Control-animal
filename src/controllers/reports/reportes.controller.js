@@ -42,6 +42,7 @@ const createReporte = async (req, res) => {
 
     // Genera folio para el reporte
     const nuevoFolio = await generateFolio("REP")
+    const domicilioBoolean = domicilio === "true" || domicilio === true;
 
     // Objeto reporte
     const reportData = {
@@ -51,7 +52,7 @@ const createReporte = async (req, res) => {
         descripcion,
         ubicacion,
         colonia_id: Number(colonia_id),
-        domicilio,
+        domicilio: domicilioBoolean,
         nombre_completo,
         telefono,
         email,

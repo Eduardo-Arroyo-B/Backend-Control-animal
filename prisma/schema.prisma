@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = env("DATABASE_URL_DEV")
 }
 
 model Usuarios {
@@ -68,7 +68,7 @@ model Reportes_Ciudadanos {
   descripcion     String
   ubicacion       String
   colonia_id      Int
-  domicilio       String?
+  domicilio       Boolean?
   nombre_completo String
   telefono        String
   email           String?
@@ -144,7 +144,6 @@ model Animales {
   edad                String?
   pelaje              String?
   peso                Int?
-  medalla             String?
   tipo_ingreso        String?
   ubicacion_actual    String?
   estado_salud        String?
@@ -154,6 +153,7 @@ model Animales {
   temperamento        String?
   tiempo_estancia     DateTime? @default(now())
   costo               String?
+  ruac                String?
 
   // Modelo animal 2
   fecha_hora_ingreso        DateTime?

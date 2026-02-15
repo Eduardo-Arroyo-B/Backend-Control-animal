@@ -600,6 +600,15 @@ const createRUAC = async (req, res) => {
             return res.status(404).json({ message: "Error generando RUAC invalido" })
         }
 
+        const updateAnimal = await prisma.animales.update({
+            where: {
+                animal_id: Number(animalId),
+            },
+            data: {
+                ruac,
+            }
+        })
+
         return res.status(201).json({ message: "Animal actualizado correctamente", ruac })
     } catch (error) {
         return res.status(500).json({ message: error.message });
