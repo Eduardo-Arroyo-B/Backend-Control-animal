@@ -68,6 +68,7 @@ model Reportes_Ciudadanos {
   descripcion     String
   ubicacion       String
   colonia_id      Int
+  domicilio       String?
   nombre_completo String
   telefono        String
   email           String?
