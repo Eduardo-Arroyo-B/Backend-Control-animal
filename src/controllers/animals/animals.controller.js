@@ -609,6 +609,10 @@ const createRUAC = async (req, res) => {
             }
         })
 
+        if (!updateAnimal) {
+            return res.status(404).json({ message: "No se pudo actualizar el ruac del animal" })
+        }
+
         return res.status(201).json({ message: "Animal actualizado correctamente", ruac })
     } catch (error) {
         return res.status(500).json({ message: error.message });
