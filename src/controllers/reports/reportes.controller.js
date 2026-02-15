@@ -10,7 +10,8 @@ const getAllReportes = async (req, res) => {
                 fecha_reporte: "desc"
             },
             include: {
-                Usuario: true
+                Usuario: true,
+                Reporte_Fotos: true
             }
         });
 
@@ -78,12 +79,20 @@ const createReporte = async (req, res) => {
                 text: "Hola, este es un correo de prueba",
                 html: "<b>Hola</b>, este es un correo de prueba"
             })
+        }
 
-            return res.status(201).json({
-                message: "Reporte y correo enviado exitosamente",
-                reporte,
-                correo: true
+        // Guardar fotos si se enviaron
+        if (req.files && req.files.length > 0) {
+            const fotosData = req.files.map((file, index) => ({
+                reporte_id: reporte.reporte_id,
+                url: file.path.replace(/\\/g, "/"),
+            }))
+
+            const reportesFotos = await prisma.reportes_Fotos.createMany({
+                data: fotosData
             })
+
+            console.log("Fotos creadas", reportesFotos)
         }
 
         const rawIp = req.headers['x-forwarded-for']?.split(',')[0] || req.socket.remoteAddress;
@@ -91,7 +100,7 @@ const createReporte = async (req, res) => {
         const ip = rawIp?.replace('::ffff', '');
 
         await bitacora({
-            usuarioId: registrado_por,
+            usuarioId: registrado_por || "WebUser",
             fecha_hora: new Date().toISOString(),
             operacion: "CREACION",
             ip,

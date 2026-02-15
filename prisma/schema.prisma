@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL_DEV")
+  url      = env("DATABASE_URL")
 }
 
 model Usuarios {
@@ -80,6 +80,7 @@ model Reportes_Ciudadanos {
   Colonia             Cat_Colonias          @relation(fields: [colonia_id], references: [colonia_id])
   Usuario             Usuarios?             @relation(fields: [registrado_por], references: [usuario_id])
   Reporte_Seguimiento Reporte_Seguimiento[]
+  Reporte_Fotos       Reportes_Fotos[]
 
   @@index([colonia_id])
   @@index([estatus_reporte])
@@ -220,6 +221,16 @@ model Animales_Fotos {
   Animales Animales @relation(fields: [animal_id], references: [animal_id])
 
   @@index([animal_id])
+}
+
+model Reportes_Fotos {
+  id          Int     @id @default(autoincrement())
+  reporte_id  Int
+  url         String
+  descripcion String?
+
+  // Relaciones
+  Reportes_Ciudadanos Reportes_Ciudadanos @relation(fields: [reporte_id], references: [reporte_id])
 }
 
 model Propietario {
