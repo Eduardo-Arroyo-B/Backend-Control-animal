@@ -14,7 +14,13 @@ const getAnimals = async (req, res) => {
                 Vacunaciones: true,
                 Esterilizaciones: true,
                 Cuarentenas: true,
-                Desparacitaciones: true
+                Desparacitaciones: true,
+                Usuarios: {
+                    select: {
+                        nombre_completo: true,
+                        username: true
+                    }
+                }
             },
             orderBy: {
                 animal_id: "desc"

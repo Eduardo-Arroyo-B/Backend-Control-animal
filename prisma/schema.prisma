@@ -153,6 +153,7 @@ model Animales {
   temperamento        String?
   tiempo_estancia     DateTime? @default(now())
   costo               String?
+  ruac                String?
 
   // Modelo animal 2
   fecha_hora_ingreso        DateTime?
