@@ -2,7 +2,11 @@ import prisma from "../../../prisma/prismaClient.js";
 
 const getAllDates = async (req, res) => {
     try {
-        const date = await prisma.cita.findMany()
+        const date = await prisma.cita.findMany({
+            include: {
+                Propietario: true
+            }
+        })
 
         if (date > 0) {
             return res.status(200).json({ message: "No se encontraron citas" })
