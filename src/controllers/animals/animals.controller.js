@@ -560,13 +560,43 @@ const createMiniExpedienteAnimal = async (req, res) => {
     };
 
     try {
-        const expediente = await prisma.mini_Expediente_Animal.create({
-            data: expedienteData
+        const expediente = await prisma.Mini_Expediente_Animal.create({
+            data: expedienteData,
+            include: {
+                propietario: true,
+            }
         })
 
         if (!expediente) {
             return res.status().json({ message: "No se pudo crear el expediente" })
         }
+
+        //  Generar RUAC
+        const especieLetra = expediente.especie?.charAt(0).toUpperCase() || "X";
+        const sexoLetra    = expediente.sexo?.charAt(0).toUpperCase() || "X";
+        const paterno      = expediente.propietario?.apellido_paterno?.charAt(0).toUpperCase() || "X";
+        const materno      = expediente.propietario?.apellido_materno?.charAt(0).toUpperCase() || "X";
+        const inicialNom   = expediente.propietario?.nombre?.charAt(0).toUpperCase() || "X";
+
+        const folio = await prisma.folio_RUAC.create({
+            data: {
+                tipo: "RUAC"
+            }
+        })
+
+        const folioStr = String(folio.id).padStart(6, "0");
+
+        const ruac = `${especieLetra}${sexoLetra}${paterno}${materno}${inicialNom}${folioStr}`;
+
+        if (ruac.length !== 11) {
+        return res.status(500).json({ message: "RUAC generado inválido" });
+        }
+
+        // 3. Actualizar expediente con el RUAC
+        const expedienteActualizado = await prisma.Mini_Expediente_Animal.update({
+        where: { id: expediente.id },
+        data: { ruac }
+        });
 
         return res.status(201).json({ message: "Expediente creado exitosamente", expediente })
     } catch (error) {
