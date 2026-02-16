@@ -86,7 +86,9 @@ const createConsultation = async (req, res) => {
                 disponible_adopcion: Boolean(disponible_adopcion),
                 veterinario_id,
                 enfermedad_critica,
-                campanas_id: Number(campanas_id),
+                campanas_id: campanas_id && !isNaN(Number(campanas_id)) 
+                ? Number(campanas_id) 
+                : null
             }
         });
         // Poner en adopcion
@@ -128,7 +130,6 @@ const createConsultation = async (req, res) => {
             ip,
             resultado: `Consulta creada con ID ${animal_id}`
         })
-
 
         return res.status(201).json({
             message: "Consulta veterinaria registrada correctamente",
