@@ -117,6 +117,7 @@ model Vacunaciones {
   veterinario_Id   String   @db.Uuid
   zona             String?
   campana          String?
+  campana_id       Int?
 
   // Nuevos campos
   via_administracion String?
@@ -127,6 +128,7 @@ model Vacunaciones {
   Animal   Animales           @relation(fields: [animal_id], references: [animal_id])
   Usuarios Usuarios           @relation(fields: [veterinario_Id], references: [usuario_id])
   Vacuna   Inventario_Vacunas @relation(fields: [vacuna_id], references: [id])
+  Campana  Campaigns?         @relation(fields: [campana_id], references: [id])
 
   @@index([animal_id])
   @@index([vacuna_id])
@@ -376,10 +378,12 @@ model Consultas_Veterinarias {
   enfermedad_critica  String?
   veterinario_id      String   @db.Uuid
   fecha_hora_consulta DateTime @default(now())
+  campanas_id         Int?
 
   // Relaciones
   Animal      Animales      @relation(fields: [animal_id], references: [animal_id])
   Usuarios    Usuarios      @relation(fields: [veterinario_id], references: [usuario_id])
+  Campanas    Campaigns?    @relation(fields: [campanas_id], references: [id])
   Cuarentenas Cuarentenas[]
 }
 
@@ -433,12 +437,14 @@ model Desparasitaciones {
   via_administracion    String
   dosis_desparasitacion String
   tipo_desparasitacion  String
+  campana_id            Int?
 
   aplicado_por String @db.Uuid
 
   // Relaciones
-  Animal   Animales @relation(fields: [animal_id], references: [animal_id])
-  Usuarios Usuarios @relation(fields: [aplicado_por], references: [usuario_id])
+  Animal   Animales   @relation(fields: [animal_id], references: [animal_id])
+  Usuarios Usuarios   @relation(fields: [aplicado_por], references: [usuario_id])
+  Campanas Campaigns? @relation(fields: [campana_id], references: [id])
 }
 
 model Egresos_Animales {
@@ -623,11 +629,13 @@ model Esterilizaciones {
   propietario_id          String?  @db.Uuid
   veterinario_cirujano_id String   @db.Uuid
   zona                    String?
+  campana_id              Int?
 
   // Relaciones
   Animal      Animales     @relation(fields: [animal_id], references: [animal_id])
   Propietario Propietario? @relation(fields: [propietario_id], references: [propietario_id])
   Veterinario Usuarios     @relation(fields: [veterinario_cirujano_id], references: [usuario_id])
+  Campana     Campaigns?   @relation(fields: [campana_id], references: [id])
 }
 
 model Campaigns {
@@ -640,6 +648,12 @@ model Campaigns {
   servicio      String
   num_lote      String
   cantidad_lote Int
+
+  // Relaciones
+  Esterilizaciones       Esterilizaciones[]
+  Vacunaciones           Vacunaciones[]
+  Desparasitaciones      Desparasitaciones[]
+  Consultas_Veterinarias Consultas_Veterinarias[]
 }
 
 model Citas {
