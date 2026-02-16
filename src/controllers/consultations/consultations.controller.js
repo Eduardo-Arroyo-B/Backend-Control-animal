@@ -91,7 +91,18 @@ const createConsultation = async (req, res) => {
         });
         // Poner en adopcion
         if (disponible_adopcion){
-            const animal = await prisma.animales.update({
+            const animal = await prisma.animales.findUnique({
+                where: { animal_id: Number(animal_id) },
+                select: { estado_reproductivo: true }
+            });
+            if (!animal) {
+                return res.status(404).json({ message: "Animal no encontrado" });
+            }
+
+            if (animal.estado_reproductivo !== "Esterilizado") {
+                return res.status(400).json({ message: "El animal debe estar esterilizado para ponerlo en adopción" });
+            }
+            await prisma.animales.update({
             where: { animal_id: Number(animal_id) },
             data: { 
                 es_adoptable: true,
@@ -101,10 +112,11 @@ const createConsultation = async (req, res) => {
             return res.status(404).json({ message: "No se pudo poner en adopcion al animal" });
             }
         }
-
         if (!consultation ) {
             return res.status(404).json({ message: "No se pudo crear la consulta" });
         }
+
+        // Bitacora
         const rawIp = req.headers['x-forwarded-for']?.split(',')[0] || req.socket.remoteAddress;
 
         const ip = rawIp?.replace('::ffff', '');
