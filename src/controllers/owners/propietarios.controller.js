@@ -272,20 +272,20 @@ const vinculatePropietarioAnimal = async (req, res) => {
     }
 
     try {
-        const animal = await prisma.animales.findUnique({
+        const animal_prop = await prisma.animales.findUnique({
             where: { animal_id: Number(id_animal) },
             select: { propietario_id: true }
         });
 
-        if (!animal) {
+        if (!animal_prop) {
             return res.status(404).json({ message: "Animal no encontrado" });
         }
 
-        if (animal.propietario_id !== null) {
+        if (animal_prop.propietario_id !== null) {
             return res.status(400).json({ message: "El animal ya tiene propietario" });
         }
 
-        await prisma.animales.update({
+        const animal = await prisma.animales.update({
             where: {
                 animal_id: Number(id_animal),
             },
@@ -306,7 +306,8 @@ const vinculatePropietarioAnimal = async (req, res) => {
         const especie = animal.especie?.charAt(0).toUpperCase() || "X"
         const sexo = animal.sexo?.charAt(0).toUpperCase() || "X"
 
-        const segundoApellido = propietario.apellido_materno?.substring(0, 2).toUpperCase().padEnd(2,"X")
+        const primerApellido = propietario.apellido_paterno?.charAt(0).toUpperCase() || "X"
+        const segundoApellido = propietario.apellido_materno?.charAt(0).toUpperCase() || "X"
 
         const inicialNombre = propietario.nombre?.charAt(0).toUpperCase() || "X"
 
@@ -324,7 +325,7 @@ const vinculatePropietarioAnimal = async (req, res) => {
         const folioFormateado = String(nuevoFolio.id).padStart(6, "0")
 
         // Unir todo
-        const ruac = `${especie}${sexo}${segundoApellido}${inicialNombre}${folioFormateado}`
+        const ruac = `${especie}${sexo}${primerApellido}${segundoApellido}${inicialNombre}${folioFormateado}`
 
         if (ruac.length !== 11) {
             return res.status(404).json({ message: "Error generando RUAC invalido" })
