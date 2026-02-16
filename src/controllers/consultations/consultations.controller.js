@@ -69,6 +69,9 @@ const createConsultation = async (req, res) => {
     } = req.body;
 
     try {
+        if (!animal_id || isNaN(Number(animal_id))) {
+            return res.status(400).json({ message: "animal_id inválido o faltante" });
+        }
         // Crear consulta
         const consultation = await prisma.consultas_Veterinarias.create({
             data: {
@@ -84,8 +87,20 @@ const createConsultation = async (req, res) => {
                 enfermedad_critica
             }
         });
+        // Poner en adopcion
+        if (disponible_adopcion){
+            const animal = await prisma.animales.update({
+            where: { animal_id: Number(animal_id) },
+            data: { 
+                es_adoptable: true,
+                },
+            })
+            if (!animal) {
+            return res.status(404).json({ message: "No se pudo poner en adopcion al animal" });
+            }
+        }
 
-        if (!consultation) {
+        if (!consultation ) {
             return res.status(404).json({ message: "No se pudo crear la consulta" });
         }
         const rawIp = req.headers['x-forwarded-for']?.split(',')[0] || req.socket.remoteAddress;
