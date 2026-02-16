@@ -49,7 +49,7 @@ const createReporte = async (req, res) => {
     const reportData = {
         folio_reporte: nuevoFolio,
         tipo_reporte,
-        prioridad,
+        prioridad: "Media",
         descripcion,
         ubicacion,
         colonia_id: Number(colonia_id),
