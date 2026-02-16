@@ -284,7 +284,7 @@ const vinculatePropietarioAnimal = async (req, res) => {
 
         const propietario = await prisma.propietario.findUnique({
             where: {
-                propietario_id
+                propietario_id: id_propietario
             }
         })
 
