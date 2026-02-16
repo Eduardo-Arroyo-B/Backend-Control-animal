@@ -376,6 +376,16 @@ const createPropietarioPortal = async (req, res) => {
 
         // Busca un propietario existente con su ID
         if (existing) {
+            await transporter.sendMail({
+                from: "SICA",
+                to: email,
+                subject: "🐶 SICA - Sistema Integral de Control Animal Municipal",
+                text: "ID ya existente",
+                html:
+                    `<b>Hola</b>
+                 Hola, se intentó registrar como Tutor con su CURP en el Portal Ciudadano para Adopciones de Tijuana, pero usted ya fué registrado con este correo. Favor de verificar su Folio y Contraseña asociados.`
+            })
+
             return res.status(404).json({ message: "El ID de este propietario ya existe"})
         }
 
@@ -393,7 +403,7 @@ const createPropietarioPortal = async (req, res) => {
 
         await transporter.sendMail({
             from: "SICA",
-            to: propietario.email,
+            to: email,
             subject: "🐶 SICA - Sistema Integral de Control Animal Municipal",
             text: "Solicitud Aprobada",
             html:
