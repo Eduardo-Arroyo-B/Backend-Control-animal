@@ -694,12 +694,18 @@ model Folio_Seguimiento {
 model Mini_Expediente_Animal {
   id             Int    @id @default(autoincrement())
   nombre         String
+  especie        String?
   raza_id        Int
   propietario_id String @db.Uuid
   edad           String
   sexo           String
   pelaje         String
-
+  estado_reproductivo	String?
+  numero_microchip	String?
+  ubicacion_anatomica	String?
+  foto_url		String?		
+  ruac			String?
+  
   // Relaciones
   CatalogoRaza Cat_Razas   @relation(fields: [raza_id], references: [id])
   Propietario  Propietario @relation(fields: [propietario_id], references: [propietario_id])
