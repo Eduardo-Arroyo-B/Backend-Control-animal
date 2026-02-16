@@ -498,7 +498,16 @@ const getMiniExpedienteAnimal = async (req, res) => {
     try {
         const expediente = await prisma.mini_Expediente_Animal.findMany({
             include: {
-                CatalogoRaza: true
+                CatalogoRaza: true,
+                Propietario: {
+                    include: {
+                        Animales: {
+                            include: {
+                                Animales_Fotos: true
+                            }
+                        }
+                    }
+                }
             }
         })
 
