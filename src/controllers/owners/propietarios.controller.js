@@ -352,6 +352,12 @@ const vinculatePropietarioAnimal = async (req, res) => {
             return res.status(404).json({ message: "No se pudo actualizar el ruac del animal" })
         }
 
+        const animalfoto = await prisma.Animales_Fotos.findFirst({
+            where: { animal_id: Number(id_animal) },
+            orderBy: { id: 'asc' },
+            select: { url: true } 
+        });
+
         const miniExpediente = await prisma.mini_Expediente_Animal.create({
             data: {
                 nombre: animal.nombre_animal,
@@ -364,6 +370,7 @@ const vinculatePropietarioAnimal = async (req, res) => {
                 estado_reproductivo: animal.estado_reproductivo,
                 numero_microchip: animal.numero_microchip,
                 ruac: ruac,
+                foto_url: animalfoto?.url || null,
                 ubicacion_anatomica: animal.ubicacion_anatomica_microchip
             }
         })
