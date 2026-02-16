@@ -65,10 +65,14 @@ const createConsultation = async (req, res) => {
         observaciones,
         disponible_adopcion,
         veterinario_id,
-        enfermedad_critica
+        enfermedad_critica,
+        campanas_id
     } = req.body;
 
     try {
+        if (!animal_id || isNaN(Number(animal_id))) {
+            return res.status(400).json({ message: "animal_id inválido o faltante" });
+        }
         // Crear consulta
         const consultation = await prisma.consultas_Veterinarias.create({
             data: {
@@ -81,13 +85,40 @@ const createConsultation = async (req, res) => {
                 observaciones: observaciones || "",
                 disponible_adopcion: Boolean(disponible_adopcion),
                 veterinario_id,
-                enfermedad_critica
+                enfermedad_critica,
+                campanas_id: campanas_id && !isNaN(Number(campanas_id)) 
+                ? Number(campanas_id) 
+                : null
             }
         });
+        // Poner en adopcion
+        if (disponible_adopcion){
+            const animal = await prisma.animales.findUnique({
+                where: { animal_id: Number(animal_id) },
+                select: { estado_reproductivo: true }
+            });
+            if (!animal) {
+                return res.status(404).json({ message: "Animal no encontrado" });
+            }
 
-        if (!consultation) {
+            if (animal.estado_reproductivo !== "Esterilizado") {
+                return res.status(400).json({ message: "El animal debe estar esterilizado para ponerlo en adopción." });
+            }
+            await prisma.animales.update({
+            where: { animal_id: Number(animal_id) },
+            data: { 
+                es_adoptable: true,                                                                                              
+                },
+            })
+            if (!animal) {
+            return res.status(404).json({ message: "No se pudo poner en adopcion al animal" });
+            }
+        }
+        if (!consultation ) {
             return res.status(404).json({ message: "No se pudo crear la consulta" });
         }
+
+        // Bitacora
         const rawIp = req.headers['x-forwarded-for']?.split(',')[0] || req.socket.remoteAddress;
 
         const ip = rawIp?.replace('::ffff', '');
@@ -99,7 +130,6 @@ const createConsultation = async (req, res) => {
             ip,
             resultado: `Consulta creada con ID ${animal_id}`
         })
-
 
         return res.status(201).json({
             message: "Consulta veterinaria registrada correctamente",

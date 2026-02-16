@@ -1,6 +1,7 @@
 import prisma from "../../../prisma/prismaClient.js";
 import generateFolio from "../../helpers/generateFolio.js";
 import bitacora from "../../helpers/binnacle.js";
+import {transporter} from "../../helpers/mailer.js";
 
 const getAllAdoptions = async (req,res) => {
     try {
@@ -125,6 +126,26 @@ const createAdoption = async (req,res) => {
         return res.status(500).json({ message: error.message });
     }
 }
+
+const uploadContract = async (req, res) => {
+  const { animal_id, url_archivo } = req.body;
+
+  if (!animal_id || !url_archivo) {
+    return res.status(400).json({ error: "animal_id y url_archivo son requeridos" });
+  }
+
+  try {
+    const upload = await prisma.animales.create({
+      data: {
+        contrato_adopcion: url_archivo,
+      }
+    });
+
+    res.status(201).json(upload);
+  } catch (error) {
+    res.status(500).json({ error: "Error al guardar el archivo" });
+  }
+};
 
 const deleteAdoption = async (req,res) => {
     // Extracion del ID por parametros
@@ -511,6 +532,14 @@ const createAdoptionRequest = async (req, res) => {
             return solicitudConRelaciones;
         });
 
+        await transporter.sendMail({
+            from: "SICA",
+            to: email,
+            subject: " SICA - Sistema Integral de Control Animal Municipal",
+            text: "Hola, este es un correo de prueba",
+            html: "<b>Hola</b>, Su solicitud de Adopcion ha sido enviada, tendra una respuesta en un tiempo aproximado de 72 horas, gracias.",
+        })
+
         return res.status(201).json({
             message: "Solicitud de adopción registrada exitosamente",
             solicitud: result
@@ -533,7 +562,8 @@ const updateAdoptionStatus = async (req, res) => {
     const { id } = req.params;
     const {
         estatus_adopcion,
-        aprobado_por
+        aprobado_por,
+        email
     } = req.body;
 
     // Validación
@@ -600,7 +630,6 @@ const updateAdoptionStatus = async (req, res) => {
             }
 
             // Actualizar el estatus de la solicitud
-            // El evaluador se establece cuando se aprueba o rechaza
             const dataUpdate = {
                 estatus_adopcion: estatus_adopcion
             };
@@ -643,17 +672,8 @@ const updateAdoptionStatus = async (req, res) => {
                 }
             });
 
-            // Si se aprueba, marcar el animal como no adoptable y registrar egreso
+            // Si se aprueba, registrar egreso
             if (estatus_adopcion === 'Aprobada') {
-                /*
-                await tx.animales.update({
-                    where: { animal_id: solicitud.animal_id },
-                    data: {
-                        es_adoptable: false
-                    }
-                });*/
-
-                // Registrar el egreso del animal
                 await tx.egresos_Animales.create({
                     data: {
                         animal_id: solicitud.animal_id,
@@ -667,16 +687,24 @@ const updateAdoptionStatus = async (req, res) => {
         });
 
         const rawIp = req.headers['x-forwarded-for']?.split(',')[0] || req.socket.remoteAddress;
-
         const ip = rawIp?.replace('::ffff', '');
 
+        // Ahora usamos `solicitud.Animal.animal_id` para acceder al animal
         await bitacora({
             usuarioId: aprobado_por,
             fecha_hora: new Date().toISOString(),
             operacion: "ACTUALIZACION",
             ip,
-            resultado: `Adopcion actualizada del animal ${animal.animal_id}`
-        })
+            resultado: `Adopcion actualizada del animal ${estatus_adopcion}` // Cambio aquí
+        });
+
+        await transporter.sendMail({
+            from: "SICA",
+            to: email,
+            subject: "SICA - Sistema Integral de Control Animal Municipal",
+            text: "Hola, este es un correo de prueba",
+            html: `<b>Hola</b>, Su estatus de su solicitud de adopción se actualizó a ${estatus_adopcion}`,
+        });
 
         return res.status(200).json({
             message: `Solicitud de adopción ${estatus_adopcion.toLowerCase()} exitosamente`,
@@ -704,5 +732,6 @@ export {
     getAllAdoptionRequests,
     getAdoptionRequestByID,
     createAdoptionRequest,
-    updateAdoptionStatus
+    updateAdoptionStatus,
+    uploadContract
 }

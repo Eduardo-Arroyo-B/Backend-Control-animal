@@ -68,6 +68,7 @@ model Reportes_Ciudadanos {
   descripcion     String
   ubicacion       String
   colonia_id      Int
+  domicilio       Boolean?
   nombre_completo String
   telefono        String
   email           String?
@@ -79,6 +80,7 @@ model Reportes_Ciudadanos {
   Colonia             Cat_Colonias          @relation(fields: [colonia_id], references: [colonia_id])
   Usuario             Usuarios?             @relation(fields: [registrado_por], references: [usuario_id])
   Reporte_Seguimiento Reporte_Seguimiento[]
+  Reporte_Fotos       Reportes_Fotos[]
 
   @@index([colonia_id])
   @@index([estatus_reporte])
@@ -115,6 +117,7 @@ model Vacunaciones {
   veterinario_Id   String   @db.Uuid
   zona             String?
   campana          String?
+  campana_id       Int?
 
   // Nuevos campos
   via_administracion String?
@@ -125,6 +128,7 @@ model Vacunaciones {
   Animal   Animales           @relation(fields: [animal_id], references: [animal_id])
   Usuarios Usuarios           @relation(fields: [veterinario_Id], references: [usuario_id])
   Vacuna   Inventario_Vacunas @relation(fields: [vacuna_id], references: [id])
+  Campana  Campaigns?         @relation(fields: [campana_id], references: [id])
 
   @@index([animal_id])
   @@index([vacuna_id])
@@ -143,7 +147,6 @@ model Animales {
   edad                String?
   pelaje              String?
   peso                Int?
-  medalla             String?
   tipo_ingreso        String?
   ubicacion_actual    String?
   estado_salud        String?
@@ -186,6 +189,7 @@ model Animales {
   registrado_por  String   @db.Uuid
   actualizado_por String?
   propietario_id  String?  @db.Uuid
+  contrato_adopcion String?
 
   // Relaciones
   Usuarios               Usuarios                 @relation(fields: [registrado_por], references: [usuario_id])
@@ -222,6 +226,16 @@ model Animales_Fotos {
   @@index([animal_id])
 }
 
+model Reportes_Fotos {
+  id          Int     @id @default(autoincrement())
+  reporte_id  Int
+  url         String
+  descripcion String?
+
+  // Relaciones
+  Reportes_Ciudadanos Reportes_Ciudadanos @relation(fields: [reporte_id], references: [reporte_id])
+}
+
 model Propietario {
   propietario_id        String    @id @default(uuid()) @db.Uuid
   folio_propietario     String    @unique
@@ -235,6 +249,8 @@ model Propietario {
   email                 String
   telefono              String
   colonia               String
+  direccion             String?
+  contacto_secundario   String
   estatus_propietario   String
   motivo                String?
   validacion_portal     Boolean?  @default(false)
@@ -250,6 +266,7 @@ model Propietario {
   Esterilizaciones                Esterilizaciones[]
   Animales                        Animales[]
   Mini_Expediente                 Mini_Expediente_Animal[]
+  Cita                            Cita[]
 }
 
 // Sin uso
@@ -364,10 +381,12 @@ model Consultas_Veterinarias {
   enfermedad_critica  String?
   veterinario_id      String   @db.Uuid
   fecha_hora_consulta DateTime @default(now())
+  campanas_id         Int?
 
   // Relaciones
   Animal      Animales      @relation(fields: [animal_id], references: [animal_id])
   Usuarios    Usuarios      @relation(fields: [veterinario_id], references: [usuario_id])
+  Campanas    Campaigns?    @relation(fields: [campanas_id], references: [id])
   Cuarentenas Cuarentenas[]
 }
 
@@ -421,12 +440,14 @@ model Desparasitaciones {
   via_administracion    String
   dosis_desparasitacion String
   tipo_desparasitacion  String
+  campana_id            Int?
 
   aplicado_por String @db.Uuid
 
   // Relaciones
-  Animal   Animales @relation(fields: [animal_id], references: [animal_id])
-  Usuarios Usuarios @relation(fields: [aplicado_por], references: [usuario_id])
+  Animal   Animales   @relation(fields: [animal_id], references: [animal_id])
+  Usuarios Usuarios   @relation(fields: [aplicado_por], references: [usuario_id])
+  Campanas Campaigns? @relation(fields: [campana_id], references: [id])
 }
 
 model Egresos_Animales {
@@ -611,11 +632,13 @@ model Esterilizaciones {
   propietario_id          String?  @db.Uuid
   veterinario_cirujano_id String   @db.Uuid
   zona                    String?
+  campana_id              Int?
 
   // Relaciones
   Animal      Animales     @relation(fields: [animal_id], references: [animal_id])
   Propietario Propietario? @relation(fields: [propietario_id], references: [propietario_id])
   Veterinario Usuarios     @relation(fields: [veterinario_cirujano_id], references: [usuario_id])
+  Campana     Campaigns?   @relation(fields: [campana_id], references: [id])
 }
 
 model Campaigns {
@@ -628,6 +651,12 @@ model Campaigns {
   servicio      String
   num_lote      String
   cantidad_lote Int
+
+  // Relaciones
+  Esterilizaciones       Esterilizaciones[]
+  Vacunaciones           Vacunaciones[]
+  Desparasitaciones      Desparasitaciones[]
+  Consultas_Veterinarias Consultas_Veterinarias[]
 }
 
 model Citas {
@@ -668,12 +697,18 @@ model Folio_Seguimiento {
 model Mini_Expediente_Animal {
   id             Int    @id @default(autoincrement())
   nombre         String
+  especie        String?
   raza_id        Int
   propietario_id String @db.Uuid
   edad           String
   sexo           String
   pelaje         String
-
+  estado_reproductivo	String?
+  numero_microchip	String?
+  ubicacion_anatomica	String?
+  foto_url		String?		
+  ruac			String?
+  
   // Relaciones
   CatalogoRaza Cat_Razas   @relation(fields: [raza_id], references: [id])
   Propietario  Propietario @relation(fields: [propietario_id], references: [propietario_id])
@@ -721,11 +756,30 @@ model Catalogo_Pelo {
   razas     String
 }
 
+model Folio_RUAC {
+  id        Int      @id @default(autoincrement())
+  tipo      String
+  createdAt DateTime @default(now())
+}
+
+model Cita {
+  id          Int      @id @default(autoincrement())
+  fecha       DateTime
+  hora        String?
+  estado      String?
+  usuarioId   String   @db.Uuid
+  servicio    String
+  comentarios String?
+
+  // Relaciones
+  Propietario Propietario @relation(fields: [usuarioId], references: [propietario_id])
+}
+
 enum Estatus_Reporte {
   Pendiente
-  EnProceso
+  En_Proceso
   Atendido
-  Cerrado
+  Resuelto
 }
 
 enum Estatus_Usuario {

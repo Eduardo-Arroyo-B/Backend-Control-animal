@@ -185,8 +185,8 @@ const createAnimal = async (req, res) => {
                 edad,
                 pelaje,
                 peso: Number(peso),
-                numero_microchip: numero_microchip === "string" && numero_microchip.trim() !== ""
-                ? numero_microchip.trim()
+                numero_microchip: numero_microchip?.trim() && /^\d+$/.test(numero_microchip.trim())
+                ?  numero_microchip.trim()
                 : null,
                 fecha_implantacion_microchip,
                 ubicacion_anatomica_microchip,
@@ -504,7 +504,16 @@ const getMiniExpedienteAnimal = async (req, res) => {
     try {
         const expediente = await prisma.mini_Expediente_Animal.findMany({
             include: {
-                CatalogoRaza: true
+                CatalogoRaza: true,
+                Propietario: {
+                    include: {
+                        Animales: {
+                            include: {
+                                Animales_Fotos: true
+                            }
+                        }
+                    }
+                }
             }
         })
 
@@ -526,17 +535,29 @@ const createMiniExpedienteAnimal = async (req, res) => {
         propietario_id,
         edad,
         sexo,
-        pelaje
+        pelaje,
+        especie,
+        estado_reproductivo,
+        numero_microchip,
+        foto_url,
+        ubicacion_anatomica
     } = req.body;
 
     const expedienteData = {
-        nombre,
-        raza_id: Number(raza_id),
-        propietario_id,
-        edad,
-        sexo,
-        pelaje,
-    }
+        nombre:                 String(nombre || '').trim() || null,
+        raza_id:                raza_id ? Number(raza_id) : null,
+        propietario_id:         propietario_id ? Number(propietario_id) : null,
+        edad:                   edad ? Number(edad) : null,
+        sexo:                   String(sexo || '').trim() || null,
+        pelaje:                 String(pelaje || '').trim() || null,
+        especie:                String(especie || '').trim() || null,
+        estado_reproductivo:    String(estado_reproductivo || '').trim() || null,
+        numero_microchip: /^\d{15}$/.test(String(numero_microchip || ''))
+        ? numero_microchip.trim()
+        : null,
+        foto_url:               String(foto_url || '').trim() || null,
+        ubicacion_anatomica:    String(ubicacion_anatomica || '').trim() || null
+    };
 
     try {
         const expediente = await prisma.mini_Expediente_Animal.create({
@@ -553,6 +574,79 @@ const createMiniExpedienteAnimal = async (req, res) => {
     }
 }
 
+const createRUAC = async (req, res) => {
+    try {
+        const { animalId } = req.body
+
+        if (!animalId) {
+            return res.status(404).json({ message: "El id del animal es requerido" })
+        }
+
+        // Buscar animal con propietario
+        const animal = await prisma.animales.findUnique({
+            where: { animal_id: Number(animalId) },
+            include: { Propietario: true }
+        })
+
+        if (!animal) {
+            return res.status(404).json({ message: "Animal no encontrado" })
+        }
+
+        const propietario = animal.Propietario
+
+        if (!propietario) {
+            return res.status(404).json({ message: "El animal no tiene propietario asignado" })
+        }
+
+        // Contruccion De RUAC
+
+        const especie = animal.especie?.charAt(0).toUpperCase() || "X"
+        const sexo = animal.sexo?.charAt(0).toUpperCase() || "X"
+
+        const primerApellido = propietario.apellido_paterno?.charAt(0).toUpperCase() || "X"
+        const segundoApellido = propietario.apellido_materno?.charAt(0).toUpperCase() || "X"
+
+        const inicialNombre = propietario.nombre?.charAt(0).toUpperCase() || "X"
+
+        // Generar folio consecutivo
+        const nuevoFolio = await prisma.folio_RUAC.create({
+            data: {
+                tipo: "RUAC"
+            }
+        })
+
+        if (!nuevoFolio) {
+            return res.status(404).json({ message: "No se pudo generar el nuevo folio" })
+        }
+
+        const folioFormateado = String(nuevoFolio.id).padStart(6, "0")
+
+        // Unir todo
+        const ruac = `${especie}${sexo}${primerApellido}${segundoApellido}${inicialNombre}${folioFormateado}`
+
+        if (ruac.length !== 11) {
+            return res.status(404).json({ message: "Error generando RUAC invalido" })
+        }
+
+        const updateAnimal = await prisma.animales.update({
+            where: {
+                animal_id: Number(animalId),
+            },
+            data: {
+                ruac,
+            }
+        })
+
+        if (!updateAnimal) {
+            return res.status(404).json({ message: "No se pudo actualizar el ruac del animal" })
+        }
+
+        return res.status(201).json({ message: "Animal actualizado correctamente", ruac })
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+}
+
 export {
     getAnimals,
     getAnimalsDeaths,
@@ -562,5 +656,6 @@ export {
     updateAnimal,
     deleteAnimals,
     getMiniExpedienteAnimal,
-    createMiniExpedienteAnimal
+    createMiniExpedienteAnimal,
+    createRUAC
 }

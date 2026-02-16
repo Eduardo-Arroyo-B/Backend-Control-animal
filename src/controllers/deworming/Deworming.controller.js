@@ -7,7 +7,8 @@ const getDewormings = async (req, res) => {
         const deworming = await prisma.desparasitaciones.findMany({
             include: {
                 Animal: true,
-                Usuarios: true
+                Usuarios: true,
+                Campanas: true
             },
             take: 10
         })
@@ -27,7 +28,6 @@ const getDewormingByID = async (req, res) => {}
 const createDeworming = async (req, res) => {
     // Obtener datos del body
     const {
-        folio_desparasitacion,
         animal_id,
         producto_utilizado,
         aplicado_por,
@@ -36,7 +36,8 @@ const createDeworming = async (req, res) => {
         lote_desparasitacion,
         via_administracion,
         dosis_desparasitacion,
-        tipo_desparasitacion
+        tipo_desparasitacion,
+        campana_id
     } = req.body;
 
     const folioDes = await generateFolio("DPS");
@@ -52,7 +53,8 @@ const createDeworming = async (req, res) => {
         lote_desparasitacion,
         via_administracion,
         dosis_desparasitacion,
-        tipo_desparasitacion
+        tipo_desparasitacion,
+        campana_id: Number(campana_id),
     }
 
     try {

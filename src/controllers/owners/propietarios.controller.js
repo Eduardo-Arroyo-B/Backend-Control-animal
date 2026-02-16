@@ -118,6 +118,8 @@ const createPropietario = async (req, res) => {
         email,
         telefono,
         colonia,
+        direccion,
+        contacto_secundario,
         estatus_propietario,
         motivo
     } = req.body;
@@ -153,6 +155,8 @@ const createPropietario = async (req, res) => {
                 email: email || "",
                 telefono,
                 colonia,
+                direccion,
+                contacto_secundario,
                 estatus_propietario,
                 motivo
             }
@@ -201,6 +205,8 @@ const updatePropietario = async (req, res) => {
         email,
         telefono,
         colonia,
+        direccion,
+        contacto_secundario,
         estatus_propietario
     } = req.body;
 
@@ -234,6 +240,8 @@ const updatePropietario = async (req, res) => {
         if (email !== undefined) datosActualizar.email = email;
         if (telefono !== undefined) datosActualizar.telefono = telefono;
         if (colonia !== undefined) datosActualizar.colonia = colonia;
+        if (direccion !== undefined) datosActualizar.direccion = direccion;
+        if (contacto_secundario !== undefined) datosActualizar.contacto_secundario = contacto_secundario;
         if (estatus_propietario !== undefined) datosActualizar.estatus_propietario = estatus_propietario;
 
         const propietario = await prisma.propietario.update({
@@ -272,6 +280,19 @@ const vinculatePropietarioAnimal = async (req, res) => {
     }
 
     try {
+        const animal_prop = await prisma.animales.findUnique({
+            where: { animal_id: Number(id_animal) },
+            select: { propietario_id: true }
+        });
+
+        if (!animal_prop) {
+            return res.status(404).json({ message: "Animal no encontrado" });
+        }
+
+        if (animal_prop.propietario_id !== null) {
+            return res.status(400).json({ message: "El animal ya tiene propietario" });
+        }
+
         const animal = await prisma.animales.update({
             where: {
                 animal_id: Number(id_animal),
@@ -281,6 +302,82 @@ const vinculatePropietarioAnimal = async (req, res) => {
                 es_adoptable: false
             },
         });
+
+        const propietario = await prisma.propietario.findUnique({
+            where: {
+                propietario_id: id_propietario
+            }
+        })
+
+        // Contruccion De RUAC
+
+        const especie = animal.especie?.charAt(0).toUpperCase() || "X"
+        const sexo = animal.sexo?.charAt(0).toUpperCase() || "X"
+
+        const primerApellido = propietario.apellido_paterno?.charAt(0).toUpperCase() || "X"
+        const segundoApellido = propietario.apellido_materno?.charAt(0).toUpperCase() || "X"
+
+        const inicialNombre = propietario.nombre?.charAt(0).toUpperCase() || "X"
+
+        // Generar folio consecutivo
+        const nuevoFolio = await prisma.folio_RUAC.create({
+            data: {
+                tipo: "RUAC"
+            }
+        })
+
+        if (!nuevoFolio) {
+            return res.status(404).json({ message: "No se pudo generar el nuevo folio" })
+        }
+
+        const folioFormateado = String(nuevoFolio.id).padStart(6, "0")
+
+        // Unir todo
+        const ruac = `${especie}${sexo}${primerApellido}${segundoApellido}${inicialNombre}${folioFormateado}`
+
+        if (ruac.length !== 11) {
+            return res.status(404).json({ message: "Error generando RUAC invalido" })
+        }
+
+        const updateAnimal = await prisma.animales.update({
+            where: {
+                animal_id: Number(id_animal),
+            },
+            data: {
+                ruac,
+            }
+        })
+
+        if (!updateAnimal) {
+            return res.status(404).json({ message: "No se pudo actualizar el ruac del animal" })
+        }
+
+        const animalfoto = await prisma.Animales_Fotos.findFirst({
+            where: { animal_id: Number(id_animal) },
+            orderBy: { id: 'asc' },
+            select: { url: true } 
+        });
+
+        const miniExpediente = await prisma.mini_Expediente_Animal.create({
+            data: {
+                nombre: animal.nombre_animal,
+                raza_id: animal.Raza,
+                propietario_id: id_propietario,
+                edad: animal.edad,
+                sexo: animal.sexo,
+                pelaje: animal.pelaje,
+                especie: animal.especie,
+                estado_reproductivo: animal.estado_reproductivo,
+                numero_microchip: animal.numero_microchip,
+                ruac: ruac,
+                foto_url: animalfoto?.url || null,
+                ubicacion_anatomica: animal.ubicacion_anatomica_microchip
+            }
+        })
+
+        if (!miniExpediente) {
+            return res.status(404).json({ message: "No se pudo crear el mini expediente" })
+        }
 
         return res.status(200).json({
             message: "Animal vinculado al propietario correctamente",
@@ -339,26 +436,39 @@ const createPropietarioPortal = async (req, res) => {
         telefono,
         colonia,
         estatus_propietario,
+        direccion,
+        contacto_secundario,
         creacion_portal
     } = req.body;
 
     const propietarioData = {
-        tipo_identificacion,
-        numero_identificacion,
-        nombre,
-        apellido_paterno,
-        apellido_materno,
-        fecha_nacimiento: new Date(fecha_nacimiento),
-        genero,
-        email,
-        telefono,
-        colonia,
-        estatus_propietario,
-        creacion_portal: true
-    }
+        tipo_identificacion:    String(tipo_identificacion || '').trim(),
+        numero_identificacion:  String(numero_identificacion || '').trim(),
+        nombre:                 String(nombre || '').trim(),
+        apellido_paterno:       String(apellido_paterno || '').trim(),
+        apellido_materno:       String(apellido_materno || '').trim(),
+        fecha_nacimiento:       fecha_nacimiento ? new Date(fecha_nacimiento) : null,
+        genero:                 String(genero || '').trim(),
+        email:                  String(email || '').trim() || null,
+        telefono:               String(telefono || '').trim() || null,
+        colonia:                String(colonia || '').trim(),
+        direccion:              String(direccion || '').trim(),
+        contacto_secundario:    String(contacto_secundario || '').trim() || null,
+        estatus_propietario:    String(estatus_propietario || 'activo').trim(),
+        creacion_portal:        Boolean(creacion_portal ?? true)
+    };
 
     // Genera el folio del propietario web
     const folioUnicoProp = await generateFolio("PROPW")
+
+    // Genera Password para el usuario
+    const plainPassword = generatePassword()
+
+    // Salt para password
+    const salt = await bcrypt.genSalt(10);
+
+    // Generar hash password
+    const hash = await bcrypt.hash(plainPassword, salt);
 
     try {
         const existing = await prisma.propietario.findUnique({
@@ -367,13 +477,24 @@ const createPropietarioPortal = async (req, res) => {
 
         // Busca un propietario existente con su ID
         if (existing) {
+            await transporter.sendMail({
+                from: "SICA",
+                to: email,
+                subject: "🐶 SICA - Sistema Integral de Control Animal Municipal",
+                text: "ID ya existente",
+                html:
+                    `<b>Hola</b>
+                 Hola, se intentó registrar como Tutor con su CURP en el Portal Ciudadano para Adopciones de Tijuana, pero usted ya fué registrado con este correo. Favor de verificar su Folio y Contraseña asociados.`
+            })
+
             return res.status(404).json({ message: "El ID de este propietario ya existe"})
         }
 
         const propietario = await prisma.propietario.create({
             data: {
                 ...propietarioData,
-                folio_propietario: folioUnicoProp
+                folio_propietario: folioUnicoProp,
+                password: hash
             }
         })
 
@@ -385,8 +506,12 @@ const createPropietarioPortal = async (req, res) => {
             from: "SICA",
             to: email,
             subject: "🐶 SICA - Sistema Integral de Control Animal Municipal",
-            text: "Registro en Portal Publico SICA",
-            html: "<b>Hola</b>, gracias por su registro en nuestro portal público, estamos procesando la revision de su expediente lo más rapido posible, una vez aprobado le mandaremos un correo con su folio para acceder, gracias por su registro"
+            text: "Solicitud Aprobada",
+            html:
+                `<b>Hola</b>
+                 Su solicitud ha sido aprobada para el uso del portal público de SICA.
+                 Su folio es: <b>${propietario.folio_propietario}</b>
+                 Su contraseña es: <b>${plainPassword}</b>`
         })
 
         return res.status(201).json({ messafge: "Propietario en portal creado exitosamente", propietario });

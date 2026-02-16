@@ -10,7 +10,8 @@ const getAllReportes = async (req, res) => {
                 fecha_reporte: "desc"
             },
             include: {
-                Usuario: true
+                Usuario: true,
+                Reporte_Fotos: true
             }
         });
 
@@ -31,6 +32,7 @@ const createReporte = async (req, res) => {
         descripcion,
         ubicacion,
         colonia_id,
+        domicilio,
         nombre_completo,
         telefono,
         email,
@@ -41,15 +43,17 @@ const createReporte = async (req, res) => {
 
     // Genera folio para el reporte
     const nuevoFolio = await generateFolio("REP")
+    const domicilioBoolean = domicilio === "true" || domicilio === true;
 
     // Objeto reporte
     const reportData = {
         folio_reporte: nuevoFolio,
         tipo_reporte,
-        prioridad,
+        prioridad: "Media",
         descripcion,
         ubicacion,
         colonia_id: Number(colonia_id),
+        domicilio: domicilioBoolean,
         nombre_completo,
         telefono,
         email,
@@ -75,12 +79,20 @@ const createReporte = async (req, res) => {
                 text: "Hola, este es un correo de prueba",
                 html: "<b>Hola</b>, este es un correo de prueba"
             })
+        }
 
-            return res.status(201).json({
-                message: "Reporte y correo enviado exitosamente",
-                reporte,
-                correo: true
+        // Guardar fotos si se enviaron
+        if (req.files && req.files.length > 0) {
+            const fotosData = req.files.map((file, index) => ({
+                reporte_id: reporte.reporte_id,
+                url: file.path.replace(/\\/g, "/"),
+            }))
+
+            const reportesFotos = await prisma.reportes_Fotos.createMany({
+                data: fotosData
             })
+
+            console.log("Fotos creadas", reportesFotos)
         }
 
         const rawIp = req.headers['x-forwarded-for']?.split(',')[0] || req.socket.remoteAddress;
@@ -88,7 +100,7 @@ const createReporte = async (req, res) => {
         const ip = rawIp?.replace('::ffff', '');
 
         await bitacora({
-            usuarioId: registrado_por,
+            usuarioId: registrado_por || "WebUser",
             fecha_hora: new Date().toISOString(),
             operacion: "CREACION",
             ip,
@@ -115,13 +127,17 @@ const createReporte = async (req, res) => {
 
 const updateStatusReporte = async (req, res) => {
     // Extraccion de datos del body
-    const { estatus_reporte, id } = req.body;
-
+    const { estatus_reporte, id, prioridad } = req.body;
+    // Validar ID
+    if (!id || isNaN(Number(id))) {
+    return res.status(400).json({ message: "ID inválido" });
+  }
     try {
-        const status = await prisma.reportes_Ciudadanos.update({
+        const status = await prisma.Reportes_Ciudadanos.update({
             where: { reporte_id: Number(id) },
             data: {
-                estatus_reporte
+                estatus_reporte,
+                prioridad
             }
         })
 

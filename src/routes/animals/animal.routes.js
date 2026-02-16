@@ -8,7 +8,8 @@ import {
     updateAnimal,
     deleteAnimals,
     getMiniExpedienteAnimal,
-    createMiniExpedienteAnimal
+    createMiniExpedienteAnimal,
+    createRUAC
 } from "../../controllers/animals/animals.controller.js";
 import upload from "../../middlewares/multerConfigAnimals.js"
 import { animalModelo1Validator } from "../../middlewares/animalModel1.js";
@@ -29,5 +30,6 @@ router.delete("/deleteAnimals/:id", deleteAnimals)
 // Mini expediente
 router.get("/getMiniExpedienteAnimal", getMiniExpedienteAnimal)
 router.post("/createMiniExpedienteAnimal", createMiniExpedienteAnimal)
+router.post("/createRUAC", createRUAC)
 
 export default router

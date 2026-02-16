@@ -47,7 +47,7 @@ const login = async (req, res) => {
                 resultado: `Login fallido del usuario`,
             })
 
-            return res.status(404).json({ message: "El usuario no existe" })
+            return res.status(404).json({ message: "Usuario o contraseña incorrecta" })
         }
 
         // Compara el password en texto plano con el hasheado
@@ -81,7 +81,7 @@ const login = async (req, res) => {
                 resultado: `Login fallido del usuario contraseña no es correcta`,
             })
 
-            return res.status(401).json({ message: "La contraseña no es correcta" })
+            return res.status(401).json({ message: "Usuario o contraseña incorrecta" })
         }
 
         await bitacora({

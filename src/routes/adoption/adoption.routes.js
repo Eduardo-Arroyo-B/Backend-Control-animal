@@ -8,7 +8,8 @@ import {
     getAllAdoptionRequests,
     getAdoptionRequestByID,
     createAdoptionRequest,
-    updateAdoptionStatus
+    updateAdoptionStatus,
+    uploadContract
 } from "../../controllers/adoption/adoption.controller.js";
 import upload from "../../middlewares/multerConfigAdoptionReport.js";
 
@@ -26,5 +27,6 @@ router.get("/getAllAdoptionRequests", getAllAdoptionRequests);
 router.get("/getAdoptionRequestByID/:search", getAdoptionRequestByID);
 router.post("/createAdoptionRequest", upload.array("fotos", 5) ,createAdoptionRequest);
 router.put("/updateAdoptionStatus/:id", updateAdoptionStatus);
+router.post("/uploadContract/:id", uploadContract);
 
 export default router;

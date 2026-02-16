@@ -5,13 +5,14 @@ import {
     updateStatusReporte,
     createReporteSeguimiento
 } from "../../controllers/reports/reportes.controller.js";
+import upload from "../../middlewares/multerConfigReports.js";
 
 // Router
 const router = express();
 
 // Rutas
 router.get("/getAllReports", getAllReportes);
-router.post("/createReport", createReporte);
+router.post("/createReport", upload.array("fotos", 5), createReporte);
 router.put("/updateStatusReporte", updateStatusReporte);
 router.put("/createReporteSeguimiento", createReporteSeguimiento);
 

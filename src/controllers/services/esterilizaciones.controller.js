@@ -59,7 +59,8 @@ const createEsterilizacion = async (req, res) => {
         observaciones,
         propietario_id,
         veterinario_cirujano_id,
-        zona
+        zona,
+        campana_id
     } = req.body;
 
     // Validación de campos requeridos
@@ -96,7 +97,8 @@ const createEsterilizacion = async (req, res) => {
                         observaciones: observaciones || "",
                         propietario_id: propietarioIdValue,
                         veterinario_cirujano_id,
-                        zona
+                        zona,
+                        campana_id: Number(campana_id),
                     },
                     include: {
                         Animal: {
