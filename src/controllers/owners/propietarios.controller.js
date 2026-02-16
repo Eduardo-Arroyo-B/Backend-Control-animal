@@ -118,6 +118,8 @@ const createPropietario = async (req, res) => {
         email,
         telefono,
         colonia,
+        direccion,
+        contacto_secundario,
         estatus_propietario,
         motivo
     } = req.body;
@@ -153,6 +155,8 @@ const createPropietario = async (req, res) => {
                 email: email || "",
                 telefono,
                 colonia,
+                direccion,
+                contacto_secundario,
                 estatus_propietario,
                 motivo
             }
@@ -201,6 +205,8 @@ const updatePropietario = async (req, res) => {
         email,
         telefono,
         colonia,
+        direccion,
+        contacto_secundario,
         estatus_propietario
     } = req.body;
 
@@ -234,6 +240,8 @@ const updatePropietario = async (req, res) => {
         if (email !== undefined) datosActualizar.email = email;
         if (telefono !== undefined) datosActualizar.telefono = telefono;
         if (colonia !== undefined) datosActualizar.colonia = colonia;
+        if (direccion !== undefined) datosActualizar.direccion = direccion;
+        if (contacto_secundario !== undefined) datosActualizar.contacto_secundario = contacto_secundario;
         if (estatus_propietario !== undefined) datosActualizar.estatus_propietario = estatus_propietario;
 
         const propietario = await prisma.propietario.update({
@@ -272,6 +280,19 @@ const vinculatePropietarioAnimal = async (req, res) => {
     }
 
     try {
+        const animal_prop = await prisma.animales.findUnique({
+            where: { animal_id: Number(id_animal) },
+            select: { propietario_id: true }
+        });
+
+        if (!animal_prop) {
+            return res.status(404).json({ message: "Animal no encontrado" });
+        }
+
+        if (animal_prop.propietario_id !== null) {
+            return res.status(400).json({ message: "El animal ya tiene propietario" });
+        }
+
         const animal = await prisma.animales.update({
             where: {
                 animal_id: Number(id_animal),
@@ -293,7 +314,8 @@ const vinculatePropietarioAnimal = async (req, res) => {
         const especie = animal.especie?.charAt(0).toUpperCase() || "X"
         const sexo = animal.sexo?.charAt(0).toUpperCase() || "X"
 
-        const segundoApellido = propietario.apellido_materno?.substring(0, 2).toUpperCase().padEnd(2,"X")
+        const primerApellido = propietario.apellido_paterno?.charAt(0).toUpperCase() || "X"
+        const segundoApellido = propietario.apellido_materno?.charAt(0).toUpperCase() || "X"
 
         const inicialNombre = propietario.nombre?.charAt(0).toUpperCase() || "X"
 
@@ -311,7 +333,7 @@ const vinculatePropietarioAnimal = async (req, res) => {
         const folioFormateado = String(nuevoFolio.id).padStart(6, "0")
 
         // Unir todo
-        const ruac = `${especie}${sexo}${segundoApellido}${inicialNombre}${folioFormateado}`
+        const ruac = `${especie}${sexo}${primerApellido}${segundoApellido}${inicialNombre}${folioFormateado}`
 
         if (ruac.length !== 11) {
             return res.status(404).json({ message: "Error generando RUAC invalido" })
@@ -330,6 +352,12 @@ const vinculatePropietarioAnimal = async (req, res) => {
             return res.status(404).json({ message: "No se pudo actualizar el ruac del animal" })
         }
 
+        const animalfoto = await prisma.Animales_Fotos.findFirst({
+            where: { animal_id: Number(id_animal) },
+            orderBy: { id: 'asc' },
+            select: { url: true } 
+        });
+
         const miniExpediente = await prisma.mini_Expediente_Animal.create({
             data: {
                 nombre: animal.nombre_animal,
@@ -337,7 +365,13 @@ const vinculatePropietarioAnimal = async (req, res) => {
                 propietario_id: id_propietario,
                 edad: animal.edad,
                 sexo: animal.sexo,
-                pelaje: animal.pelaje
+                pelaje: animal.pelaje,
+                especie: animal.especie,
+                estado_reproductivo: animal.estado_reproductivo,
+                numero_microchip: animal.numero_microchip,
+                ruac: ruac,
+                foto_url: animalfoto?.url || null,
+                ubicacion_anatomica: animal.ubicacion_anatomica_microchip
             }
         })
 
@@ -402,6 +436,8 @@ const createPropietarioPortal = async (req, res) => {
         telefono,
         colonia,
         estatus_propietario,
+        direccion,
+        contacto_secundario,
         creacion_portal
     } = req.body;
 
@@ -416,6 +452,8 @@ const createPropietarioPortal = async (req, res) => {
         email,
         telefono,
         colonia,
+        direccion,
+        contacto_secundario,
         estatus_propietario,
         creacion_portal: true
     }

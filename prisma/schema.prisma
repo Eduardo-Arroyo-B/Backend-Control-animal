@@ -189,6 +189,7 @@ model Animales {
   registrado_por  String   @db.Uuid
   actualizado_por String?
   propietario_id  String?  @db.Uuid
+  contrato_adopcion String?
 
   // Relaciones
   Usuarios               Usuarios                 @relation(fields: [registrado_por], references: [usuario_id])
@@ -248,6 +249,8 @@ model Propietario {
   email                 String
   telefono              String
   colonia               String
+  direccion             String
+  contacto_secundario   String
   estatus_propietario   String
   motivo                String?
   validacion_portal     Boolean?  @default(false)
@@ -694,12 +697,18 @@ model Folio_Seguimiento {
 model Mini_Expediente_Animal {
   id             Int    @id @default(autoincrement())
   nombre         String
+  especie        String?
   raza_id        Int
   propietario_id String @db.Uuid
   edad           String
   sexo           String
   pelaje         String
-
+  estado_reproductivo	String?
+  numero_microchip	String?
+  ubicacion_anatomica	String?
+  foto_url		String?		
+  ruac			String?
+  
   // Relaciones
   CatalogoRaza Cat_Razas   @relation(fields: [raza_id], references: [id])
   Propietario  Propietario @relation(fields: [propietario_id], references: [propietario_id])

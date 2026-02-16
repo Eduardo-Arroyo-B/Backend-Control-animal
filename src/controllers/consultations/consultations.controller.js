@@ -86,7 +86,9 @@ const createConsultation = async (req, res) => {
                 disponible_adopcion: Boolean(disponible_adopcion),
                 veterinario_id,
                 enfermedad_critica,
-                campanas_id: Number(campanas_id),
+                campanas_id: campanas_id && !isNaN(Number(campanas_id)) 
+                ? Number(campanas_id) 
+                : null
             }
         });
         // Poner en adopcion
@@ -100,12 +102,12 @@ const createConsultation = async (req, res) => {
             }
 
             if (animal.estado_reproductivo !== "Esterilizado") {
-                return res.status(400).json({ message: "El animal debe estar esterilizado para ponerlo en adopción" });
+                return res.status(400).json({ message: "El animal debe estar esterilizado para ponerlo en adopción." });
             }
             await prisma.animales.update({
             where: { animal_id: Number(animal_id) },
             data: { 
-                es_adoptable: true,
+                es_adoptable: true,                                                                                              
                 },
             })
             if (!animal) {
@@ -128,7 +130,6 @@ const createConsultation = async (req, res) => {
             ip,
             resultado: `Consulta creada con ID ${animal_id}`
         })
-
 
         return res.status(201).json({
             message: "Consulta veterinaria registrada correctamente",
