@@ -118,6 +118,8 @@ const createPropietario = async (req, res) => {
         email,
         telefono,
         colonia,
+        direccion,
+        contacto_secundario,
         estatus_propietario,
         motivo
     } = req.body;
@@ -153,6 +155,8 @@ const createPropietario = async (req, res) => {
                 email: email || "",
                 telefono,
                 colonia,
+                direccion,
+                contacto_secundario,
                 estatus_propietario,
                 motivo
             }
@@ -201,6 +205,8 @@ const updatePropietario = async (req, res) => {
         email,
         telefono,
         colonia,
+        direccion,
+        contacto_secundario,
         estatus_propietario
     } = req.body;
 
@@ -234,6 +240,8 @@ const updatePropietario = async (req, res) => {
         if (email !== undefined) datosActualizar.email = email;
         if (telefono !== undefined) datosActualizar.telefono = telefono;
         if (colonia !== undefined) datosActualizar.colonia = colonia;
+        if (direccion !== undefined) datosActualizar.direccion = direccion;
+        if (contacto_secundario !== undefined) datosActualizar.contacto_secundario = contacto_secundario;
         if (estatus_propietario !== undefined) datosActualizar.estatus_propietario = estatus_propietario;
 
         const propietario = await prisma.propietario.update({
@@ -421,6 +429,8 @@ const createPropietarioPortal = async (req, res) => {
         telefono,
         colonia,
         estatus_propietario,
+        direccion,
+        contacto_secundario,
         creacion_portal
     } = req.body;
 
@@ -435,6 +445,8 @@ const createPropietarioPortal = async (req, res) => {
         email,
         telefono,
         colonia,
+        direccion,
+        contacto_secundario,
         estatus_propietario,
         creacion_portal: true
     }
