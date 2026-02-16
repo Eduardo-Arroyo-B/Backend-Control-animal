@@ -529,7 +529,12 @@ const createMiniExpedienteAnimal = async (req, res) => {
         propietario_id,
         edad,
         sexo,
-        pelaje
+        pelaje,
+        especie,
+        estado_reproductivo,
+        numero_microchip,
+        foto_url,
+        ubicacion_anatomica
     } = req.body;
 
     const expedienteData = {
@@ -592,7 +597,8 @@ const createRUAC = async (req, res) => {
         const especie = animal.especie?.charAt(0).toUpperCase() || "X"
         const sexo = animal.sexo?.charAt(0).toUpperCase() || "X"
 
-        const segundoApellido = propietario.apellido_materno?.substring(0, 2).toUpperCase().padEnd(2,"X")
+        const primerApellido = propietario.apellido_paterno?.charAt(0).toUpperCase() || "X"
+        const segundoApellido = propietario.apellido_materno?.charAt(0).toUpperCase() || "X"
 
         const inicialNombre = propietario.nombre?.charAt(0).toUpperCase() || "X"
 
@@ -610,7 +616,7 @@ const createRUAC = async (req, res) => {
         const folioFormateado = String(nuevoFolio.id).padStart(6, "0")
 
         // Unir todo
-        const ruac = `${especie}${sexo}${segundoApellido}${inicialNombre}${folioFormateado}`
+        const ruac = `${especie}${sexo}${primerApellido}${segundoApellido}${inicialNombre}${folioFormateado}`
 
         if (ruac.length !== 11) {
             return res.status(404).json({ message: "Error generando RUAC invalido" })
