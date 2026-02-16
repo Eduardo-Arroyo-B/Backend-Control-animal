@@ -7,7 +7,8 @@ const getDewormings = async (req, res) => {
         const deworming = await prisma.desparasitaciones.findMany({
             include: {
                 Animal: true,
-                Usuarios: true
+                Usuarios: true,
+                Campanas: true
             },
             take: 10
         })
