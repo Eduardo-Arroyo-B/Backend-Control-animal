@@ -355,7 +355,7 @@ const vinculatePropietarioAnimal = async (req, res) => {
                 especie: animal.especie,
                 estado_reproductivo: animal.estado_reproductivo,
                 numero_microchip: animal.numero_microchip,
-                ruac: animal.ruac,
+                ruac: ruac,
                 ubicacion_anatomica: animal.ubicacion_anatomica_microchip
             }
         })
