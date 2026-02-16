@@ -65,7 +65,8 @@ const createConsultation = async (req, res) => {
         observaciones,
         disponible_adopcion,
         veterinario_id,
-        enfermedad_critica
+        enfermedad_critica,
+        campanas_id
     } = req.body;
 
     try {
@@ -84,7 +85,8 @@ const createConsultation = async (req, res) => {
                 observaciones: observaciones || "",
                 disponible_adopcion: Boolean(disponible_adopcion),
                 veterinario_id,
-                enfermedad_critica
+                enfermedad_critica,
+                campanas_id: Number(campanas_id),
             }
         });
         // Poner en adopcion

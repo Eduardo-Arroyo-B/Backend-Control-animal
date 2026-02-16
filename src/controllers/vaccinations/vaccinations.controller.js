@@ -81,7 +81,7 @@ const createVaccination = async (req, res) => {
                 observaciones: observaciones || "",
                 veterinario_Id,
                 zona,
-                campaña,
+                campana_id: Number(campaña),
                 via_administracion,
                 sitio_anatomico,
                 dosis_aplicada
