@@ -272,7 +272,20 @@ const vinculatePropietarioAnimal = async (req, res) => {
     }
 
     try {
-        const animal = await prisma.animales.update({
+        const animal = await prisma.animales.findUnique({
+            where: { animal_id: Number(id_animal) },
+            select: { propietario_id: true }
+        });
+
+        if (!animal) {
+            return res.status(404).json({ message: "Animal no encontrado" });
+        }
+
+        if (animal.propietario_id !== null) {
+            return res.status(400).json({ message: "El animal ya tiene propietario" });
+        }
+
+        await prisma.animales.update({
             where: {
                 animal_id: Number(id_animal),
             },

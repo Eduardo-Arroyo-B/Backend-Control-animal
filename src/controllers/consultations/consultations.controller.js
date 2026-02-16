@@ -100,12 +100,12 @@ const createConsultation = async (req, res) => {
             }
 
             if (animal.estado_reproductivo !== "Esterilizado") {
-                return res.status(400).json({ message: "El animal debe estar esterilizado para ponerlo en adopción" });
+                return res.status(400).json({ message: "El animal debe estar esterilizado para ponerlo en adopción." });
             }
             await prisma.animales.update({
             where: { animal_id: Number(animal_id) },
             data: { 
-                es_adoptable: true,
+                es_adoptable: true,                                                                                              
                 },
             })
             if (!animal) {
