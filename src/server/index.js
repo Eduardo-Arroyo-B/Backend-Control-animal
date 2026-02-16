@@ -28,6 +28,7 @@ import bitacora from "../routes/binnacle/binaccle.routes.js"
 import citas from "../routes/schedule/schedule.routes.js"
 import pelaje from "../routes/hair/hair.routes.js"
 import cita from "../routes/date/date.routes.js"
+import costos from "../routes/services/costCatalog.routes.js"
 
 // App
 const app = express();
@@ -88,7 +89,8 @@ app.use("/sica",
     bitacora,
     citas,
     pelaje,
-    cita
+    cita,
+    costos
 );
 
 // Endpoint para validar la actividad del server

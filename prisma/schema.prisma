@@ -183,12 +183,12 @@ model Animales {
   medico_implanto_microchip     String?
 
   // aparte
-  fecha_ingreso   String?
-  es_adoptable    Boolean? @default(false)
-  muerto          Boolean  @default(false)
-  registrado_por  String   @db.Uuid
-  actualizado_por String?
-  propietario_id  String?  @db.Uuid
+  fecha_ingreso     String?
+  es_adoptable      Boolean? @default(false)
+  muerto            Boolean  @default(false)
+  registrado_por    String   @db.Uuid
+  actualizado_por   String?
+  propietario_id    String?  @db.Uuid
   contrato_adopcion String?
 
   // Relaciones
@@ -250,7 +250,7 @@ model Propietario {
   telefono              String
   colonia               String
   direccion             String?
-  contacto_secundario   String
+  contacto_secundario   String?
   estatus_propietario   String
   motivo                String?
   validacion_portal     Boolean?  @default(false)
@@ -695,20 +695,20 @@ model Folio_Seguimiento {
 }
 
 model Mini_Expediente_Animal {
-  id             Int    @id @default(autoincrement())
-  nombre         String
-  especie        String?
-  raza_id        Int
-  propietario_id String @db.Uuid
-  edad           String
-  sexo           String
-  pelaje         String
-  estado_reproductivo	String?
-  numero_microchip	String?
-  ubicacion_anatomica	String?
-  foto_url		String?		
-  ruac			String?
-  
+  id                  Int     @id @default(autoincrement())
+  nombre              String
+  especie             String?
+  raza_id             Int
+  propietario_id      String  @db.Uuid
+  edad                String
+  sexo                String
+  pelaje              String
+  estado_reproductivo String?
+  numero_microchip    String?
+  ubicacion_anatomica String?
+  foto_url            String?
+  ruac                String?
+
   // Relaciones
   CatalogoRaza Cat_Razas   @relation(fields: [raza_id], references: [id])
   Propietario  Propietario @relation(fields: [propietario_id], references: [propietario_id])
@@ -739,6 +739,20 @@ model Cat_Colonias {
 
   // Relaciones
   Reportes_Ciudadanos Reportes_Ciudadanos[]
+}
+
+model Tabla_Costos {
+  id              Int           @id @default(autoincrement())
+  nombre_servicio Tipo_Servicio
+  costo           Int
+  servicio_id     Int?
+}
+
+enum Tipo_Servicio {
+  Vacuna
+  Esterilizacion
+  Desparacitacion
+  Consultas
 }
 
 model Bitacora_Auditoria {
