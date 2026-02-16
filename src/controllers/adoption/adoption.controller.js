@@ -127,6 +127,26 @@ const createAdoption = async (req,res) => {
     }
 }
 
+const uploadContract = async (req, res) => {
+  const { animal_id, url_archivo } = req.body;
+
+  if (!animal_id || !url_archivo) {
+    return res.status(400).json({ error: "animal_id y url_archivo son requeridos" });
+  }
+
+  try {
+    const upload = await prisma.animales.create({
+      data: {
+        contrato_adopcion: url_archivo,
+      }
+    });
+
+    res.status(201).json(upload);
+  } catch (error) {
+    res.status(500).json({ error: "Error al guardar el archivo" });
+  }
+};
+
 const deleteAdoption = async (req,res) => {
     // Extracion del ID por parametros
     const { id } = req.params
@@ -722,5 +742,6 @@ export {
     getAllAdoptionRequests,
     getAdoptionRequestByID,
     createAdoptionRequest,
-    updateAdoptionStatus
+    updateAdoptionStatus,
+    uploadContract
 }

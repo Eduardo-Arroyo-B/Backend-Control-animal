@@ -189,6 +189,7 @@ model Animales {
   registrado_por  String   @db.Uuid
   actualizado_por String?
   propietario_id  String?  @db.Uuid
+  contrato_adopcion String?
 
   // Relaciones
   Usuarios               Usuarios                 @relation(fields: [registrado_por], references: [usuario_id])
