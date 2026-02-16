@@ -754,9 +754,9 @@ model Cita {
 
 enum Estatus_Reporte {
   Pendiente
-  EnProceso
+  En_Proceso
   Atendido
-  Cerrado
+  Resuelto
 }
 
 enum Estatus_Usuario {
