@@ -261,6 +261,7 @@ model Propietario {
   Esterilizaciones                Esterilizaciones[]
   Animales                        Animales[]
   Mini_Expediente                 Mini_Expediente_Animal[]
+  Cita                            Cita[]
 }
 
 // Sin uso
@@ -736,6 +737,19 @@ model Folio_RUAC {
   id        Int      @id @default(autoincrement())
   tipo      String
   createdAt DateTime @default(now())
+}
+
+model Cita {
+  id          Int      @id @default(autoincrement())
+  fecha       DateTime
+  hora        String?
+  estado      String?
+  usuarioId   String   @db.Uuid
+  servicio    String
+  comentarios String?
+
+  // Relaciones
+  Propietario Propietario @relation(fields: [usuarioId], references: [propietario_id])
 }
 
 enum Estatus_Reporte {
