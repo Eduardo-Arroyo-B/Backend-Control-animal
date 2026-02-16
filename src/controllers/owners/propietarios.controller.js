@@ -131,6 +131,7 @@ const createPropietario = async (req, res) => {
         });
     }
 
+    // Genera el folio del propietario web
     const folioUnicoProp = await generateFolio("PROP")
 
     try {
@@ -161,6 +162,58 @@ const createPropietario = async (req, res) => {
                 motivo
             }
         });
+
+        // Genera Password para el usuario
+        const plainPassword = generatePassword()
+
+        // Salt para password
+        const salt = await bcrypt.genSalt(10);
+
+        // Generar hash password
+        const hash = await bcrypt.hash(plainPassword, salt);
+
+        const existing = await prisma.propietario.findUnique({
+            where: { numero_identificacion },
+        })
+
+        // Busca un propietario existente con su ID
+        if (existing) {
+            await transporter.sendMail({
+                from: "SICA",
+                to: email,
+                subject: "🐶 SICA - Sistema Integral de Control Animal Municipal",
+                text: "ID ya existente",
+                html:
+                    `<b>Hola</b>
+                Hola, se intentó registrar como Tutor con su CURP en el Portal Ciudadano para Adopciones de Tijuana, pero usted ya fué registrado con este correo. Favor de verificar su Folio y Contraseña asociados.`
+            })
+
+            return res.status(404).json({ message: "El ID de este propietario ya existe"})
+        }
+
+        const portalpropietario = await prisma.propietario.create({
+            data: {
+                ...propietarioData,
+                folio_propietario: folioUnicoProp,
+                password: hash
+            }
+        })
+
+        if (!portalpropietario) {
+            return res.status(404).json({ message: "No se pudo crear el propietario en el portal" })
+        }
+
+        await transporter.sendMail({
+            from: "SICA",
+            to: email,
+            subject: "🐶 SICA - Sistema Integral de Control Animal Municipal",
+            text: "Solicitud Aprobada",
+            html:
+                `<b>Hola</b>
+                Su solicitud ha sido aprobada para el uso del portal público de SICA.
+                Su folio es: <b>${propietario.folio_propietario}</b>
+                Su contraseña es: <b>${plainPassword}</b>`
+        })
 
         const rawIp = req.headers['x-forwarded-for']?.split(',')[0] || req.socket.remoteAddress;
 
