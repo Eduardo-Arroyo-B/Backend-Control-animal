@@ -127,7 +127,7 @@ const createReporte = async (req, res) => {
 
 const updateStatusReporte = async (req, res) => {
     // Extraccion de datos del body
-    const { estatus_reporte, id } = req.body;
+    const { estatus_reporte, id, prioridad } = req.body;
     // Validar ID
     if (!id || isNaN(Number(id))) {
     return res.status(400).json({ message: "ID inválido" });
@@ -136,7 +136,8 @@ const updateStatusReporte = async (req, res) => {
         const status = await prisma.Reportes_Ciudadanos.update({
             where: { reporte_id: Number(id) },
             data: {
-                estatus_reporte
+                estatus_reporte,
+                prioridad
             }
         })
 
