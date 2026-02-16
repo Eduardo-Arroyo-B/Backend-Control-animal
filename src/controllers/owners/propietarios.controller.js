@@ -351,7 +351,12 @@ const vinculatePropietarioAnimal = async (req, res) => {
                 propietario_id: id_propietario,
                 edad: animal.edad,
                 sexo: animal.sexo,
-                pelaje: animal.pelaje
+                pelaje: animal.pelaje,
+                especie: animal.especie,
+                estado_reproductivo: animal.estado_reproductivo,
+                numero_microchip: animal.numero_microchip,
+                ruac: animal.ruac,
+                ubicacion_anatomica: animal.ubicacion_anatomica_microchip
             }
         })
 
