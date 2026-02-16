@@ -179,8 +179,8 @@ const createAnimal = async (req, res) => {
                 edad,
                 pelaje,
                 peso: Number(peso),
-                numero_microchip: numero_microchip === "string" && numero_microchip.trim() !== ""
-                ? numero_microchip.trim()
+                numero_microchip: numero_microchip?.trim() && /^\d+$/.test(numero_microchip.trim())
+                ?  numero_microchip.trim()
                 : null,
                 fecha_implantacion_microchip,
                 ubicacion_anatomica_microchip,
