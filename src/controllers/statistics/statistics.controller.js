@@ -111,7 +111,7 @@ const getCompleteStatistics = async (req, res) => {
             where: { estatus_reporte: 'Atendido' }
         });
         const reportesCerrados = await prisma.reportes_Ciudadanos.count({
-            where: { estatus_reporte: 'Cerrado' }
+            where: { estatus_reporte: 'Resuelto' }
         });
 
         // Estadísticas de Inventario
