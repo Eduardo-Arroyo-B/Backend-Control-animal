@@ -360,6 +360,15 @@ const createPropietarioPortal = async (req, res) => {
     // Genera el folio del propietario web
     const folioUnicoProp = await generateFolio("PROPW")
 
+    // Genera Password para el usuario
+    const plainPassword = generatePassword()
+
+    // Salt para password
+    const salt = await bcrypt.genSalt(10);
+
+    // Generar hash password
+    const hash = await bcrypt.hash(plainPassword, salt);
+
     try {
         const existing = await prisma.propietario.findUnique({
             where: { numero_identificacion },
@@ -373,7 +382,8 @@ const createPropietarioPortal = async (req, res) => {
         const propietario = await prisma.propietario.create({
             data: {
                 ...propietarioData,
-                folio_propietario: folioUnicoProp
+                folio_propietario: folioUnicoProp,
+                password: hash
             }
         })
 
@@ -383,10 +393,14 @@ const createPropietarioPortal = async (req, res) => {
 
         await transporter.sendMail({
             from: "SICA",
-            to: email,
+            to: propietario.email,
             subject: "🐶 SICA - Sistema Integral de Control Animal Municipal",
-            text: "Registro en Portal Publico SICA",
-            html: "<b>Hola</b>, gracias por su registro en nuestro portal público, estamos procesando la revision de su expediente lo más rapido posible, una vez aprobado le mandaremos un correo con su folio para acceder, gracias por su registro"
+            text: "Solicitud Aprobada",
+            html:
+                `<b>Hola</b>
+                 Su solicitud ha sido aprobada para el uso del portal público de SICA.
+                 Su folio es: <b>${propietario.folio_propietario}</b>
+                 Su contraseña es: <b>${plainPassword}</b>`
         })
 
         return res.status(201).json({ messafge: "Propietario en portal creado exitosamente", propietario });
