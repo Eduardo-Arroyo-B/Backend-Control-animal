@@ -630,7 +630,6 @@ const updateAdoptionStatus = async (req, res) => {
             }
 
             // Actualizar el estatus de la solicitud
-            // El evaluador se establece cuando se aprueba o rechaza
             const dataUpdate = {
                 estatus_adopcion: estatus_adopcion
             };
@@ -673,17 +672,8 @@ const updateAdoptionStatus = async (req, res) => {
                 }
             });
 
-            // Si se aprueba, marcar el animal como no adoptable y registrar egreso
+            // Si se aprueba, registrar egreso
             if (estatus_adopcion === 'Aprobada') {
-                /*
-                await tx.animales.update({
-                    where: { animal_id: solicitud.animal_id },
-                    data: {
-                        es_adoptable: false
-                    }
-                });*/
-
-                // Registrar el egreso del animal
                 await tx.egresos_Animales.create({
                     data: {
                         animal_id: solicitud.animal_id,
@@ -697,24 +687,24 @@ const updateAdoptionStatus = async (req, res) => {
         });
 
         const rawIp = req.headers['x-forwarded-for']?.split(',')[0] || req.socket.remoteAddress;
-
         const ip = rawIp?.replace('::ffff', '');
 
+        // Ahora usamos `solicitud.Animal.animal_id` para acceder al animal
         await bitacora({
             usuarioId: aprobado_por,
             fecha_hora: new Date().toISOString(),
             operacion: "ACTUALIZACION",
             ip,
-            resultado: `Adopcion actualizada del animal ${animal.animal_id}`
-        })
+            resultado: `Adopcion actualizada del animal ${estatus_adopcion}` // Cambio aquí
+        });
 
         await transporter.sendMail({
             from: "SICA",
             to: email,
-            subject: " SICA - Sistema Integral de Control Animal Municipal",
+            subject: "SICA - Sistema Integral de Control Animal Municipal",
             text: "Hola, este es un correo de prueba",
-            html:`"<b>Hola</b>, Su estatus de su solicitud de adopcion se actualizó a ${estatus_adopcion}`,
-        })
+            html: `<b>Hola</b>, Su estatus de su solicitud de adopción se actualizó a ${estatus_adopcion}`,
+        });
 
         return res.status(200).json({
             message: `Solicitud de adopción ${estatus_adopcion.toLowerCase()} exitosamente`,
