@@ -249,7 +249,7 @@ model Propietario {
   email                 String
   telefono              String
   colonia               String
-  direccion             String
+  direccion             String?
   contacto_secundario   String
   estatus_propietario   String
   motivo                String?
