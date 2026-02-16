@@ -1,6 +1,7 @@
 import prisma from "../../../prisma/prismaClient.js";
 import generateFolio from "../../helpers/generateFolio.js";
 import bitacora from "../../helpers/binnacle.js";
+import {transporter} from "../../helpers/mailer.js";
 
 const getAllAdoptions = async (req,res) => {
     try {
@@ -511,6 +512,14 @@ const createAdoptionRequest = async (req, res) => {
             return solicitudConRelaciones;
         });
 
+        await transporter.sendMail({
+            from: "SICA",
+            to: email,
+            subject: " SICA - Sistema Integral de Control Animal Municipal",
+            text: "Hola, este es un correo de prueba",
+            html: "<b>Hola</b>, Su solicitud de Adopcion ha sido enviada, tendra una respuesta en un tiempo aproximado de 72 horas, gracias.",
+        })
+
         return res.status(201).json({
             message: "Solicitud de adopción registrada exitosamente",
             solicitud: result
@@ -533,7 +542,8 @@ const updateAdoptionStatus = async (req, res) => {
     const { id } = req.params;
     const {
         estatus_adopcion,
-        aprobado_por
+        aprobado_por,
+        email
     } = req.body;
 
     // Validación
@@ -676,6 +686,14 @@ const updateAdoptionStatus = async (req, res) => {
             operacion: "ACTUALIZACION",
             ip,
             resultado: `Adopcion actualizada del animal ${animal.animal_id}`
+        })
+
+        await transporter.sendMail({
+            from: "SICA",
+            to: email,
+            subject: " SICA - Sistema Integral de Control Animal Municipal",
+            text: "Hola, este es un correo de prueba",
+            html:`"<b>Hola</b>, Su estatus de su solicitud de adopcion se actualizó a ${estatus_adopcion}`,
         })
 
         return res.status(200).json({
