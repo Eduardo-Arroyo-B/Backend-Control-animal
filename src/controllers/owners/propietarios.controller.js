@@ -282,6 +282,69 @@ const vinculatePropietarioAnimal = async (req, res) => {
             },
         });
 
+        const propietario = await prisma.propietario.findUnique({
+            where: {
+                propietario_id
+            }
+        })
+
+        // Contruccion De RUAC
+
+        const especie = animal.especie?.charAt(0).toUpperCase() || "X"
+        const sexo = animal.sexo?.charAt(0).toUpperCase() || "X"
+
+        const segundoApellido = propietario.apellido_materno?.substring(0, 2).toUpperCase().padEnd(2,"X")
+
+        const inicialNombre = propietario.nombre?.charAt(0).toUpperCase() || "X"
+
+        // Generar folio consecutivo
+        const nuevoFolio = await prisma.folio_RUAC.create({
+            data: {
+                tipo: "RUAC"
+            }
+        })
+
+        if (!nuevoFolio) {
+            return res.status(404).json({ message: "No se pudo generar el nuevo folio" })
+        }
+
+        const folioFormateado = String(nuevoFolio.id).padStart(6, "0")
+
+        // Unir todo
+        const ruac = `${especie}${sexo}${segundoApellido}${inicialNombre}${folioFormateado}`
+
+        if (ruac.length !== 11) {
+            return res.status(404).json({ message: "Error generando RUAC invalido" })
+        }
+
+        const updateAnimal = await prisma.animales.update({
+            where: {
+                animal_id: Number(animalId),
+            },
+            data: {
+                ruac,
+            }
+        })
+
+        if (!updateAnimal) {
+            return res.status(404).json({ message: "No se pudo actualizar el ruac del animal" })
+        }
+
+        const miniExpediente = await prisma.mini_Expediente_Animal.create({
+            data: {
+                nombre: animal.nombre_animal,
+                raza_id: animal.Raza,
+                propietario_id: id_propietario,
+                edad: animal.edad,
+                sexo: animal.sexo,
+                pelaje: animal.pelaje
+            }
+        })
+
+        if (!miniExpediente) {
+            return res.status(404).json({ message: "No se pudo crear el mini expediente" })
+        }
+
         return res.status(200).json({
             message: "Animal vinculado al propietario correctamente",
             animal,
