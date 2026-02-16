@@ -319,7 +319,7 @@ const vinculatePropietarioAnimal = async (req, res) => {
 
         const updateAnimal = await prisma.animales.update({
             where: {
-                animal_id: Number(animalId),
+                animal_id: Number(id_animal),
             },
             data: {
                 ruac,
