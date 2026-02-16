@@ -105,13 +105,13 @@ const getCompleteStatistics = async (req, res) => {
             where: { estatus_reporte: 'Pendiente' }
         });
         const reportesEnProceso = await prisma.reportes_Ciudadanos.count({
-            where: { estatus_reporte: 'EnProceso' }
+            where: { estatus_reporte: 'En_Proceso' }
         });
         const reportesAtendidos = await prisma.reportes_Ciudadanos.count({
             where: { estatus_reporte: 'Atendido' }
         });
         const reportesCerrados = await prisma.reportes_Ciudadanos.count({
-            where: { estatus_reporte: 'Cerrado' }
+            where: { estatus_reporte: 'Resuelto' }
         });
 
         // Estadísticas de Inventario
