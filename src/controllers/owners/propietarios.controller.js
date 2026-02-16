@@ -442,21 +442,21 @@ const createPropietarioPortal = async (req, res) => {
     } = req.body;
 
     const propietarioData = {
-        tipo_identificacion,
-        numero_identificacion,
-        nombre,
-        apellido_paterno,
-        apellido_materno,
-        fecha_nacimiento: new Date(fecha_nacimiento),
-        genero,
-        email,
-        telefono,
-        colonia,
-        direccion,
-        contacto_secundario,
-        estatus_propietario,
-        creacion_portal: true
-    }
+        tipo_identificacion:    String(tipo_identificacion || '').trim(),
+        numero_identificacion:  String(numero_identificacion || '').trim(),
+        nombre:                 String(nombre || '').trim(),
+        apellido_paterno:       String(apellido_paterno || '').trim(),
+        apellido_materno:       String(apellido_materno || '').trim(),
+        fecha_nacimiento:       fecha_nacimiento ? new Date(fecha_nacimiento) : null,
+        genero:                 String(genero || '').trim(),
+        email:                  String(email || '').trim() || null,
+        telefono:               String(telefono || '').trim() || null,
+        colonia:                String(colonia || '').trim(),
+        direccion:              String(direccion || '').trim(),
+        contacto_secundario:    String(contacto_secundario || '').trim() || null,
+        estatus_propietario:    String(estatus_propietario || 'activo').trim(),
+        creacion_portal:        Boolean(creacion_portal ?? true)
+    };
 
     // Genera el folio del propietario web
     const folioUnicoProp = await generateFolio("PROPW")
