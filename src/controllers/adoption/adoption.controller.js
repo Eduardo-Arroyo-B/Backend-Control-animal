@@ -697,7 +697,7 @@ const updateAdoptionStatus = async (req, res) => {
             fecha_hora: new Date().toISOString(),
             operacion: "ACTUALIZACION",
             ip,
-            resultado: `Adopcion actualizada del animal ${estatus_adopcion}` // Cambio aquí
+            resultado: `Adopcion actualizada del animal ${estatus_adopcion}`
         });
 
         try {
