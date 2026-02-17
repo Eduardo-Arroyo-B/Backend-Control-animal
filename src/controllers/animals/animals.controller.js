@@ -592,7 +592,7 @@ const createMiniExpedienteAnimal = async (req, res) => {
         return res.status(500).json({ message: "RUAC generado inválido" });
         }
 
-        // 3. Actualizar expediente con el RUAC
+        // Actualizar expediente con el RUAC
         const expedienteActualizado = await prisma.Mini_Expediente_Animal.update({
         where: { id: expediente.id },
         data: { ruac }
