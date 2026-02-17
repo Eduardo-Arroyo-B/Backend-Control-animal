@@ -541,6 +541,7 @@ const createMiniExpedienteAnimal = async (req, res) => {
         estado_reproductivo,
         numero_microchip,
         foto_url,
+        raza_id,
         ubicacion_anatomica
     } = req.body;
 
