@@ -75,6 +75,7 @@ const getAnimalsByID = async (req, res) => {
         { nombre_animal: { contains: search, mode: "insensitive" } },
         { numero_microchip: { contains: search, mode: "insensitive" } },
         { folio: { contains: search, mode: "insensitive" } },
+        { ruac: { contains: search, mode: "insensitive" } },
     ].filter(Boolean);
 
     try {
