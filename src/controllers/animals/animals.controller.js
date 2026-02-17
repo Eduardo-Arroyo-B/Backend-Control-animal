@@ -581,9 +581,9 @@ const createMiniExpedienteAnimal = async (req, res) => {
         //  Generar RUAC
         const especieLetra = expediente.especie?.charAt(0).toUpperCase() || "X";
         const sexoLetra    = expediente.sexo?.charAt(0).toUpperCase() || "X";
-        const paterno      = expediente.propietario?.apellido_paterno?.charAt(0).toUpperCase() || "X";
-        const materno      = expediente.propietario?.apellido_materno?.charAt(0).toUpperCase() || "X";
-        const inicialNom   = expediente.propietario?.nombre?.charAt(0).toUpperCase() || "X";
+        const paterno      = expediente.Propietario?.apellido_paterno?.charAt(0).toUpperCase() || "X";
+        const materno      = expediente.Propietario?.apellido_materno?.charAt(0).toUpperCase() || "X";
+        const inicialNom   = expediente.Propietario?.nombre?.charAt(0).toUpperCase() || "X";
 
         const folio = await prisma.folio_RUAC.create({
             data: {
