@@ -468,6 +468,7 @@ model Adopciones {
   fecha_solicitud  DateTime
   estatus_adopcion String
   costo_adopcion   Int?
+  direccion        Boolean?
   actualizado_por  String?
   evaluador_id     String?  @db.Uuid
 
