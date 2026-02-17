@@ -126,30 +126,40 @@ const createReporte = async (req, res) => {
 };
 
 const updateStatusReporte = async (req, res) => {
-    // Extraccion de datos del body
-    const { estatus_reporte, id, prioridad } = req.body;
-    // Validar ID
-    if (!id || isNaN(Number(id))) {
+  const { id } = req.params;
+  const { estatus_reporte, prioridad } = req.body;
+
+  if (!id || isNaN(Number(id))) {
     return res.status(400).json({ message: "ID inválido" });
   }
-    try {
-        const status = await prisma.Reportes_Ciudadanos.update({
-            where: { reporte_id: Number(id) },
-            data: {
-                estatus_reporte,
-                prioridad
-            }
-        })
 
-        if (!status) {
-            return res.status(404).json({ message: "No se pudo actualizar el estatus del reporte" })
-        }
+  if (!estatus_reporte || !prioridad) {
+    return res.status(400).json({ 
+      message: "Debe enviar estatus_reporte y prioridad" 
+    });
+  }
 
-        return res.status(200).json({ message: "Estatus del reporte actualizado exitosamente", status })
-    } catch (error) {
-        return res.status(500).json({ message: "Error al actualizar el estatus del reporte", error: error.message });
-    }
-}
+  try {
+    const status = await prisma.Reportes_Ciudadanos.update({
+      where: { reporte_id: Number(id) },
+      data: {
+        estatus_reporte,
+        prioridad
+      }
+    });
+
+    return res.status(200).json({
+      message: "Reporte actualizado correctamente",
+      status
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      message: "Error al actualizar el reporte",
+      error: error.message
+    });
+  }
+};
 
 const createReporteSeguimiento = async (req, res) => {
     const {
