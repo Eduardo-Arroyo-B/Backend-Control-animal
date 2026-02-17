@@ -133,7 +133,7 @@ const updateStatusReporte = async (req, res) => {
     return res.status(400).json({ message: "ID inválido" });
   }
     try {
-        const status = await prisma.Reportes_Ciudadanos.update({
+        const status = await prisma.reportes_Ciudadanos.update({
             where: { reporte_id: Number(id) },
             data: {
                 estatus_reporte,
