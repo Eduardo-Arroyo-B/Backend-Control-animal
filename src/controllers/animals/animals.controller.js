@@ -592,7 +592,6 @@ const createMiniExpedienteAnimal = async (req, res) => {
         })
 
         const folioStr = String(folio.id).padStart(6, "0");
-
         const ruac = `${especieLetra}${sexoLetra}${paterno}${materno}${inicialNom}${folioStr}`;
 
         if (ruac.length !== 11) {
@@ -602,9 +601,15 @@ const createMiniExpedienteAnimal = async (req, res) => {
         // Actualizar expediente con el RUAC
         const expedienteActualizado = await prisma.Mini_Expediente_Animal.update({
         where: { id: expediente.id },
-        data: { ruac }
+            include: {
+                    propietario: true,
+                },
+            data: { ruac }
         });
 
+        if (!expedienteActualizado) {
+            return res.status().json({ message: "No se pudo crear la RUAC" })
+        }
         return res.status(201).json({ message: "Expediente creado exitosamente", expediente })
     } catch (error) {
         return res.status(500).json({ message: "Ha ocurrido un error al crear el expediente", error: error.message });
