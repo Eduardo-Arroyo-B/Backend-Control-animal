@@ -13,7 +13,7 @@ const router = express();
 // Rutas
 router.get("/getAllReports", getAllReportes);
 router.post("/createReport", upload.array("fotos", 5), createReporte);
-router.put("/reportes/:id", updateStatusReporte);
+router.put("/updateStatusReporte/:id", updateStatusReporte);
 router.put("/createReporteSeguimiento", createReporteSeguimiento);
 
 export default router;
