@@ -564,33 +564,8 @@ const createMiniExpedienteAnimal = async (req, res) => {
 
         Propietario: {
             connect: { id: propietario_id }
-        },
-    };
-    if (!raza_id || isNaN(Number(raza_id))) {
-        return res.status(400).json({ message: "raza_id es requerido y debe ser un número válido" });
+        }
     }
-
-    if (!propietario_id) {
-        return res.status(400).json({ message: "propietario_id es requerido" });
-    }
-
-    // Verificar existencia
-    const razaExiste = await prisma.CatalogoRaza.findUnique({
-        where: { id: Number(raza_id) }
-    });
-
-    if (!razaExiste) {
-        return res.status(404).json({ message: "La raza con id proporcionado no existe" });
-    }
-
-    const propietarioExiste = await prisma.Propietario.findUnique({
-        where: { id: propietario_id }
-    });
-
-    if (!propietarioExiste) {
-        return res.status(404).json({ message: "El propietario con id proporcionado no existe" });
-    }
-
     try {
         const expediente = await prisma.Mini_Expediente_Animal.create({
             data: expedienteData,
@@ -602,7 +577,7 @@ const createMiniExpedienteAnimal = async (req, res) => {
         if (!expediente) {
             return res.status().json({ message: "No se pudo crear el expediente" })
         }
-        /*
+        
         //  Generar RUAC
         const especieLetra = expediente.especie?.charAt(0).toUpperCase() || "X";
         const sexoLetra    = expediente.sexo?.charAt(0).toUpperCase() || "X";
@@ -628,7 +603,7 @@ const createMiniExpedienteAnimal = async (req, res) => {
         const expedienteActualizado = await prisma.Mini_Expediente_Animal.update({
         where: { id: expediente.id },
         data: { ruac }
-        });*/
+        });
 
         return res.status(201).json({ message: "Expediente creado exitosamente", expediente })
     } catch (error) {
