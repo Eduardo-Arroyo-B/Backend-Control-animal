@@ -29,7 +29,11 @@ router.delete("/deleteAnimals/:id", deleteAnimals)
 
 // Mini expediente
 router.get("/getMiniExpedienteAnimal", getMiniExpedienteAnimal)
-router.post("/createMiniExpedienteAnimal", createMiniExpedienteAnimal)
+router.post(
+  "/createMiniExpedienteAnimal",
+  express.json(),
+  createMiniExpedienteAnimal
+)
 router.post("/createRUAC", createRUAC)
 
 export default router
