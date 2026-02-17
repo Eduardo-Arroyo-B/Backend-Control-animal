@@ -708,8 +708,9 @@ const updateAdoptionStatus = async (req, res) => {
                 text: "Hola, este es un correo de prueba",
                 html: `<b>Hola</b>, Su estatus de su solicitud de adopción se actualizó a ${estatus_adopcion}`,
             });
+            console.log("Correo enviado correctamente")
         } catch (error) {
-            return error;
+            console.error("Error al enviar el correo:", error);
         }
 
         return res.status(200).json({
