@@ -540,10 +540,15 @@ const createMiniExpedienteAnimal = async (req, res) => {
         especie,
         estado_reproductivo,
         numero_microchip,
-        foto_url,
         raza_id,
         ubicacion_anatomica
     } = req.body;
+
+    let foto_url = null
+
+    if (req.file) {
+        foto_url = req.file.path.replace(/\\/g,"/")
+    }
 
     const expedienteData = {
         nombre,
@@ -552,9 +557,7 @@ const createMiniExpedienteAnimal = async (req, res) => {
         pelaje,
         especie,
         estado_reproductivo,
-        numero_microchip:       /^\d{15}$/.test(String(numero_microchip || '')) 
-                                    ? String(numero_microchip).trim() 
-                                    : null,
+        numero_microchip: /^\d{15}$/.test(String(numero_microchip || '')) ? String(numero_microchip).trim() : null,
         foto_url,
         ubicacion_anatomica,
 
@@ -567,7 +570,7 @@ const createMiniExpedienteAnimal = async (req, res) => {
         }
     };
     try {
-        const expediente = await prisma.Mini_Expediente_Animal.create({
+        const expediente = await prisma.mini_Expediente_Animal.create({
             data: expedienteData,
             include: {
                 Propietario: true,
@@ -599,7 +602,7 @@ const createMiniExpedienteAnimal = async (req, res) => {
         }
 
         // Actualizar expediente con el RUAC
-        const expedienteActualizado = await prisma.Mini_Expediente_Animal.update({
+        const expedienteActualizado = await prisma.mini_Expediente_Animal.update({
         where: { id: expediente.id },
             include: {
                     Propietario: true,

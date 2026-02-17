@@ -12,8 +12,7 @@ import {
     createRUAC
 } from "../../controllers/animals/animals.controller.js";
 import upload from "../../middlewares/multerConfigAnimals.js"
-import { animalModelo1Validator } from "../../middlewares/animalModel1.js";
-import { validarCampos } from "../../middlewares/validationResult.js";
+import uploadMini from "../../middlewares/multerConfigMiniExpediente.js"
 
 // Router
 const router = express.Router()
@@ -29,7 +28,7 @@ router.delete("/deleteAnimals/:id", deleteAnimals)
 
 // Mini expediente
 router.get("/getMiniExpedienteAnimal", getMiniExpedienteAnimal)
-router.post("/createMiniExpedienteAnimal", createMiniExpedienteAnimal)
+router.post("/createMiniExpedienteAnimal", uploadMini.single("foto"), createMiniExpedienteAnimal)
 router.post("/createRUAC", createRUAC)
 
 export default router

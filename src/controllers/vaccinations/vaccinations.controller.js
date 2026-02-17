@@ -17,6 +17,7 @@ const getVaccinations = async (req, res) => {
                         }
                     }
                 },
+                Campana: true,
                 Vacuna: true,
                 Usuarios: true
             },
