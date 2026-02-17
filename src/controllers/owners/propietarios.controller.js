@@ -152,6 +152,15 @@ const createPropietario = async (req, res) => {
             return res.status(404).json({ message: "Ya existe una persona registrada con este numero de identificacion" })
         }
 
+        // Genera Password para el usuario
+        const plainPassword = generatePassword()
+
+        // Salt para password
+        const salt = await bcrypt.genSalt(10);
+
+        // Generar hash password
+        const hash = await bcrypt.hash(plainPassword, salt);
+
         const propietario = await prisma.propietario.create({
             data: {
                 folio_propietario: folioUnicoProp,
@@ -168,28 +177,10 @@ const createPropietario = async (req, res) => {
                 direccion,
                 contacto_secundario,
                 estatus_propietario,
-                motivo
-            }
-        });
-
-        // Genera Password para el usuario
-        const plainPassword = generatePassword()
-
-        // Salt para password
-        const salt = await bcrypt.genSalt(10);
-
-        // Generar hash password
-        const hash = await bcrypt.hash(plainPassword, salt);
-
-        const portalpropietario = await prisma.propietario.update({
-            data: {
+                motivo,
                 password: hash
             }
-        })
-
-        if (!portalpropietario) {
-            return res.status(404).json({ message: "No se pudo crear el propietario en el portal" })
-        }
+        });
 
         await transporter.sendMail({
             from: "SICA",
