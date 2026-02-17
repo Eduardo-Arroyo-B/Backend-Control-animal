@@ -12,6 +12,7 @@ import {
     uploadContract
 } from "../../controllers/adoption/adoption.controller.js";
 import upload from "../../middlewares/multerConfigAdoptionReport.js";
+import uploadConImg from "../../middlewares/multerCofigContracts.js"
 
 // Router
 const router = express.Router();
@@ -27,6 +28,6 @@ router.get("/getAllAdoptionRequests", getAllAdoptionRequests);
 router.get("/getAdoptionRequestByID/:search", getAdoptionRequestByID);
 router.post("/createAdoptionRequest", upload.array("fotos", 5) ,createAdoptionRequest);
 router.put("/updateAdoptionStatus/:id", updateAdoptionStatus);
-router.post("/uploadContract/:id", uploadContract);
+router.put("/uploadContract/:id", uploadConImg.single("foto"), uploadContract);
 
 export default router;

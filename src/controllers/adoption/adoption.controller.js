@@ -127,31 +127,40 @@ const createAdoption = async (req,res) => {
     }
 }
 
+// Endpoint uploadContract Reconfigurado
 const uploadContract = async (req, res) => {
-  const { id } = req.params;
-  const { url_archivo } = req.body;
+    // Extraccion de datos de los parametros
+    const { id } = req.params;
 
-  if (!id || !url_archivo) {
-    return res.status(400).json({ error: "id y url_archivo son requeridos" });
-  }
-  if (!url_archivo || !String(url_archivo).trim()) {
-  return res.status(400).json({ error: "url_archivo es requerido y no puede ser vacío" });
+    if (!id) {
+        return res.status(404).json({ message: "Falta parametro de busqueda (id)" })
+    }
+
+    let foto_url = null
+
+    if (req.file) {
+        foto_url = req.file.path.replace(/\\/g,"/")
+    }
+
+    try {
+        const animal = await prisma.animales.update({
+            where: {
+                animal_id: Number(id),
+            },
+            data: {
+                contrato_adopcion: foto_url
+            }
+        })
+
+        if (!animal) {
+            return res.status().json({ message: "No se pudo crear el contrato del animal" })
+        }
+
+        return res.status(201).json({ message: "Contrato guardado exitosamente", animal})
+    } catch (error) {
+        return res.status(500).json({ message: "Ha ocurrido un error al subir el contrato del animal", error: error.message });
+    }
 }
-  try {
-    const animal = await prisma.Animales.update({
-      where: { animal_id: Number(id) },
-      data: { contrato_adopcion: String(url_archivo).trim()}
-    });
-
-    return res.status(200).json({
-      message: "Contrato guardado",
-      animal
-    });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ error: "Error al guardar el contrato" });
-  }
-};
 
 const deleteAdoption = async (req,res) => {
     // Extracion del ID por parametros
