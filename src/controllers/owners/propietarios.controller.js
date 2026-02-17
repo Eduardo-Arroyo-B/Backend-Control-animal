@@ -191,7 +191,7 @@ const createPropietario = async (req, res) => {
             return res.status(404).json({ message: "El ID de este propietario ya existe"})
         }
 
-        const portalpropietario = await prisma.propietario.create({
+        const portalpropietario = await prisma.propietario.update({
             data: {
                 password: hash
             }
