@@ -545,19 +545,23 @@ const createMiniExpedienteAnimal = async (req, res) => {
     } = req.body;
 
     const expedienteData = {
-        nombre:                 String(nombre || '').trim() || null,
-        raza_id:                raza_id ? Number(raza_id) : null,
-        propietario_id:         propietario_id ? Number(propietario_id) : null,
-        edad:                   edad ? Number(edad) : null,
-        sexo:                   String(sexo || '').trim() || null,
-        pelaje:                 String(pelaje || '').trim() || null,
-        especie:                String(especie || '').trim() || null,
-        estado_reproductivo:    String(estado_reproductivo || '').trim() || null,
-        numero_microchip: /^\d{15}$/.test(String(numero_microchip || ''))
-        ? numero_microchip.trim()
-        : null,
-        foto_url:               String(foto_url || '').trim() || null,
-        ubicacion_anatomica:    String(ubicacion_anatomica || '').trim() || null
+    nombre:                 String(nombre || '').trim() || null,
+    raza_id:                raza_id ? Number(raza_id) : null,
+    propietario_id:         propietario_id ? Number(propietario_id) : null,
+    edad:                   edad ? Number(edad) : null,
+    sexo:                   String(sexo || '').trim() || null,
+    pelaje:                 String(pelaje || '').trim() || null,
+    especie:                String(especie || '').trim() || null,
+    estado_reproductivo:    String(estado_reproductivo || '').trim() || null,
+    numero_microchip:       /^\d{15}$/.test(String(numero_microchip || '')) 
+                                ? String(numero_microchip).trim() 
+                                : null,
+    foto_url:               String(foto_url || '').trim() || null,
+    ubicacion_anatomica:    String(ubicacion_anatomica || '').trim() || null,
+
+    CatalogoRaza: {
+        connect: { id: Number(raza_id) }   // ← Number() obligatorio aquí
+        }
     };
 
     try {
