@@ -546,7 +546,7 @@ const createPropietarioPortal = async (req, res) => {
                  Su contraseña es: <b>${plainPassword}</b>`
         })
 
-        return res.status(201).json({ messafge: "Propietario en portal creado exitosamente", propietario });
+        return res.status(201).json({ message: "Propietario en portal creado exitosamente", propietario });
     } catch (error) {
         return res.status(500).json({ message: "Ha ocurrido un error al crear el propietario en el portal", error: error.message})
     }

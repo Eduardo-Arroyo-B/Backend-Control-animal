@@ -29,6 +29,7 @@ import citas from "../routes/schedule/schedule.routes.js"
 import pelaje from "../routes/hair/hair.routes.js"
 import cita from "../routes/date/date.routes.js"
 import costos from "../routes/services/costCatalog.routes.js"
+import recibos from "../routes/receipts/receipts.routes.js"
 
 // App
 const app = express();
@@ -90,7 +91,8 @@ app.use("/sica",
     citas,
     pelaje,
     cita,
-    costos
+    costos,
+    recibos
 );
 
 // Endpoint para validar la actividad del server
