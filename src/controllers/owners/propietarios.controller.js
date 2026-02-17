@@ -193,8 +193,6 @@ const createPropietario = async (req, res) => {
 
         const portalpropietario = await prisma.propietario.create({
             data: {
-                ...propietarioData,
-                folio_propietario: folioUnicoProp,
                 password: hash
             }
         })
