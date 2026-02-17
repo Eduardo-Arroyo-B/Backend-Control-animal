@@ -290,38 +290,43 @@ const getCompleteStatistics = async (req, res) => {
 
 const getStatisticsCampaigns = async (req, res) => {
     try {
-        const [vacunacionesCount, desparasitacionesCount, consultasCount] = await prisma.$transaction([
-            // Contar campañas asociadas con vacunaciones
-            prisma.campaigns.count({
-                where: {
-                    Vacunaciones: {
-                        some: {} // Verifica si hay alguna vacuna asociada a la campaña
-                    }
-                }
-            }),
-            // Contar campañas asociadas con desparasitaciones
-            prisma.campaigns.count({
-                where: {
-                    Desparasitaciones: {
-                        some: {} // Verifica si hay alguna desparacitación asociada a la campaña
-                    }
-                }
-            }),
-            // Contar campañas asociadas con consultas veterinarias
-            prisma.campaigns.count({
-                where: {
-                    Consultas_Veterinarias: {
-                        some: {} // Verifica si hay alguna consulta veterinaria asociada a la campaña
-                    }
-                }
-            })
-        ]);
-
-        return res.status(200).json({
-            vacunacionesCount,
-            desparasitacionesCount,
-            consultasCount
+        // Primero, obtenemos todas las campañas
+        const campaigns = await prisma.campaigns.findMany({
+            select: {
+                id: true,
+                nombre: true
+            }
         });
+
+        // Luego, por cada campaña, contamos las relaciones asociadas
+        const campaignsStats = await Promise.all(campaigns.map(async (campaign) => {
+            const vacunacionesCount = await prisma.vacunaciones.count({
+                where: {
+                    campana_id: campaign.id
+                }
+            });
+
+            const desparasitacionesCount = await prisma.desparasitaciones.count({
+                where: {
+                    campana_id: campaign.id
+                }
+            });
+
+            const consultasCount = await prisma.consultas_Veterinarias.count({
+                where: {
+                    campana_id: campaign.id
+                }
+            });
+
+            return {
+                nombre: campaign.nombre,
+                vacunacionesCount,
+                desparasitacionesCount,
+                consultasCount
+            };
+        }));
+
+        return res.status(200).json(campaignsStats);
     } catch (error) {
         return res.status(500).json({
             message: "Ha ocurrido un error al obtener las estadísticas de las campañas",
