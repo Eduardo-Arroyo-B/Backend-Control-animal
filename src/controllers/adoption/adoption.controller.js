@@ -128,22 +128,28 @@ const createAdoption = async (req,res) => {
 }
 
 const uploadContract = async (req, res) => {
-  const { animal_id, url_archivo } = req.body;
+  const { id } = req.params;
+  const { url_archivo } = req.body;
 
-  if (!animal_id || !url_archivo) {
-    return res.status(400).json({ error: "animal_id y url_archivo son requeridos" });
+  if (!id || !url_archivo) {
+    return res.status(400).json({ error: "id y url_archivo son requeridos" });
   }
-
+  if (!url_archivo || !String(url_archivo).trim()) {
+  return res.status(400).json({ error: "url_archivo es requerido y no puede ser vacío" });
+}
   try {
-    const upload = await prisma.animales.create({
-      data: {
-        contrato_adopcion: url_archivo,
-      }
+    const animal = await prisma.Animales.update({
+      where: { animal_id: Number(id) },
+      data: { contrato_adopcion: String(url_archivo).trim()}
     });
 
-    res.status(201).json(upload);
+    return res.status(200).json({
+      message: "Contrato guardado",
+      animal
+    });
   } catch (error) {
-    res.status(500).json({ error: "Error al guardar el archivo" });
+    console.error(error);
+    return res.status(500).json({ error: "Error al guardar el contrato" });
   }
 };
 
