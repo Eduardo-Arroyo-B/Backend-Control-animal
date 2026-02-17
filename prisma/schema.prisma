@@ -768,6 +768,20 @@ model Cat_Colonias {
   Reportes_Ciudadanos Reportes_Ciudadanos[]
 }
 
+model Tabla_Costos {
+  id              Int           @id @default(autoincrement())
+  nombre_servicio Tipo_Servicio
+  costo           Int
+  servicio_id     Int?
+}
+
+enum Tipo_Servicio {
+  Vacuna
+  Esterilizacion
+  Desparacitacion
+  Consultas
+}
+
 model Bitacora_Auditoria {
   id         Int      @id @default(autoincrement())
   usuarioId  String
