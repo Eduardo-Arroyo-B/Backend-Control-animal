@@ -547,7 +547,7 @@ const createMiniExpedienteAnimal = async (req, res) => {
 
     const expedienteData = {
         nombre:                 String(nombre || '').trim() || null,
-        edad:                   edad ? Number(edad) : null,
+        edad:                   edad && String(edad).trim() ? String(edad).trim() : null,
         sexo:                   String(sexo || '').trim() || null,
         pelaje:                 String(pelaje || '').trim() || null,
         especie:                String(especie || '').trim() || null,

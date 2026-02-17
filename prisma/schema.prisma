@@ -701,7 +701,7 @@ model Mini_Expediente_Animal {
   especie             String?
   raza_id             Int
   propietario_id      String  @db.Uuid
-  edad                String
+  edad                String?
   sexo                String
   pelaje              String
   estado_reproductivo String?
