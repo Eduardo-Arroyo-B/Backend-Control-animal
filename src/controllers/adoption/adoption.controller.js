@@ -382,7 +382,8 @@ const createAdoptionRequest = async (req, res) => {
         email,
         telefono,
         colonia,
-        estatus_propietario
+        estatus_propietario,
+        direccion
     } = req.body;
 
     if (!animal_id) {
@@ -477,6 +478,7 @@ const createAdoptionRequest = async (req, res) => {
                     adoptante_id: propietario.propietario_id,
                     fecha_solicitud: new Date(),
                     estatus_adopcion: 'Pendiente',
+                    direccion
                 }
             });
 

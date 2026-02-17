@@ -468,6 +468,7 @@ model Adopciones {
   fecha_solicitud  DateTime
   estatus_adopcion String
   costo_adopcion   Int?
+  direccion        String?
   actualizado_por  String?
   evaluador_id     String?  @db.Uuid
 
@@ -742,17 +743,10 @@ model Cat_Colonias {
 }
 
 model Tabla_Costos {
-  id              Int           @id @default(autoincrement())
-  nombre_servicio Tipo_Servicio
+  id              Int    @id @default(autoincrement())
+  nombre_servicio String
   costo           Int
   servicio_id     Int?
-}
-
-enum Tipo_Servicio {
-  Vacuna
-  Esterilizacion
-  Desparacitacion
-  Consultas
 }
 
 model Bitacora_Auditoria {
