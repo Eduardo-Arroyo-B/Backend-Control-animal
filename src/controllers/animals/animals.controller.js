@@ -560,7 +560,7 @@ const createMiniExpedienteAnimal = async (req, res) => {
     ubicacion_anatomica:    String(ubicacion_anatomica || '').trim() || null,
 
     CatalogoRaza: {
-        connect: { id: Number(raza_id) }   // ← Number() obligatorio aquí
+        connect: { id: Number(raza_id) }
         }
     };
 
