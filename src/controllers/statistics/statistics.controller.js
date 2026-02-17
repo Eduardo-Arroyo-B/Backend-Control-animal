@@ -314,7 +314,7 @@ const getStatisticsCampaigns = async (req, res) => {
 
             const consultasCount = await prisma.consultas_Veterinarias.count({
                 where: {
-                    campana_id: campaign.id
+                    campanas_id: campaign.id
                 }
             });
 
