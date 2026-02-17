@@ -135,9 +135,10 @@ const uploadContract = async (req, res) => {
   }
 
   try {
-    const upload = await prisma.animales.create({
+    const upload = await prisma.animales.update({
+     where: { animal_id: animal_id},
       data: {
-        contrato_adopcion: url_archivo,
+        contrato_adopcion: url_archivo
       }
     });
 
