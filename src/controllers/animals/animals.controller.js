@@ -602,7 +602,7 @@ const createMiniExpedienteAnimal = async (req, res) => {
         if (!expediente) {
             return res.status().json({ message: "No se pudo crear el expediente" })
         }
-
+        /*
         //  Generar RUAC
         const especieLetra = expediente.especie?.charAt(0).toUpperCase() || "X";
         const sexoLetra    = expediente.sexo?.charAt(0).toUpperCase() || "X";
@@ -628,7 +628,7 @@ const createMiniExpedienteAnimal = async (req, res) => {
         const expedienteActualizado = await prisma.Mini_Expediente_Animal.update({
         where: { id: expediente.id },
         data: { ruac }
-        });
+        });*/
 
         return res.status(201).json({ message: "Expediente creado exitosamente", expediente })
     } catch (error) {
