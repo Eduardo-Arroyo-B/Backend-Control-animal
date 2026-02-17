@@ -141,7 +141,7 @@ const createPropietario = async (req, res) => {
 
         if (findIdentificacion) {
             await transporter.sendMail({
-                from: "SICA",
+                from: `"Sistema Animales" 🐶 <dms@tijuana.gob.mx>"`,
                 to: email,
                 subject: "🐶 SICA - Sistema Integral de Control Animal Municipal",
                 text: "ID ya existente",
@@ -183,7 +183,7 @@ const createPropietario = async (req, res) => {
         });
 
         await transporter.sendMail({
-            from: "SICA",
+            from: `"Sistema Animales" 🐶 <dms@tijuana.gob.mx>"`,
             to: email,
             subject: "🐶 SICA - Sistema Integral de Control Animal Municipal",
             text: "Solicitud Aprobada",
@@ -510,7 +510,7 @@ const createPropietarioPortal = async (req, res) => {
         // Busca un propietario existente con su ID
         if (existing) {
             await transporter.sendMail({
-                from: "SICA",
+                from: `"Sistema Animales" 🐶 <dms@tijuana.gob.mx>"`,
                 to: email,
                 subject: "🐶 SICA - Sistema Integral de Control Animal Municipal",
                 text: "ID ya existente",
@@ -535,7 +535,7 @@ const createPropietarioPortal = async (req, res) => {
         }
 
         await transporter.sendMail({
-            from: "SICA",
+            from: `"Sistema Animales" 🐶 <dms@tijuana.gob.mx>"`,
             to: email,
             subject: "🐶 SICA - Sistema Integral de Control Animal Municipal",
             text: "Solicitud Aprobada",
@@ -609,7 +609,7 @@ const updateStatusValidacionPortal = async (req, res) => {
         }
 
         await transporter.sendMail({
-            from: "SICA",
+            from: `"Sistema Animales" 🐶 <dms@tijuana.gob.mx>"`,
             to: updatePropietario.email,
             subject: "🐶 SICA - Sistema Integral de Control Animal Municipal",
             text: "Solicitud Aprobada",

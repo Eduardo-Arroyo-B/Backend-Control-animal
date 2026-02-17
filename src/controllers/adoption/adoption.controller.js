@@ -550,7 +550,7 @@ const createAdoptionRequest = async (req, res) => {
         });
 
         await transporter.sendMail({
-            from: "SICA",
+            from: `"Sistema Animales" 🐶 <dms@tijuana.gob.mx>"`,
             to: email,
             subject: " SICA - Sistema Integral de Control Animal Municipal",
             text: "Hola, este es un correo de prueba",
@@ -718,7 +718,7 @@ const updateAdoptionStatus = async (req, res) => {
         });
 
         await transporter.sendMail({
-                from: "SICA",
+                from: `"Sistema Animales" 🐶 <dms@tijuana.gob.mx>"`,
                 to: email,
                 subject: "🐶 SICA - Sistema Integral de Control Animal Municipal",
                 text: "Actualizacion de estatus adopcion",
