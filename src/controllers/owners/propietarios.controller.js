@@ -140,6 +140,15 @@ const createPropietario = async (req, res) => {
         })
 
         if (findIdentificacion) {
+            await transporter.sendMail({
+                from: "SICA",
+                to: email,
+                subject: "🐶 SICA - Sistema Integral de Control Animal Municipal",
+                text: "ID ya existente",
+                html:
+                    `<b>Hola</b>
+                Hola, se intentó registrar como Tutor con su CURP en el Portal Ciudadano para Adopciones de Tijuana, pero usted ya fué registrado con este correo. Favor de verificar su Folio y Contraseña asociados.`
+            })
             return res.status(404).json({ message: "Ya existe una persona registrada con este numero de identificacion" })
         }
 
@@ -171,26 +180,7 @@ const createPropietario = async (req, res) => {
 
         // Generar hash password
         const hash = await bcrypt.hash(plainPassword, salt);
-
-        const existing = await prisma.propietario.findUnique({
-            where: { numero_identificacion },
-        })
-
-        // Busca un propietario existente con su ID
-        if (existing) {
-            await transporter.sendMail({
-                from: "SICA",
-                to: email,
-                subject: "🐶 SICA - Sistema Integral de Control Animal Municipal",
-                text: "ID ya existente",
-                html:
-                    `<b>Hola</b>
-                Hola, se intentó registrar como Tutor con su CURP en el Portal Ciudadano para Adopciones de Tijuana, pero usted ya fué registrado con este correo. Favor de verificar su Folio y Contraseña asociados.`
-            })
-
-            return res.status(404).json({ message: "El ID de este propietario ya existe"})
-        }
-
+        
         const portalpropietario = await prisma.propietario.update({
             data: {
                 password: hash
