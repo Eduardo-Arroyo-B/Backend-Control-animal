@@ -568,6 +568,8 @@ const updateAdoptionStatus = async (req, res) => {
         email
     } = req.body;
 
+    console.log(email);
+
     // Validación
     if (!id) {
         return res.status(400).json({
@@ -700,18 +702,13 @@ const updateAdoptionStatus = async (req, res) => {
             resultado: `Adopcion actualizada del animal ${estatus_adopcion}`
         });
 
-        // try {
-        //     await transporter.sendMail({
-        //         from: "SICA",
-        //         to: email,
-        //         subject: "SICA - Sistema Integral de Control Animal Municipal",
-        //         text: "Hola, este es un correo de prueba",
-        //         html: `<b>Hola</b>, Su estatus de su solicitud de adopción se actualizó a ${estatus_adopcion}`,
-        //     });
-        //     console.log("Correo enviado correctamente")
-        // } catch (error) {
-        //     console.error("Error al enviar el correo:", error);
-        // }
+        await transporter.sendMail({
+                from: "SICA",
+                to: email,
+                subject: "🐶 SICA - Sistema Integral de Control Animal Municipal",
+                text: "Actualizacion de estatus adopcion",
+                html: `<b>Hola</b>, Su estatus de su solicitud de adopción se actualizó a ${estatus_adopcion}`,
+        });
 
         return res.status(200).json({
             message: `Solicitud de adopción ${estatus_adopcion.toLowerCase()} exitosamente`,

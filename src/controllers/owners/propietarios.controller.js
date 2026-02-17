@@ -147,7 +147,7 @@ const createPropietario = async (req, res) => {
                 text: "ID ya existente",
                 html:
                     `<b>Hola</b>
-                Hola, se intentó registrar como Tutor con su ID en el Portal Ciudadano para Adopciones de Tijuana, pero usted ya fué registrado con este correo. Favor de verificar su Folio y Contraseña asociados.`
+                Se intentó registrar como Tutor con su ID en el Portal Ciudadano para Adopciones de Tijuana, pero usted ya fué registrado con este correo. Favor de verificar su Folio y Contraseña asociados.`
             })
             return res.status(404).json({ message: "Ya existe una persona registrada con este numero de identificacion" })
         }
