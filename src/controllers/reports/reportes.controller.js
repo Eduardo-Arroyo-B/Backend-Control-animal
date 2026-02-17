@@ -133,6 +133,16 @@ const updateStatusReporte = async (req, res) => {
     return res.status(400).json({ message: "ID inválido" });
   }
     try {
+        const findReport = await prisma.reportes_Ciudadanos.findUnique({
+            where: {
+                reporte_id: Number(id)
+            }
+        })
+
+        if (!findReport) {
+            return res.status(404).json({ message: "No existe el reporte a actualizar" })
+        }
+
         const status = await prisma.reportes_Ciudadanos.update({
             where: { reporte_id: Number(id) },
             data: {
