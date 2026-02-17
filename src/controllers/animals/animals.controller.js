@@ -563,9 +563,9 @@ const createMiniExpedienteAnimal = async (req, res) => {
         },
 
         Propietario: {
-            connect: { id: propietario_id }
+            connect: { propietario_id: propietario_id }
         }
-    }
+    };
     try {
         const expediente = await prisma.Mini_Expediente_Animal.create({
             data: expedienteData,
