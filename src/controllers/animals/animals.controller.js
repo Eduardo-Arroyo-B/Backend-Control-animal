@@ -70,6 +70,7 @@ const getAnimalsByID = async (req, res) => {
     const isAnimalId =
         /^\d+$/.test(search) && Number(search) <= 2147483647;
 
+    // Busqueda
     const conditions = [
         isAnimalId ? { animal_id: Number(search) } : null,
         { nombre_animal: { contains: search, mode: "insensitive" } },
