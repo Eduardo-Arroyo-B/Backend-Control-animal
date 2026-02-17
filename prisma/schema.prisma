@@ -125,11 +125,10 @@ model Vacunaciones {
   dosis_aplicada     String?
 
   // Relaciones
-  Animal       Animales           @relation(fields: [animal_id], references: [animal_id])
-  Usuarios     Usuarios           @relation(fields: [veterinario_Id], references: [usuario_id])
-  Vacuna       Inventario_Vacunas @relation(fields: [vacuna_id], references: [id])
-  Campana      Campaigns?         @relation(fields: [campana_id], references: [id])
-  Tabla_Costos Tabla_Costos[]
+  Animal   Animales           @relation(fields: [animal_id], references: [animal_id])
+  Usuarios Usuarios           @relation(fields: [veterinario_Id], references: [usuario_id])
+  Vacuna   Inventario_Vacunas @relation(fields: [vacuna_id], references: [id])
+  Campana  Campaigns?         @relation(fields: [campana_id], references: [id])
 
   @@index([animal_id])
   @@index([vacuna_id])
@@ -385,11 +384,10 @@ model Consultas_Veterinarias {
   campanas_id         Int?
 
   // Relaciones
-  Animal       Animales       @relation(fields: [animal_id], references: [animal_id])
-  Usuarios     Usuarios       @relation(fields: [veterinario_id], references: [usuario_id])
-  Campanas     Campaigns?     @relation(fields: [campanas_id], references: [id])
-  Cuarentenas  Cuarentenas[]
-  Tabla_Costos Tabla_Costos[]
+  Animal      Animales      @relation(fields: [animal_id], references: [animal_id])
+  Usuarios    Usuarios      @relation(fields: [veterinario_id], references: [usuario_id])
+  Campanas    Campaigns?    @relation(fields: [campanas_id], references: [id])
+  Cuarentenas Cuarentenas[]
 }
 
 model Cuarentenas {
@@ -447,10 +445,9 @@ model Desparasitaciones {
   aplicado_por String @db.Uuid
 
   // Relaciones
-  Animal       Animales       @relation(fields: [animal_id], references: [animal_id])
-  Usuarios     Usuarios       @relation(fields: [aplicado_por], references: [usuario_id])
-  Campanas     Campaigns?     @relation(fields: [campana_id], references: [id])
-  Tabla_costos Tabla_Costos[]
+  Animal   Animales   @relation(fields: [animal_id], references: [animal_id])
+  Usuarios Usuarios   @relation(fields: [aplicado_por], references: [usuario_id])
+  Campanas Campaigns? @relation(fields: [campana_id], references: [id])
 }
 
 model Egresos_Animales {
@@ -638,11 +635,10 @@ model Esterilizaciones {
   campana_id              Int?
 
   // Relaciones
-  Animal       Animales       @relation(fields: [animal_id], references: [animal_id])
-  Propietario  Propietario?   @relation(fields: [propietario_id], references: [propietario_id])
-  Veterinario  Usuarios       @relation(fields: [veterinario_cirujano_id], references: [usuario_id])
-  Campana      Campaigns?     @relation(fields: [campana_id], references: [id])
-  Tabla_Costos Tabla_Costos[]
+  Animal      Animales     @relation(fields: [animal_id], references: [animal_id])
+  Propietario Propietario? @relation(fields: [propietario_id], references: [propietario_id])
+  Veterinario Usuarios     @relation(fields: [veterinario_cirujano_id], references: [usuario_id])
+  Campana     Campaigns?   @relation(fields: [campana_id], references: [id])
 }
 
 model Campaigns {
@@ -661,29 +657,6 @@ model Campaigns {
   Vacunaciones           Vacunaciones[]
   Desparasitaciones      Desparasitaciones[]
   Consultas_Veterinarias Consultas_Veterinarias[]
-}
-
-model Tabla_Costos {
-  id                   Int          @id @default(autoincrement())
-  nombre_servicio      TipoServicio
-  costo                Int
-  vacuna_id            Int?
-  esterilizaciones_id  Int?
-  desparasitaciones_id Int?
-  consulta_id          Int?
-
-  // Relaciones
-  Vacunaciones      Vacunaciones?           @relation(fields: [vacuna_id], references: [id])
-  Esterilizaciones  Esterilizaciones?       @relation(fields: [esterilizaciones_id], references: [esterilizacion_id])
-  Desparasitaciones Desparasitaciones?      @relation(fields: [desparasitaciones_id], references: [desparacitaciones_id])
-  Consulta          Consultas_Veterinarias? @relation(fields: [consulta_id], references: [consulta_id])
-}
-
-enum TipoServicio {
-  Vacuna
-  Esterilizacion
-  Desparacitacion
-  Consulta
 }
 
 model Citas {

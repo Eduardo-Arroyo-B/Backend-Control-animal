@@ -528,7 +528,6 @@ const getMiniExpedienteAnimal = async (req, res) => {
 }
 
 const createMiniExpedienteAnimal = async (req, res) => {
-    // Extraccion de datos del body
     const {
         nombre,
         raza_id,
@@ -543,66 +542,57 @@ const createMiniExpedienteAnimal = async (req, res) => {
         ubicacion_anatomica
     } = req.body;
 
-    const expedienteData = {
-        nombre:                 String(nombre || '').trim() || null,
-        raza_id:                raza_id ? Number(raza_id) : null,
-        propietario_id:         propietario_id ? Number(propietario_id) : null,
-        edad:                   edad ? Number(edad) : null,
-        sexo:                   String(sexo || '').trim() || null,
-        pelaje:                 String(pelaje || '').trim() || null,
-        especie:                String(especie || '').trim() || null,
-        estado_reproductivo:    String(estado_reproductivo || '').trim() || null,
-        numero_microchip: /^\d{15}$/.test(String(numero_microchip || ''))
-        ? numero_microchip.trim()
-        : null,
-        foto_url:               String(foto_url || '').trim() || null,
-        ubicacion_anatomica:    String(ubicacion_anatomica || '').trim() || null
-    };
-
     try {
-        const expediente = await prisma.Mini_Expediente_Animal.create({
-            data: expedienteData,
-            include: {
-                propietario: true,
-            }
-        })
-
-        if (!expediente) {
-            return res.status().json({ message: "No se pudo crear el expediente" })
-        }
-
-        //  Generar RUAC
-        const especieLetra = expediente.especie?.charAt(0).toUpperCase() || "X";
-        const sexoLetra    = expediente.sexo?.charAt(0).toUpperCase() || "X";
-        const paterno      = expediente.propietario?.apellido_paterno?.charAt(0).toUpperCase() || "X";
-        const materno      = expediente.propietario?.apellido_materno?.charAt(0).toUpperCase() || "X";
-        const inicialNom   = expediente.propietario?.nombre?.charAt(0).toUpperCase() || "X";
-
-        const folio = await prisma.folio_RUAC.create({
-            data: {
-                tipo: "RUAC"
-            }
-        })
-
-        const folioStr = String(folio.id).padStart(6, "0");
-
-        const ruac = `${especieLetra}${sexoLetra}${paterno}${materno}${inicialNom}${folioStr}`;
-
-        if (ruac.length !== 11) {
-        return res.status(500).json({ message: "RUAC generado inválido" });
-        }
-
-        // 3. Actualizar expediente con el RUAC
-        const expedienteActualizado = await prisma.Mini_Expediente_Animal.update({
-        where: { id: expediente.id },
-        data: { ruac }
+        // Verificar que la raza existe
+        const raza = await prisma.cat_Razas.findUnique({
+            where: { id: Number(raza_id) }
         });
 
-        return res.status(201).json({ message: "Expediente creado exitosamente", expediente })
+        if (!raza) {
+            return res.status(400).json({ message: "Raza no encontrada" });
+        }
+
+        // Verificar que el propietario existe
+        const propietario = await prisma.propietario.findUnique({
+            where: { propietario_id: propietario_id }
+        });
+
+        if (!propietario) {
+            return res.status(400).json({ message: "Propietario no encontrado" });
+        }
+
+        // Si las verificaciones son correctas, proceder con la creación del expediente
+        const expedienteData = {
+            nombre: String(nombre || '').trim() || null,
+            raza_id: raza_id ? Number(raza_id) : null,
+            propietario_id: String(propietario_id || '').trim() || null,
+            edad: edad ? String(edad) : null,
+            sexo: String(sexo || '').trim() || null,
+            pelaje: String(pelaje || '').trim() || null,
+            especie: String(especie || '').trim() || null,
+            estado_reproductivo: String(estado_reproductivo || '').trim() || null,
+            numero_microchip: /^\d{15}$/.test(String(numero_microchip || ''))
+                ? numero_microchip.trim()
+                : null,
+            foto_url: String(foto_url || '').trim() || null,
+            ubicacion_anatomica: String(ubicacion_anatomica || '').trim() || null
+        };
+
+        const expediente = await prisma.mini_Expediente_Animal.create({
+            data: expedienteData,
+            include: {
+                Propietario: true,  // Incluir la relación con propietario
+            }
+        });
+
+        return res.status(201).json({ message: "Expediente creado exitosamente", expediente });
+
     } catch (error) {
         return res.status(500).json({ message: "Ha ocurrido un error al crear el expediente", error: error.message });
     }
 }
+
+
 
 const createRUAC = async (req, res) => {
     try {
