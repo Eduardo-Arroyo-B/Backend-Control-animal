@@ -470,8 +470,6 @@ const createAdoptionRequest = async (req, res) => {
             // Generar folio para la solicitud
             const folioAdopcion = await generateFolio("ADP");
 
-            const direccionBoolean = direccion === "true" || direccion === true;
-
             // Crear la solicitud de adopción (sin evaluador, se asignará en el update)
             const solicitud = await tx.adopciones.create({
                 data: {
@@ -480,7 +478,7 @@ const createAdoptionRequest = async (req, res) => {
                     adoptante_id: propietario.propietario_id,
                     fecha_solicitud: new Date(),
                     estatus_adopcion: 'Pendiente',
-                    direccion: direccionBoolean
+                    direccion
                 }
             });
 
