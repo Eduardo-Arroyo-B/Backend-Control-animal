@@ -652,7 +652,7 @@ const updateAdoptionStatus = async (req, res) => {
                             animal_id: true,
                             nombre_animal: true,
                             especie: true,
-                            Raza: true
+                            Raza: true,
                         }
                     },
                     Adoptante: {

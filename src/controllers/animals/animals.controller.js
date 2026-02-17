@@ -546,17 +546,17 @@ const createMiniExpedienteAnimal = async (req, res) => {
     } = req.body;
 
     const expedienteData = {
-        nombre:                 String(nombre || '').trim() || null,
-        edad:                   edad && String(edad).trim() ? String(edad).trim() : null,
-        sexo:                   String(sexo || '').trim() || null,
-        pelaje:                 String(pelaje || '').trim() || null,
-        especie:                String(especie || '').trim() || null,
-        estado_reproductivo:    String(estado_reproductivo || '').trim() || null,
+        nombre,
+        edad,
+        sexo,
+        pelaje,
+        especie,
+        estado_reproductivo,
         numero_microchip:       /^\d{15}$/.test(String(numero_microchip || '')) 
                                     ? String(numero_microchip).trim() 
                                     : null,
-        foto_url:               String(foto_url || '').trim() || null,
-        ubicacion_anatomica:    String(ubicacion_anatomica || '').trim() || null,
+        foto_url,
+        ubicacion_anatomica,
 
         CatalogoRaza: {
             connect: { id: Number(raza_id) }
