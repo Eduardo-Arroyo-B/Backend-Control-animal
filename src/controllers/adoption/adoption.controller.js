@@ -697,16 +697,21 @@ const updateAdoptionStatus = async (req, res) => {
             fecha_hora: new Date().toISOString(),
             operacion: "ACTUALIZACION",
             ip,
-            resultado: `Adopcion actualizada del animal ${estatus_adopcion}` // Cambio aquí
+            resultado: `Adopcion actualizada del animal ${estatus_adopcion}`
         });
 
-        await transporter.sendMail({
-            from: "SICA",
-            to: email,
-            subject: "SICA - Sistema Integral de Control Animal Municipal",
-            text: "Hola, este es un correo de prueba",
-            html: `<b>Hola</b>, Su estatus de su solicitud de adopción se actualizó a ${estatus_adopcion}`,
-        });
+        // try {
+        //     await transporter.sendMail({
+        //         from: "SICA",
+        //         to: email,
+        //         subject: "SICA - Sistema Integral de Control Animal Municipal",
+        //         text: "Hola, este es un correo de prueba",
+        //         html: `<b>Hola</b>, Su estatus de su solicitud de adopción se actualizó a ${estatus_adopcion}`,
+        //     });
+        //     console.log("Correo enviado correctamente")
+        // } catch (error) {
+        //     console.error("Error al enviar el correo:", error);
+        // }
 
         return res.status(200).json({
             message: `Solicitud de adopción ${estatus_adopcion.toLowerCase()} exitosamente`,
