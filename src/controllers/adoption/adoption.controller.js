@@ -135,16 +135,18 @@ const uploadContract = async (req, res) => {
   }
 
   try {
-    const upload = await prisma.animales.update({
-     where: { animal_id: animal_id},
-      data: {
-        contrato_adopcion: url_archivo
-      }
+    const animal = await prisma.Animales.update({
+      where: { animal_id: animal_id },
+      data: { contrato_adopcion: url_archivo }
     });
 
-    res.status(201).json(upload);
+    return res.status(200).json({
+      message: "Contrato guardado",
+      animal_id: animal.id
+    });
   } catch (error) {
-    res.status(500).json({ error: "Error al guardar el archivo" });
+    console.error(error);
+    return res.status(500).json({ error: "Error al guardar el contrato" });
   }
 };
 
