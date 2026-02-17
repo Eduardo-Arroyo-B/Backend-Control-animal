@@ -18,8 +18,8 @@ const createCost = async (req, res) => {
     // Extraer datos del body
     const {
         nombre_servicio,
-        costo,  // Tipo de servicio (Vacuna, Esterilización, Desparacitación)
-        servicio_id     // ID del servicio (vacuna_id, esterilizaciones_id, o desparasitaciones_id)
+        costo,
+        servicio_id
     } = req.body;
 
     // Objeto

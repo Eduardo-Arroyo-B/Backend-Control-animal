@@ -22,35 +22,13 @@ const createCost = async (req, res) => {
         servicio_id     // ID del servicio (vacuna_id, esterilizaciones_id, o desparasitaciones_id)
     } = req.body;
 
+    // data
+    const data = {
+        nombre_servicio,
+        costo: Number(costo),
+    }
+
     try {
-        // Lógica para asignar el id correspondiente al servicio basado en el tipo de servicio
-        let data = {};
-
-        if (nombre_servicio === 'Vacuna') {
-            data = {
-                nombre_servicio,
-                costo: Number(costo),
-                vacuna_id: servicio_id // Asignamos el id de la vacuna
-            };
-        } else if (nombre_servicio === 'Esterilizacion') {
-            data = {
-                nombre_servicio,
-                costo: Number(costo),
-                esterilizaciones_id: servicio_id // Asignamos el id de la esterilización
-            };
-        } else if (nombre_servicio === 'Desparacitacion') {
-            data = {
-                nombre_servicio,
-                costo: Number(costo),
-                desparasitaciones_id: servicio_id // Asignamos el id de la desparacitación
-            };
-        } else {
-            // Si el tipo de servicio no es válido
-            return res.status(400).json({
-                message: "Tipo de servicio no válido. Debe ser 'Vacuna', 'Esterilización' o 'Desparacitación'."
-            });
-        }
-
         // Crear el nuevo costo en la base de datos
         const cost = await prisma.tabla_Costos.create({
             data,
