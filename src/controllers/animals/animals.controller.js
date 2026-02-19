@@ -453,13 +453,15 @@ const updateAnimal = async (req, res) => {
     }
     if (booleanAdoptable) {
         const EnCuarentena = await prisma.cuarentenas.findFirst({
-            where: { animal_id: Number(id) },
-            select: { cuarentena_id: true },
-        });
+                where: { animal_id: Number(animal_id),
+                    estatus_cuarentena: "Activa"
+                 },
+                select: { cuarentena_id: true },
+            });
 
-        if (EnCuarentena){
-            return res.status(400).json({ message: "El animal se encuentra en cuarentena." });
-        }
+            if (EnCuarentena){
+                return res.status(400).json({ message: "El animal se encuentra en cuarentena." });
+            }
     }
     try {
         const animal = await prisma.animales.update({
