@@ -447,6 +447,16 @@ const updateAnimal = async (req, res) => {
             })
         }
     }
+    if (es_adoptable){
+        const EnCuarentena = await prisma.cuarentenas.findFirst({
+            where: { animal_id: Number(animal_id) },
+            select: { id: true },
+        });
+
+        if (EnCuarentena){
+            return res.status(400).json({ message: "El animal se encuentra en cuarentena." });
+        }
+    }
 
     try {
         const animal = await prisma.animales.update({

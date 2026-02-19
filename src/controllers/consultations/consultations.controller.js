@@ -105,6 +105,16 @@ const createConsultation = async (req, res) => {
                 return res.status(400).json({ message: "El animal debe estar esterilizado para ponerlo en adopción." });
             }
             */
+
+            const EnCuarentena = await prisma.cuarentenas.findFirst({
+                where: { animal_id: Number(animal_id) },
+                select: { id: true },
+            });
+
+            if (EnCuarentena){
+                return res.status(400).json({ message: "El animal se encuentra en cuarentena." });
+            }
+            
             await prisma.animales.update({
             where: { animal_id: Number(animal_id) },
             data: { 
