@@ -450,7 +450,7 @@ const updateAnimal = async (req, res) => {
     if (booleanAdoptable) {
         const EnCuarentena = await prisma.cuarentenas.findFirst({
             where: { animal_id: Number(id) },
-            select: { id: true },
+            select: { cuarentena_id: true },
         });
 
         if (EnCuarentena){
