@@ -162,22 +162,21 @@ const createAnimal = async (req, res) => {
         if (!raza) {
             return res.status(404).json({ message: "La raza no existe en el catalogo" })
         }
-
-        const microchip = await prisma.animales.findUnique({
-            where: {
-                numero_microchip
+        
+        if (numero_microchip !== null && numero_microchip !== undefined){
+            const microchipUnique = await prisma.animales.findUnique({
+                where: {
+                    numero_microchip
+                }
+            })
+            if (microchipUnique) {
+                return res.status(404).json({ message: "No se puede crear un animal con microchip existente" })
             }
-        })
-
-        if (microchip) {
-            return res.status(404).json({ message: "No se puede crear un animal con microchip existente" })
         }
-
+        
         const booleanAdoptable = es_adoptable === true || es_adoptable === "true"
 
         const folioGenerado = await generateFolio("ANM")
-
-        console.log(numero_microchip)
 
         const animal = await prisma.animales.create({
             data: {
@@ -450,7 +449,16 @@ const updateAnimal = async (req, res) => {
             })
         }
     }
+    if (booleanAdoptable) {
+        const EnCuarentena = await prisma.cuarentenas.findFirst({
+            where: { animal_id: Number(id) },
+            select: { cuarentena_id: true },
+        });
 
+        if (EnCuarentena){
+            return res.status(400).json({ message: "El animal se encuentra en cuarentena." });
+        }
+    }
     try {
         const animal = await prisma.animales.update({
             where: { animal_id: Number(id) },
