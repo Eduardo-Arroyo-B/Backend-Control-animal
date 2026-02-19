@@ -396,6 +396,7 @@ const vinculatePropietarioAnimal = async (req, res) => {
                 raza_id: animal.Raza,
                 propietario_id: id_propietario,
                 edad: animal.edad,
+                fecha_nacimiento: animal.fecha_nacimiento,
                 sexo: animal.sexo,
                 pelaje: animal.pelaje,
                 especie: animal.especie,
