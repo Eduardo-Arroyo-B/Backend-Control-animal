@@ -106,6 +106,7 @@ const createAnimal = async (req, res) => {
             especie,
             Raza,
             edad,
+            fecha_nacimiento,
             pelaje,
             peso,
             numero_microchip,
@@ -185,6 +186,7 @@ const createAnimal = async (req, res) => {
                 especie,
                 Raza: razaId,
                 edad,
+                fecha_nacimiento: new Date(fecha_nacimiento),
                 pelaje,
                 peso: Number(peso),
                 numero_microchip: numero_microchip?.trim() && /^\d+$/.test(numero_microchip.trim())

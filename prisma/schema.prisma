@@ -145,6 +145,7 @@ model Animales {
   especie             String?
   Raza                Int?
   edad                String?
+  fecha_nacimiento    DateTime?
   pelaje              String?
   peso                Int?
   tipo_ingreso        String?
