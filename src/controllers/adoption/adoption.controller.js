@@ -138,9 +138,11 @@ const uploadContract = async (req, res) => {
 
     let foto_url = null
 
-    if (req.file) {
-        foto_url = req.file.path.replace(/\\/g,"/")
+     if (!req.file) {
+        return res.status(400).json({ message: "No se recibió ningún archivo" });
     }
+
+    foto_url = req.file.path.replace(/\\/g,"/")
 
     try {
         const animal = await prisma.animales.update({
@@ -153,10 +155,10 @@ const uploadContract = async (req, res) => {
         })
 
         if (!animal) {
-            return res.status().json({ message: "No se pudo crear el contrato del animal" })
+            return res.status(400).json({ message: "No se pudo subir el contrato del animal" });
         }
 
-        return res.status(201).json({ message: "Contrato guardado exitosamente", animal})
+        return res.status(200).json({ message: "Contrato guardado exitosamente", animal})
     } catch (error) {
         return res.status(500).json({ message: "Ha ocurrido un error al subir el contrato del animal", error: error.message });
     }
@@ -550,7 +552,7 @@ const createAdoptionRequest = async (req, res) => {
         });
 
         await transporter.sendMail({
-            from: "SICA",
+            from: `"Sistema Animales" 🐶 <dms@tijuana.gob.mx>"`,
             to: email,
             subject: " SICA - Sistema Integral de Control Animal Municipal",
             text: "Hola, este es un correo de prueba",
@@ -718,7 +720,7 @@ const updateAdoptionStatus = async (req, res) => {
         });
 
         await transporter.sendMail({
-                from: "SICA",
+                from: `"Sistema Animales" 🐶 <dms@tijuana.gob.mx>"`,
                 to: email,
                 subject: "🐶 SICA - Sistema Integral de Control Animal Municipal",
                 text: "Actualizacion de estatus adopcion",

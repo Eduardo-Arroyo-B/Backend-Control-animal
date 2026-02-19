@@ -73,7 +73,7 @@ const createReporte = async (req, res) => {
 
         if (tipo_reporte === "Animal maltratado") {
             await transporter.sendMail({
-                from: "Sistema Animales 🐶",
+                from: `"Sistema Animales" 🐶 <dms@tijuana.gob.mx>"`,
                 to: reportData.email,
                 subject: "Correo de prueba",
                 text: "Hola, este es un correo de prueba",

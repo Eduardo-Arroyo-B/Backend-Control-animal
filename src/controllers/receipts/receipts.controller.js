@@ -1,7 +1,7 @@
-import { sql } from 'mssql';
+import sql from 'mssql';
 
 const getVpagosByRecibo = async (req, res) => {
-    const { recibo } = req.query; // Recibo enviado como parámetro en la URL
+    const { recibo } = req.params; // Recibo enviado como parámetro en la URL
 
     if (!recibo) {
         return res.status(400).json({
@@ -12,10 +12,10 @@ const getVpagosByRecibo = async (req, res) => {
     try {
         // Configuración de conexión a la base de datos
         const config = {
-            user: 'ejemplo',
-            password: 'ejemplo',
+            user: process.env.RECEIPTS_USER,
+            password: process.env.RECEIPTS_PASSWORD,
             server: '10.10.250.9', // Dirección del servidor
-            database: 'nombre_de_base_de_datos', // Nombre de la base de datos
+            database: 'Tesoreria', // Nombre de la base de datos
             options: {
                 encrypt: true, // Usar encriptación si es necesario
                 trustServerCertificate: true, // Si se necesita confiar en el certificado del servidor

@@ -28,6 +28,6 @@ router.get("/getAllAdoptionRequests", getAllAdoptionRequests);
 router.get("/getAdoptionRequestByID/:search", getAdoptionRequestByID);
 router.post("/createAdoptionRequest", upload.array("fotos", 5) ,createAdoptionRequest);
 router.put("/updateAdoptionStatus/:id", updateAdoptionStatus);
-router.put("/uploadContract/:id", uploadConImg.single("foto"), uploadContract);
+router.post("/uploadContract/:id", uploadConImg.single("foto"), uploadContract);
 
 export default router;
