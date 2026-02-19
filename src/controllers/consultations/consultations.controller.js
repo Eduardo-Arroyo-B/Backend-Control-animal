@@ -107,8 +107,10 @@ const createConsultation = async (req, res) => {
             */
 
             const EnCuarentena = await prisma.cuarentenas.findFirst({
-                where: { animal_id: Number(animal_id) },
-                select: { id: true },
+                where: { animal_id: Number(animal_id),
+                    estatus_cuarentena: "Activa"
+                 },
+                select: { cuarentena_id: true },
             });
 
             if (EnCuarentena){
