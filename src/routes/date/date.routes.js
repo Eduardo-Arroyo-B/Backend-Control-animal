@@ -2,7 +2,9 @@ import express from "express";
 import {
     getAllDates,
     getDate,
-    createDate
+    createDate,
+    updateDate,
+    deleteDate
 } from "../../controllers/date/date.controller.js";
 
 // Router
@@ -12,5 +14,7 @@ const router = express.Router();
 router.get("/getAllDates", getAllDates);
 router.get("/getDate", getDate);
 router.post("/createDate", createDate);
+router.put("/updateDate/:id", updateDate);
+router.delete("/deleteDate/:id", deleteDate);
 
 export default router

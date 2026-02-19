@@ -46,8 +46,67 @@ const createDate = async (req, res) => {
     }
 }
 
+const updateDate = async (req, res) => {
+    // Extraer ID de los parametros
+    const { id } = req.params;
+
+    try {
+        const findDate = await prisma.cita.findUnique({
+            where: { id: Number(id) },
+        })
+
+        if (!findDate) {
+            return res.status(404).json({ message: "No se encontro la cita a actualizar" })
+        }
+
+        const updateDate = await prisma.cita.update({
+            where: { id: Number(id) },
+            data: {
+                estado: "Atendida"
+            }
+        })
+
+        if (!updateDate) {
+            return res.status(404).json({ message: "" })
+        }
+
+        return res.status(200).json({ message: "Cita actualizada exitosamente", updateDate });
+    } catch (error) {
+        return res.status(500).json({ message: "Ha ocurrido un error al actualizar la cita", error: error.message });
+    }
+}
+
+const deleteDate = async (req, res) => {
+    // Extraccion de ID de los parametros
+    const { id } = req.params;
+
+    try {
+        const findDate = await prisma.cita.findUnique({
+            where: { id: Number(id) },
+        })
+
+        if (!findDate) {
+            return res.status(404).json({ message: "No se encontro la cita a eliminar" })
+        }
+
+        const deleteDate = await prisma.cita.delete({
+            where: { id: Number(id) }
+        })
+
+        if (!deleteDate) {
+            return res.status(404).json({ message: "No se pudo eliminar la cita seleccionada" })
+        }
+
+        return res.status(200).json({ message: "Cita eliminada exitosamente", deleteDate })
+    } catch (error) {
+        return res.status(500).json({ message: "Ha ocurrido un error al eliminar la cita", error: error.message })
+    }
+}
+
 export {
     getAllDates,
     getDate,
-    createDate
+    createDate,
+    updateDate,
+    deleteDate
 }

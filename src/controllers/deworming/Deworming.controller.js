@@ -5,6 +5,9 @@ import bitacora from "../../helpers/binnacle.js";
 const getDewormings = async (req, res) => {
     try {
         const deworming = await prisma.desparasitaciones.findMany({
+            orderBy: {
+                fecha_desparasitacion: "desc"
+            },
             include: {
                 Animal: true,
                 Usuarios: true,
