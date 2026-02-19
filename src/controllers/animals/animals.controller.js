@@ -162,7 +162,7 @@ const createAnimal = async (req, res) => {
             return res.status(404).json({ message: "La raza no existe en el catalogo" })
         }
         
-        if (microchip !== null && microchip !== undefined){
+        if (numero_microchip !== null && numero_microchip !== undefined){
             const microchipUnique = await prisma.animales.findUnique({
                 where: {
                     numero_microchip
