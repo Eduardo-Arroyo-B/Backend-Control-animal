@@ -697,11 +697,11 @@ model Folio_Seguimiento {
 }
 
 model Mini_Expediente_Animal {
-  id                  Int     @id @default(autoincrement())
+  id                  Int       @id @default(autoincrement())
   nombre              String
   especie             String?
   raza_id             Int
-  propietario_id      String  @db.Uuid
+  propietario_id      String    @db.Uuid
   edad                String?
   fecha_nacimiento    DateTime?
   sexo                String
@@ -754,7 +754,7 @@ model Tabla_Costos {
 model Bitacora_Auditoria {
   id         Int      @id @default(autoincrement())
   usuarioId  String
-  fecha_hora DateTime
+  fecha_hora DateTime @default(now())
   operacion  String
   ip         String
   resultado  String
