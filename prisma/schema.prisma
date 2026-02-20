@@ -73,7 +73,7 @@ model Reportes_Ciudadanos {
   telefono        String
   email           String?
   estatus_reporte Estatus_Reporte
-  fecha_reporte   DateTime        @default(now())
+  fecha_reporte   String?
   registrado_por  String?         @db.Uuid
 
   // Relaciones
@@ -752,9 +752,9 @@ model Tabla_Costos {
 }
 
 model Bitacora_Auditoria {
-  id         Int      @id @default(autoincrement())
+  id         Int     @id @default(autoincrement())
   usuarioId  String
-  fecha_hora DateTime @default(now())
+  fecha_hora String?
   operacion  String
   ip         String
   resultado  String

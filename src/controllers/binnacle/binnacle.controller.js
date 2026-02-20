@@ -31,11 +31,13 @@ const createDeleteBinnacle = async (req, res) => {
 
     const ip = rawIp?.replace('::ffff', '');
 
+    const localNow = new Date().toLocaleString("es-MX", { timeZone: "America/Tijuana" });
+
     try {
         const deleteBinaccle = await prisma.bitacora_Auditoria.create({
             data: {
                 usuarioId,
-                fecha_hora: new Date().toISOString(),
+                fecha_hora: localNow,
                 operacion,
                 ip,
                 resultado
@@ -59,10 +61,13 @@ const createBinnacleReports = async (req, res) => {
 
     const ip = rawIp?.replace('::ffff', '');
 
+    const localNow = new Date().toLocaleString("es-MX", { timeZone: "America/Tijuana" });
+
     try {
         const createBinnacle = await prisma.bitacora_Auditoria.create({
             data: {
                 usuarioId,
+                fecha_hora: localNow,
                 operacion: "CREACION",
                 ip,
                 resultado: `Reporte de ${resultado} creado con ID ${usuarioId}`
@@ -73,7 +78,7 @@ const createBinnacleReports = async (req, res) => {
             return res.status(404).json({ message: "No se pudo crear la bitacora de reportes" })
         }
 
-        return res.status(201).json({ message: "Bitacora de reportes creada exitosamente" })
+        return res.status(201).json({ message: "Bitacora de reportes creada exitosamente", createBinnacle })
     } catch (error) {
         return res.status(500).json({ message: "Error la crear la bitacora de reportes" })
     }
