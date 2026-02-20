@@ -228,6 +228,37 @@ const createCatVaccination = async (req, res) => {
     }
 }
 
+const updateVaccination = async (req, res) => {
+    // Extraer ID de los parametros
+    const { id } = req.params;
+    const { cantidad_disponible } = req.body;
+
+    try {
+        const vaccination = await prisma.inventario_Vacunas.findUnique({
+            where: { id: Number(id) },
+        })
+
+        if (!vaccination) {
+            return res.status(404).json({ message: "No se encontro la vacuna a actualizar" })
+        }
+
+        const updateVaccination = await prisma.inventario_Vacunas.update({
+            where: { id: Number(id) },
+            data: {
+                cantidad_disponible: Number(cantidad_disponible),
+            }
+        })
+
+        if (!updateVaccination) {
+            return res.status(404).json({ message: "No se pudo actualizar la vacuna" })
+        }
+
+        return res.status(200).json({ message: "Vacuna actualizada exitosamente", updateVaccination });
+    } catch (error) {
+        return res.status(500).json({ message: "Ha ocurrido un error al actualizar la vacuna", error: error.message });
+    }
+}
+
 const deleteVaccination = async (req, res) => {
     const { id } = req.params;
 
@@ -257,5 +288,6 @@ export {
     getCatVaccination,
     getCatVaccinationByID,
     createCatVaccination,
+    updateVaccination,
     deleteVaccination
 };
