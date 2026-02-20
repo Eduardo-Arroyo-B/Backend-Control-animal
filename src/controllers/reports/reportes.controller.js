@@ -44,6 +44,7 @@ const createReporte = async (req, res) => {
     // Genera folio para el reporte
     const nuevoFolio = await generateFolio("REP")
     const domicilioBoolean = domicilio === "true" || domicilio === true;
+    const localNow = new Date().toLocaleString("es-MX", { timeZone: "America/Tijuana" });
 
     // Objeto reporte
     const reportData = {
@@ -58,6 +59,7 @@ const createReporte = async (req, res) => {
         telefono,
         email,
         estatus_reporte,
+        fecha_reporte: localNow,
         registrado_por: registrado_por || null
     }
 
