@@ -613,7 +613,7 @@ model Cremaciones {
   temperatura          String
   duracion             String
   entrega_cenizas      String
-  observaciones        String
+  observaciones        String?
   costo_cremacion      Int
   registrado_por       String   @db.Uuid
 
