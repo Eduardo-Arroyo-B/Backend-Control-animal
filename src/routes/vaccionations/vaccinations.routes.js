@@ -6,6 +6,7 @@ import {
     getCatVaccination,
     getCatVaccinationByID,
     createCatVaccination,
+    updateVaccination,
     deleteVaccination
 } from "../../controllers/vaccinations/vaccinations.controller.js";
 
@@ -16,6 +17,7 @@ const router = express();
 router.get("/getVaccinations", getVaccinations);
 router.get("/getVaccinationsByID/:id", getVaccinationByID);
 router.post("/createVaccination", createVaccination);
+router.put("/updateVaccination/:id", updateVaccination);
 router.delete("/deleteVaccination", deleteVaccination);
 
 // Rutas Stock vacunas
