@@ -9,13 +9,35 @@ const getAllBinnacles = async (req, res) => {
             take: 50
         })
 
-        if (binnacles.length === 0) {
-            return res.status(404).json({ message: "No se encontraron resultados en la bitacora de auditoria" })
-        }
+        // Convertir fecha a zona México
+        const formattedBinnacles = binnacles.map(item => ({
+            ...item,
+            fecha_hora: item.fecha_hora.toLocaleString("es-MX", {
+                timeZone: "America/Mexico_City",
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit",
+                hour12: false
+            })
+        }))
 
-        return res.status(200).json({ message: "Bitacora encontrada exitosamente", binnacles })
+        return res.status(200).json({
+            message: binnacles.length === 0
+                ? "No hay registros en la bitácora"
+                : "Bitácora obtenida exitosamente",
+            count: formattedBinnacles.length,
+            binnacles: formattedBinnacles
+        })
+
     } catch (error) {
-        return res.status(400).json({ message: "No se pudieron obtener "})
+        console.error("Error obteniendo bitácora:", error)
+
+        return res.status(500).json({
+            message: "Error interno del servidor al obtener la bitácora"
+        })
     }
 }
 
