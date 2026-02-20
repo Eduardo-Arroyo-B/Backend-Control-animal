@@ -63,7 +63,6 @@ const createBinnacleReports = async (req, res) => {
         const createBinnacle = await prisma.bitacora_Auditoria.create({
             data: {
                 usuarioId,
-                fecha_hora: new Date().toISOString(),
                 operacion: "CREACION",
                 ip,
                 resultado: `Reporte de ${resultado} creado con ID ${usuarioId}`
