@@ -29,6 +29,7 @@ const createDate = async (req, res) => {
         fecha: new Date(fecha),
         usuarioId,
         servicio,
+        estado: "Pendiente"
     }
 
     try {
