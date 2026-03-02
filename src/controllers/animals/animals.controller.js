@@ -322,7 +322,7 @@ const createAnimalFlujo = async (req, res) => {
         temperamento,
         tiempo_estancia,
         pelaje,
-        peso,
+        peso: Number(peso),
         ubicacion_actual,
         estado_salud,
         sexo,
