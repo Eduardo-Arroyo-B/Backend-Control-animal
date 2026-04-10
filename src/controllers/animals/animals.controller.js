@@ -504,6 +504,75 @@ const updateAnimal = async (req, res) => {
     }
 }
 
+const updatePhotoAnimal = async (req, res) => {
+    // ID del animal
+    const { id } = req.params;
+
+    // Usuario que lo registro
+    const { registrado_por } = req.body;
+
+    // Validar que se envie el ID
+    if (!id) {
+        return res.status(400).json({ message: "ID del animal no proporcionado" });
+    }
+
+    try {
+        // Verificar que el animal existe
+        const animal = await prisma.animales.findUnique({
+            where: {
+                animal_id: Number(id)
+            },
+            include: {
+                Animales_Fotos: true
+            }
+        });
+
+        if (!animal) {
+            return res.status(404).json({ message: "Animal no encontrado" });
+        }
+
+        // Verificar que se enviaron fotos
+        if (!req.files || req.files.length === 0) {
+            return res.status(400).json({ message: "No se proporcionaron fotos" });
+        }
+
+        if (animal.Animales_Fotos.length >= 5) {
+            return res.status(400).json({ message: "No se pueden tener mas de 5 fotos de un animal" });
+        }
+
+        // Guardar las fotos nuevas
+        const fotosData = req.files.map((file) => ({
+            animal_id: animal.animal_id,
+            url: file.path.replace(/\\/g, "/"),
+        }));
+
+        const fotosCreadas = await prisma.animales_Fotos.createMany({
+            data: fotosData
+        });
+
+        console.log("Fotos agregadas", fotosCreadas);
+
+        const rawIp = req.headers['x-forwarded-for']?.split(',')[0] || req.socket.remoteAddress;
+        const ip = rawIp?.replace('::ffff', '');
+
+        await bitacora({
+            usuarioId: registrado_por,
+            fecha_hora: new Date().toISOString(),
+            operacion: "ACTUALIZACION",
+            ip,
+            resultado: `Fotos agregadas al animal con ID ${animal.animal_id}`
+        });
+
+        return res.status(201).json({
+            message: "Fotos agregadas correctamente",
+            fotos_agregadas: fotosCreadas.count
+        });
+
+    } catch (err) {
+        return res.status(500).json({ message: "No se pudo actualizar la foto del animal", error: err.message });
+    }
+};
+
 const deleteAnimals = async (req, res) => {
     // Obtener id de los parametros
     const { id } = req.params
@@ -729,6 +798,7 @@ export {
     createAnimal,
     createAnimalFlujo,
     updateAnimal,
+    updatePhotoAnimal,
     deleteAnimals,
     getMiniExpedienteAnimal,
     createMiniExpedienteAnimal,

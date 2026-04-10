@@ -6,6 +6,7 @@ import {
     createAnimal,
     createAnimalFlujo,
     updateAnimal,
+    updatePhotoAnimal,
     deleteAnimals,
     getMiniExpedienteAnimal,
     createMiniExpedienteAnimal,
@@ -24,6 +25,7 @@ router.get("/getAnimalByID/:search", getAnimalsByID)
 router.post("/createAnimal", upload.array("fotos", 5), createAnimal)
 router.post("/createAnimalFlujo", upload.array("fotos", 5), createAnimalFlujo)
 router.put("/updateAnimal/:id", updateAnimal)
+router.put("/updatePhotoAnimal/:id", upload.array("fotos", 5),updatePhotoAnimal)
 router.delete("/deleteAnimals/:id", deleteAnimals)
 
 // Mini expediente
